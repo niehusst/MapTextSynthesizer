@@ -12,7 +12,7 @@ Convolutional Neural Network that recognizes text in scanned images of historica
 * **OpenCV** computer vision repository can be found on [github](https://github.com/opencv) .
 * ??more??
 
-#### Install with CMake on Linux
+### Install with CMake on Linux
 
 $ cmake-gui
 
@@ -32,7 +32,7 @@ $ cd build
 
 $ make install
 
-#### Examples
+### Examples
 
 For python, see samples/text_synthesizer.py
 
