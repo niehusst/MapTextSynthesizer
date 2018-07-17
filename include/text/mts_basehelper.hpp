@@ -4,9 +4,11 @@
 #include <unordered_map>
 #include <memory>
 #include <vector>
-#include <pango/pangocairo.h>
 
 #include <boost/random.hpp>
+
+#include <pango/pangocairo.h>
+
 
 using namespace std;
 using boost::random::mt19937;

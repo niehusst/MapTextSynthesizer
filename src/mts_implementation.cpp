@@ -1,10 +1,24 @@
-#include "opencv2/imgproc.hpp"
-#include "opencv2/core.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/calib3d.hpp"
+/** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * mts_implementation.cpp contains the class method definitions for the       *
+ * MTSImplementation class, which handles the integration of the background   *
+ * and text into one synthetic image.                                         *
+ * Copyright (C) 2018, Liam Niehus-Staab and Ziwen Chen                       *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ * (at your option) any later version.                                        * 
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful,            *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+ * GNU General Public License for more details.                               *
+ *                                                                            *
+ * You should have received a copy of the GNU General Public License          *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 
-#include "text/mts_implementation.hpp"
-
+// standard includes
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -24,13 +38,20 @@
 #include <utility>
 #include <vector>
 
+// opencv includes
+#include <opencv2/imgproc.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/calib3d.hpp>
+#include <opencv2/core/cvstd.hpp> // cv::String
+#include <opencv2/core/mat.hpp>   // cv::Mat
+
 // Pango/cairo includes
 #include <glib.h>
 #include <pango/pangocairo.h>
 
-//opencv includes
-#include <opencv2/core/cvstd.hpp> // cv::String
-#include <opencv2/core/mat.hpp>   // cv::Mat
+#include "text/mts_implementation.hpp"
+
  
 using namespace std;
 using boost::random::beta_distribution;
