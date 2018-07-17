@@ -1,6 +1,8 @@
 #ifndef MAP_TEXT_SYNTHESIZER_HPP
 #define MAP_TEXT_SYNTHESIZER_HPP
 
+#include <opencv2/core/cvstd.hpp> // cv::String
+#include <opencv2/core/types_c.h> // CV_EXPORTS_W
 using namespace std;
 
 namespace cv

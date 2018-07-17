@@ -1,14 +1,20 @@
 #ifndef MTS_IMPLEMENTATION_HPP
 #define MTS_IMPLEMENTATION_HPP
 
+// pango/cairo includes
 #include <glib.h>
 #include <pango/pangocairo.h>
 
-#include "opencv2/text/map_text_synthesizer.hpp"
-#include "opencv2/text/mts_utilities.hpp"
-#include "opencv2/text/mts_basehelper.hpp"
-#include "opencv2/text/mts_texthelper.hpp"
-#include "opencv2/text/mts_bghelper.hpp"
+// opencv includes
+#include <opencv2/core/cvstd.hpp> // cv::String
+#include <opencv2/core/mat.hpp> // cv::Mat
+
+// our method includes
+#include "text/map_text_synthesizer.hpp"
+#include "text/mts_utilities.hpp"
+#include "text/mts_basehelper.hpp"
+#include "text/mts_texthelper.hpp"
+#include "text/mts_bghelper.hpp"
 
 using namespace std;
 using boost::random::mt19937;

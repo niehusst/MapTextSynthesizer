@@ -2,6 +2,9 @@
 #define MTS_TEXTHELPER_HPP
 
 #include <pango/pangocairo.h>
+
+#include <opencv2/core/cvstd.hpp> // cv::String
+
 #include <vector>
 #include <string>
 #include <memory>

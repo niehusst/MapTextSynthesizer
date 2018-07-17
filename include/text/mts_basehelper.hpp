@@ -310,11 +310,11 @@ namespace cv
 
                 /*
                  * Returns true or false based on a randomly generated probability under
-                 * the input value v
+                 * the input value probability
                  *
-                 * v - the probability to be calculated under
+                 * probability - the probability to be calculated under (0 - 1.0)
                  */
-                bool rndProbUnder(double v);
+                bool rndProbUnder(double probability);
 
                 /*
                  * A wrapper for the openCV random number generator. Returns a
