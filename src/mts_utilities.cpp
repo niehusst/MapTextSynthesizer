@@ -3,9 +3,10 @@
 #include <fstream>
 #include <stdlib.h>
 #include <memory>
-
-#include <opencv2/text/mts_utilities.hpp>
 #include <unistd.h>
+
+#include "text/mts_utilities.hpp"
+
 
 using namespace std;
 

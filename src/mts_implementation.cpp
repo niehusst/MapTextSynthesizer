@@ -3,7 +3,7 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/calib3d.hpp"
 
-#include "opencv2/text/mts_implementation.hpp"
+#include "text/mts_implementation.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,9 +24,14 @@
 #include <utility>
 #include <vector>
 
+// Pango/cairo includes
 #include <glib.h>
 #include <pango/pangocairo.h>
 
+//opencv includes
+#include <opencv2/core/cvstd.hpp> // cv::String
+#include <opencv2/core/mat.hpp>   // cv::Mat
+ 
 using namespace std;
 using boost::random::beta_distribution;
 using boost::random::variate_generator;

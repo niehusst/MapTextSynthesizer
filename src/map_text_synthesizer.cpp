@@ -1,7 +1,5 @@
-#include "precomp.hpp"
-
-#include "opencv2/text/map_text_synthesizer.hpp"
-#include "opencv2/text/mts_implementation.hpp"
+#include "text/map_text_synthesizer.hpp"
+#include "text/mts_implementation.hpp"
 
 using namespace std;
 

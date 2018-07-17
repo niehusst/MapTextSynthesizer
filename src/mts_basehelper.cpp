@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include "opencv2/text/mts_basehelper.hpp"
+#include "text/mts_basehelper.hpp"
 
 using namespace std;
 using boost::random::mt19937;

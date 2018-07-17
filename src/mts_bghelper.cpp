@@ -6,8 +6,8 @@
 #include <iostream>
 #include <string>
 
-#include "opencv2/text/mts_bghelper.hpp"
-#include "opencv2/text/mts_basehelper.hpp"
+#include "text/mts_bghelper.hpp"
+#include "text/mts_basehelper.hpp"
 
 using namespace std;
 using boost::random::beta_distribution;

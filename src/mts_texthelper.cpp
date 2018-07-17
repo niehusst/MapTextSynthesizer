@@ -4,10 +4,10 @@
 #include <memory>
 #include <string>
 #include <sstream>
-
+#include <opencv2/core/cvstd.hpp> // cv::String
 #include <iostream>
 
-#include "opencv2/text/mts_texthelper.hpp"
+#include "text/mts_texthelper.hpp"
 
 using namespace std;
 using boost::random::beta_distribution;
