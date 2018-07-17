@@ -5,13 +5,13 @@ Convolutional Neural Network that recognizes text in scanned images of historica
 
 ## Getting Started
 
-To run a quick sample usage of the code, simply fork or clone this repository, run **add make instructions** and navigate to and run text_synthesizer.py.
+To run a quick sample usage of the code, fork or clone this repository, run **add make instructions** and navigate to and run text_synthesizer.py.
 
 #### Prerequisites/Dependencies
 
-* Pango comes preinstalled on Linux machines since . Otherwise, requiers download from their [website] (https://www.pango.org/).
-* Cairo comes preinstalled on Linux machines since . Otherwise, requiers download from their [website] (https://cairographics.org/).
-* OpenCV computer vision repository can be found on [github] (https://github.com/opencv) .
+* **Pango** comes preinstalled on many Linux machines. Otherwise, follow download from their [website] (https://www.pango.org/).
+* **Cairo** comes preinstalled on many Linux machines. Otherwise, follow download from their [website] (https://cairographics.org/).
+* **OpenCV** computer vision repository can be found on [github] (https://github.com/opencv) .
 * ??more??
 
 ## Authors
