@@ -17,20 +17,25 @@ Convolutional Neural Network that recognizes text in scanned images of historica
 $ cmake-gui
 
 Edited Where is the source code: [path-to]/MapTextSynthesizer
+
 Where to build the binaries: [path-to]/MapTextSynthesizer/build
 
 Configure
+
 Unix Makefiles / default native compilers. Finish
 
 Configure
+
 Generate
 
 $ cd build
+
 $ make install
 
 #### Examples
 
 For python, see samples/text_synthesizer.py
+
 For C++, see samples/text_synthesizer.cpp
 
 ## Authors
