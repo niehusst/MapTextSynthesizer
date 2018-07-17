@@ -8,5 +8,5 @@ Description: @mtsynth_DESCRIPTION@
 Version: @mtsynth_VERSION@
 
 Requires: opencv pangocairo glib-2.0
-Libs: -L${libdir} -lmylib
+Libs: -L${libdir} -lmtsynth
 Cflags: -I${includedir}
