@@ -1,5 +1,22 @@
-set(the_description "Text Detection and Recognition")
-ocv_define_module(text opencv_ml opencv_imgproc opencv_core opencv_features2d opencv_dnn OPTIONAL opencv_highgui WRAP python java)
+cmake_minimum_required(VERSION 2.8)
+find_package(PkgConfig REQUIRED)
+
+project(mtsynth)
+set(mtsynth_VERSION "1.0.0")
+set(mtsynth_DESCRIPTION "Map Text Synthesizer")
+
+add_library(mtsynth SHARED
+    src/map_text_synthesizer.cpp
+    src/mts_basehelper.cpp
+    src/mts_bghelper.cpp
+    src/mts_implementation.cpp
+    src/mts_texthelper.cpp
+    src/mts_utilities.cpp
+    )
+
+set_target_properties(mtsynth PROPERTIES
+    VERSION ${mtsynth_VERSION}
+    PUBLIC_HEADER inc/map_text_synthesizer.hpp)
 
 pkg_check_modules(GLIB REQUIRED glib-2.0)
 if (GLIB_FOUND)
@@ -11,30 +28,29 @@ endif()
 pkg_check_modules(PANGO REQUIRED pangocairo)
 if (PANGO_FOUND)
     message(STATUS "pango:   YES")
-    target_include_directories(${the_module} PUBLIC ${PANGO_INCLUDE_DIRS})
-    target_link_libraries(${the_module} INTERFACE ${PANGO_LDFLAGS})
+    target_include_directories(mtsynth PUBLIC ${PANGO_INCLUDE_DIRS})
+    target_link_libraries(mtsynth INTERFACE ${PANGO_LDFLAGS})
 else()
     message(STATUS "pango:   NO")
 endif()
 
-if(NOT CMAKE_CROSSCOMPILING OR OPENCV_FIND_TESSERACT)
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-    find_package(Tesseract QUIET)
-    if(Tesseract_FOUND)
-        message(STATUS "Tesseract:   YES")
-        set(HAVE_TESSERACT 1)
-        ocv_include_directories(${Tesseract_INCLUDE_DIR})
-        ocv_target_link_libraries(${the_module} ${Tesseract_LIBRARIES})
-    else()
-        message(STATUS "Tesseract:   NO")
-    endif()
+pkg_check_modules(OPENCV REQUIRED opencv)
+if (OPENCV_FOUND)
+    message(STATUS "opencv:   YES")
+    target_include_directories(mtsynth PUBLIC ${OPENCV_INCLUDE_DIRS})
+    target_link_libraries(mtsynth INTERFACE ${OPENCV_LDFLAGS})
+else()
+    message(STATUS "opencv:   NO")
 endif()
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/text_config.hpp.in
-    ${CMAKE_BINARY_DIR}/text_config.hpp @ONLY)
+configure_file(mtsynth.pc.in mtsynth.pc @ONLY)
 
-ocv_include_directories(${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(mtsynth PRIVATE inc)
+target_include_directories(mtsynth PRIVATE src)
 
-ocv_add_testdata(samples/ contrib/text
-    FILES_MATCHING PATTERN "*.xml" PATTERN "*.xml.gz" REGEX "scenetext[0-9]+.jpg"
-    )
+install(TARGETS mtsynth
+    LIBRARY DESTINATION lib
+    PUBLIC_HEADER DESTINATION include)
+
+install(FILES ${CMAKE_BINARY_DIR}/mtsynth.pc
+    DESTINATION lib/pkgconfig)
