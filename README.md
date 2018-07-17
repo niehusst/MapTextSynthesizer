@@ -34,9 +34,17 @@ $ make install
 
 ### Examples
 
-For python, see samples/text_synthesizer.py
+#### Python
 
-For C++, see samples/text_synthesizer.cpp
+see samples/text_synthesizer.py
+
+#### C++
+
+export PKG_CONFIG_PATH=[prefix]/lib/pkgconfig
+
+g++ text_syntheziser.cpp `pkg-config --cflags --libs mtsynth`
+
+see samples/text_synthesizer.cpp
 
 ## Authors
 
