@@ -40,7 +40,9 @@ see samples/text_synthesizer.py
 
 #### C++
 
-export PKG_CONFIG_PATH=[prefix]/lib/pkgconfig
+export PKG_CONFIG_PATH=[prefix]/share/pkgconfig
+
+export LD_LIBRARY_PATH="[prefix]/lib"
 
 g++ text_syntheziser.cpp `pkg-config --cflags --libs mtsynth`
 

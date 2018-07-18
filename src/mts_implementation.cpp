@@ -24,6 +24,7 @@
 #include "mts_implementation.hpp"
 
 using namespace std;
+using namespace cv;
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
 
