@@ -49,16 +49,21 @@ void
 MTS_BackgroundHelper::draw_boundary(cairo_t *cr, double linewidth, 
         double og_col, bool horizontal) {
 
+    cout << "in boundary" << endl;
     // get original dash code
     int dash_len = cairo_get_dash_count(cr);
-    double dash[dash_len], *offset;
+    cout << "got count" << endl;
+    double dash[dash_len], offset[dash_len];
+    cout << "offset" << endl;
     cairo_get_dash(cr, dash, offset);
 
+    cout << "calculate dis" << endl;
     // calculate a distance between lines
     int dist_min = getParam(string("boundary_distance_min"));
     int dist_max = getParam(string("boundary_distance_max"))+1 - dist_min;
     double distance = (dist_min + helper->rng() % dist_max) * linewidth;
 
+    cout << "set chara" << endl;
     // set boundary line characteristics
     int width_min = getParam(string("boundary_linewidth_min"));
     int width_max = getParam(string("boundary_linewidth_max"))+1 - width_min;
@@ -66,6 +71,7 @@ MTS_BackgroundHelper::draw_boundary(cairo_t *cr, double linewidth,
     cairo_set_line_width(cr, new_linewidth);
     cairo_set_dash(cr, dash, 0,0); //set dash pattern to none
 
+    cout << "set color" << endl;
     // set boundary line gray-scale color (lighter than original)
     int color_min = 100 * getParam(string("boundary_color_diff_min"));
     int color_max = 100 * getParam(string("boundary_color_diff_max"))+1 - color_min;
@@ -73,12 +79,14 @@ MTS_BackgroundHelper::draw_boundary(cairo_t *cr, double linewidth,
     double color = og_col + color_diff;
     cairo_set_source_rgb(cr, color, color, color);
 
+    cout << "stroke" << endl;
     // stroke the boundary line
     cairo_stroke_preserve(cr);
 
     // translate distance so that main line is drawn off center of boundary
     draw_parallel(cr, horizontal, distance, false); //doesn't stroke new path
 
+    cout << "reset" << endl;
     // reset to color and line width of original line
     cairo_set_line_width(cr, linewidth);
     cairo_set_source_rgb(cr, og_col, og_col, og_col);
@@ -275,11 +283,14 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
         }
     } 
 
+    cout << "before dash" << endl;
     // set line style to dashed or not (default solid)
     if(dashed) { set_dash_pattern(cr); } 
 
+    cout << "before boundary" << endl;
     // set boundry or not
     if(boundary) { draw_boundary(cr, line_width, color, horizontal); }
+    cout << "after boundary" << endl;
 
     // set hatching or not
     if(hatched) { draw_hatched(cr, line_width); } 

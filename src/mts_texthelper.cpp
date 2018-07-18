@@ -37,12 +37,15 @@ MTS_TextHelper::generateFont(char *font, int fontsize){
     double blockyProb=getParam("font_blocky");
     double normalProb=getParam("font_normal");
     double probs[3]={blockyProb, normalProb + blockyProb, 1};
+    cout << "got probs" << endl;
 
     const char *font_name;
     // randomly select a font style 
     for (int i = 0; i < 3; i++) {
         if(font_prob < 10000 * probs[i]){
+            cout << "in if " << endl;
             int listsize = fonts_[i]->size();
+            cout << "got size " << endl;
             CV_Assert(listsize);
             font_name = fonts_[i]->at(helper->rng()%listsize).c_str();
             strcpy(font,font_name);
@@ -61,6 +64,7 @@ MTS_TextHelper::generateFont(char *font, int fontsize){
     std::ostringstream stm;
     stm << fontsize;
     strcat(font,stm.str().c_str());
+    cout << font << endl;
 }
 
 void

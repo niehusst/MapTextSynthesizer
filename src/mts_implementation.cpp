@@ -37,17 +37,12 @@ void MTSImplementation::cairoToMat(cairo_surface_t *surface,Mat &mat) {
     // make a 4 channel opencv matrix
     Mat mat4 = Mat(cairo_image_surface_get_height(surface),cairo_image_surface_get_width(surface),CV_8UC4,cairo_image_surface_get_data(surface));
 
-    vector<Mat> channels1;
-    vector<Mat> channels2;
+    vector<Mat> channels;
 
-    cv::split(mat,channels2);
-    cv::split(mat4,channels1);
+    cv::split(mat4,channels);
 
     //iterate through all channels
-    for (int i = 0; i < 3; i++) {
-        channels2[i] = channels1[i];
-    }
-    cv::merge(channels2,mat);
+    mat = channels[0];
 }
 
 void MTSImplementation::addGaussianNoise(Mat& out) {
@@ -61,17 +56,11 @@ void MTSImplementation::addGaussianNoise(Mat& out) {
 
     // populate noise with random values
     randn(noise, 0, sigma);
-    vector<Mat> channels;
-    cv::split(out,channels);
 
     // add noise to each channel
-    for (int i = 0; i < 3; i++) {
-        channels[i]+=noise;
-        threshold(channels[i],channels[i],1.0,1.0,THRESH_TRUNC);
-        threshold(channels[i],channels[i],0,1.0,THRESH_TOZERO);
-    }
-    // merge target image Mat with the new noise Mat
-    merge(channels,out);
+    out+=noise;
+    threshold(out,out,1.0,1.0,THRESH_TRUNC);
+    threshold(out,out,0,1.0,THRESH_TOZERO);
 }
 
 void MTSImplementation::addGaussianBlur(Mat& out) {
@@ -237,12 +226,12 @@ void MTSImplementation::generateSample(CV_OUT String &caption, CV_OUT Mat & samp
         cairo_paint(cr); // dont blend
     }
 
-    Mat sample_uchar = Mat(height,width,CV_8UC3,Scalar_<uchar>(0,0,0));
+    Mat sample_uchar = Mat(height,width,CV_8UC1,Scalar_<uchar>(0,0,0));
 
     // convert cairo image to openCV Mat object
     cairoToMat(bg_surface, sample_uchar);
-    sample = Mat(height, width, CV_32FC3);
-    sample_uchar.convertTo(sample, CV_32FC3, 1.0/255.0);
+    sample = Mat(height, width, CV_32FC1);
+    sample_uchar.convertTo(sample, CV_32FC1, 1.0/255.0);
 
     // clean up cairo objects
     cairo_destroy(cr);
@@ -252,4 +241,7 @@ void MTSImplementation::generateSample(CV_OUT String &caption, CV_OUT Mat & samp
     // add image smoothing using blur and noise
     addGaussianNoise(sample);
     addGaussianBlur(sample);
+
+    sample.convertTo(sample_uchar, CV_8UC1, 255.0);
+    sample = sample_uchar;
 }
