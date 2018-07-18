@@ -1,11 +1,12 @@
 # MapTextSynthesizer
 
-MapTextSynthesizer is a program to dynamically generate synthetic images containing text, which appear to be from historical maps. The produced images serve as training data for a 
-Convolutional Neural Network that recognizes text in scanned images of historical maps. (Data not intended for training a text spotting model)
+MapTextSynthesizer is a program to dynamically generate synthetic images containing text, which appear to be from historical maps. The produced images serve as training data for a Convolutional Neural Network that recognizes text in scanned images of historical maps. (Data not intended for training a text recognition model)
 
 ## Getting Started
 
 To run a quick sample usage of the code, fork or clone this repository, run **add make instructions** and navigate to and run text_synthesizer.py.
+
+**add a c++ program to make and run as well.**
 
 #### Prerequisites/Dependencies
 
