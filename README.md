@@ -14,11 +14,11 @@ Convolutional Neural Network that recognizes text in scanned images of historica
 
 ### Install with CMake on Linux
 
-open install.sh using a text editor and type in corresponding path
+open install.sh using a text editor and type in corresponding paths
 
 e.g. Edited Where is the source code: [path-to]/MapTextSynthesizer
 
-$ ./install.sh
+`` $ ./install.sh ``
 
 ### Examples
 
@@ -32,9 +32,9 @@ see samples/text_synthesizer.cpp
 
 ##### Sample compiling steps:
 
-(if using virtual env,) export PKG_CONFIG_PATH=[install_prefix]/share/pkgconfig
+(if using virtual env,) `` export PKG_CONFIG_PATH=[install_prefix]/share/pkgconfig ``
 
-(if using virtual env,) export LD_LIBRARY_PATH="[install_prefix]/lib"
+(if using virtual env,) `` export LD_LIBRARY_PATH="[install_prefix]/lib" ``
 
 ``g++ text_syntheziser.cpp `pkg-config --cflags --libs mtsynth` ``
 
