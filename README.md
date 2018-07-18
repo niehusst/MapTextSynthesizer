@@ -36,7 +36,7 @@ see samples/text_synthesizer.cpp
 
 (if using virtual env,) export LD_LIBRARY_PATH="[install_prefix]/lib"
 
-g++ text_syntheziser.cpp ```pkg-config --cflags --libs mtsynth```
+``g++ text_syntheziser.cpp `pkg-config --cflags --libs mtsynth` ``
 
 ## Authors
 
