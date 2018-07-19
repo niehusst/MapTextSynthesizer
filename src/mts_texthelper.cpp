@@ -26,7 +26,7 @@
 #include <opencv2/core/cvstd.hpp> // cv::String
 #include <iostream>
 
-#include "text/mts_texthelper.hpp"
+#include "mts_texthelper.hpp"
 
 using namespace std;
 using boost::random::beta_distribution;

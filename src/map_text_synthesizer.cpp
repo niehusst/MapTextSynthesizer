@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 
-#include "text/map_text_synthesizer.hpp"
-#include "text/mts_implementation.hpp"
+#include "map_text_synthesizer.hpp"
+#include "mts_implementation.hpp"
 
 using namespace std;
 

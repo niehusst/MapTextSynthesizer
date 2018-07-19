@@ -27,7 +27,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include "text/mts_basehelper.hpp"
+#include "mts_basehelper.hpp"
 
 using namespace std;
 using boost::random::mt19937;

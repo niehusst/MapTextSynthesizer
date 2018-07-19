@@ -50,7 +50,7 @@
 #include <glib.h>
 #include <pango/pangocairo.h>
 
-#include "text/mts_implementation.hpp"
+#include "mts_implementation.hpp"
 
  
 using namespace std;

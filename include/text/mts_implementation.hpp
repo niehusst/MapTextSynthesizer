@@ -10,11 +10,11 @@
 #include <opencv2/core/mat.hpp> // cv::Mat
 
 // our method includes
-#include "text/map_text_synthesizer.hpp"
-#include "text/mts_utilities.hpp"
-#include "text/mts_basehelper.hpp"
-#include "text/mts_texthelper.hpp"
-#include "text/mts_bghelper.hpp"
+#include "map_text_synthesizer.hpp"
+#include "mts_utilities.hpp"
+#include "mts_basehelper.hpp"
+#include "mts_texthelper.hpp"
+#include "mts_bghelper.hpp"
 
 using namespace std;
 using boost::random::mt19937;

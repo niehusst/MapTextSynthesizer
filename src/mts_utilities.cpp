@@ -25,7 +25,7 @@
 #include <memory>
 #include <unistd.h>
 
-#include "text/mts_utilities.hpp"
+#include "mts_utilities.hpp"
 
 
 using namespace std;

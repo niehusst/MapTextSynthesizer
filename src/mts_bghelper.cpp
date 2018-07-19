@@ -25,8 +25,8 @@
 #include <iostream>
 #include <string>
 
-#include "text/mts_bghelper.hpp"
-#include "text/mts_basehelper.hpp"
+#include "mts_bghelper.hpp"
+#include "mts_basehelper.hpp"
 
 using namespace std;
 using boost::random::beta_distribution;
