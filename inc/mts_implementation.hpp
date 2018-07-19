@@ -9,7 +9,7 @@
 #include <opencv2/opencv.hpp>
 
 // our method includes
-#include "map_text_synthesizer.hpp"
+#include "mtsynth/map_text_synthesizer.hpp"
 #include "mts_utilities.hpp"
 #include "mts_basehelper.hpp"
 #include "mts_texthelper.hpp"

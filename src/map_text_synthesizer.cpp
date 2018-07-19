@@ -1,4 +1,4 @@
-#include "map_text_synthesizer.hpp"
+#include "mtsynth/map_text_synthesizer.hpp"
 #include "mts_implementation.hpp"
 
 using namespace std;

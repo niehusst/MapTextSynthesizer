@@ -3,7 +3,7 @@
 #include <fstream>
 #include <memory>
 #include <string>
-#include <map_text_synthesizer.hpp>
+#include <mtsynth/map_text_synthesizer.hpp>
 
 using namespace std;
 using namespace cv;
