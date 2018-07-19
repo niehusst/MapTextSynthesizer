@@ -24,7 +24,8 @@ MTS_BackgroundHelper::getParam(string key) {
 }
 
 MTS_BackgroundHelper::MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h)
-    :helper(h),  // initialize fields
+    //:helper(make_shared<MTS_BaseHelper>(*h)),  // initialize fields
+    :helper(&(*h)),  // initialize fields
     bias_var_dist(h->getParam(string("bias_std_alpha")),
             h->getParam(string("bias_std_beta"))),
     bias_var_gen(h->rng2_, bias_var_dist),
@@ -32,6 +33,10 @@ MTS_BackgroundHelper::MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h)
             h->getParam(string("texture_width_beta"))),
     texture_distrib_gen(h->rng2_, texture_distribution)
 {}
+
+MTS_BackgroundHelper::~MTS_BackgroundHelper(){
+    cout << "bg helper destructed" << endl;
+}
 
 void
 MTS_BackgroundHelper::make_dash_pattern(double * pattern, int len) {

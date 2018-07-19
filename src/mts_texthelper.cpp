@@ -19,12 +19,17 @@ double MTS_TextHelper::getParam(string key) {
 }
 
 MTS_TextHelper::MTS_TextHelper(shared_ptr<MTS_BaseHelper> h)
-    :helper(h),  // initialize fields
+    //:helper(make_shared<MTS_BaseHelper>(*h)),  // initialize fields
+    :helper(&(*h)),  // initialize fields
     spacing_dist(h->getParam("spacing_alpha"),h->getParam("spacing_beta")),
     spacing_gen(h->rng2_, spacing_dist),
     stretch_dist(h->getParam("stretch_alpha"),h->getParam("stretch_beta")),
     stretch_gen(h->rng2_, stretch_dist)
 {}
+
+MTS_TextHelper::~MTS_TextHelper(){
+    cout << "text helper destructed" << endl;
+}
 
 // SEE mts_texthelper.hpp FOR ALL DOCUMENTATION
 
@@ -476,12 +481,14 @@ MTS_TextHelper::distractText (cairo_t *cr, int width, int height, char *font) {
 
 
 void
-MTS_TextHelper::setFonts(std::shared_ptr<std::vector<String> > *data) {
+//MTS_TextHelper::setFonts(std::shared_ptr<std::vector<String> > *data) {
+MTS_TextHelper::setFonts(std::vector<String> **data) {
     fonts_ = data;
 }
 
 
 void
-MTS_TextHelper::setSampleCaptions(std::shared_ptr<std::vector<String> > data) {
+//MTS_TextHelper::setSampleCaptions(std::shared_ptr<std::vector<String> > data) {
+MTS_TextHelper::setSampleCaptions(std::vector<String> *data) {
     sampleCaptions_ = data;
 }

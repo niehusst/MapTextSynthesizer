@@ -63,22 +63,23 @@ class MTSImplementation: public MapTextSynthesizer{
         void updateFontNameList(std::vector<String>& fntList);
 
         /* The list of blocky font names set by user. */
-        std::vector<String> blockyFonts_;
+        std::vector<String> blockyFonts_ = std::vector<String>();
 
         /* The list of regular font names set by user. */
-        std::vector<String> regularFonts_;
+        std::vector<String> regularFonts_ = std::vector<String>();
 
         /* The list of cursive font names set by user. */
-        std::vector<String> cursiveFonts_;
+        std::vector<String> cursiveFonts_ = std::vector<String>();
 
         /* The list of available system font names. */
-        std::vector<String> availableFonts_;
+        std::vector<String> availableFonts_ = std::vector<String>();
 
         /* Pointers pointing to blocky, regular, cursive font lists. */
-        std::shared_ptr<std::vector<String> > fonts_[3];
+        //std::shared_ptr<std::vector<String> > fonts_[3];
+        std::vector<String>* fonts_[3];
 
         /* The list of captions to sample from.*/
-        std::vector<String> sampleCaptions_;
+        std::vector<String> sampleCaptions_ = std::vector<String>();
 
         MTS_Utilities utils;
 
@@ -94,6 +95,9 @@ class MTSImplementation: public MapTextSynthesizer{
 
         /* Constructor */
         MTSImplementation();
+
+        /* Destructor */
+        ~MTSImplementation();
 
         /* See MapTextSynthesizer for documentations.*/
 

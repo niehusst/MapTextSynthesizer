@@ -66,6 +66,7 @@ class CV_EXPORTS_W MapTextSynthesizer{
          * Use this method to create a MTS object.
          */
         CV_WRAP static Ptr<MapTextSynthesizer> 
+        //CV_WRAP static MapTextSynthesizer* 
             create();
 
         /*

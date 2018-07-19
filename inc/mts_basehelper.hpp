@@ -296,6 +296,9 @@ class MTS_BaseHelper {
         //Constructor
         MTS_BaseHelper(shared_ptr<unordered_map<string, double> > params);
 
+        //Destructor
+        ~MTS_BaseHelper();
+
         /* Returns the value for key*/
         double getParam(string key);
 

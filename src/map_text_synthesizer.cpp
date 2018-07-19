@@ -9,3 +9,9 @@ Ptr<MapTextSynthesizer> MapTextSynthesizer::create(){
     Ptr<MapTextSynthesizer> mts(new MTSImplementation());
     return mts;
 }
+/*
+MapTextSynthesizer* MapTextSynthesizer::create(){
+    MapTextSynthesizer* mts = new MTSImplementation();
+    return mts;
+}
+*/

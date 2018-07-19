@@ -21,6 +21,10 @@ MTS_BaseHelper::MTS_BaseHelper(shared_ptr<unordered_map<string, double> > params
     cout << "param number " << this->params->size() << endl;
 }
 
+MTS_BaseHelper::~MTS_BaseHelper(){
+    cout << "base helper destructed" << endl;
+}
+
 double MTS_BaseHelper::getParam(string key) {
     return this->params->find(key)->second;
 }

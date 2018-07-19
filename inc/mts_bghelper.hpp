@@ -383,9 +383,14 @@ class MTS_BackgroundHelper {
     public://------------------------ PUBLIC METHODS ---------------------------
 
         // a helper class memeber that holds important functions
-        shared_ptr<MTS_BaseHelper> helper;
+        //shared_ptr<MTS_BaseHelper> helper;
+        MTS_BaseHelper* helper;
 
+        //Constructor
         MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h);
+
+        //Destructor
+        ~MTS_BackgroundHelper();
 
         /*
          * Generate bg features that will be drawn on current image
