@@ -18,7 +18,7 @@ add_library(mtsynth SHARED
 
 set_target_properties(mtsynth PROPERTIES
     VERSION ${mtsynth_VERSION}
-    PUBLIC_HEADER inc/map_text_synthesizer.hpp)
+    PUBLIC_HEADER include/mtsynth/map_text_synthesizer.hpp)
 
 pkg_check_modules(PANGO REQUIRED pangocairo)
 if (PANGO_FOUND)
@@ -40,12 +40,13 @@ endif()
 
 configure_file(mtsynth.pc.in mtsynth.pc @ONLY)
 
+target_include_directories(mtsynth PRIVATE include)
 target_include_directories(mtsynth PRIVATE inc)
 target_include_directories(mtsynth PRIVATE src)
 
 install(TARGETS mtsynth
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} 
-    PUBLIC_HEADER DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR})
+    PUBLIC_HEADER DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/mtsynth)
 
 install(FILES ${CMAKE_BINARY_DIR}/mtsynth.pc
     DESTINATION  ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)

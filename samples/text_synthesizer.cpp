@@ -1,23 +1,36 @@
 #include <vector>
 #include <iostream>
-#include <map_text_synthesizer.hpp>
+#include <fstream>
+#include <memory>
+#include <string>
+#include <mtsynth/map_text_synthesizer.hpp>
 
 using namespace std;
 using namespace cv;
 
+void read_words(string path, vector<String> &caps){
+    ifstream infile(path);
+    string line;
+    while (std::getline(infile, line))
+    {
+        caps.push_back(String(line));
+    }
+}
+
 int main() {
-    shared_ptr<MapTextSynthesizer> s = MapTextSynthesizer::create();
+    auto s = MapTextSynthesizer::create();
 
     vector<String> caps;
-    caps.push_back("AAA");
-    caps.push_back("BBB");
-    caps.push_back("CCC");
+    read_words("IA/Civil.txt",caps);
 
     vector<String> blocky;
     blocky.push_back("MathJax_Fraktur");
+    blocky.push_back("eufm10");
 
     vector<String> regular;
     regular.push_back("cmmi10");
+    regular.push_back("Sans");
+    regular.push_back("Serif");
 
     vector<String> cursive;
     cursive.push_back("URW Chancery L");
