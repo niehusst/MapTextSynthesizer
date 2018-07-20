@@ -34,7 +34,6 @@
 #include <algorithm>
 #include <iosfwd>
 #include <memory>
-#include <string>
 #include <utility>
 #include <vector>
 
@@ -53,24 +52,24 @@
 #include "mts_implementation.hpp"
 
  
-using namespace std;
+//using namespace std;
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
-
+/*
 namespace cv{
     namespace text{
-
-        double MTSImplementation::getParam(string key) {
+*/
+        double MTSImplementation::getParam(std::string key) {
             double val = helper->getParam(key);
             return val;
         }
 
-        void MTSImplementation::cairoToMat(cairo_surface_t *surface,Mat &mat) {
+void MTSImplementation::cairoToMat(cairo_surface_t *surface,cv::Mat &mat) {
           // make a 4 channel opencv matrix
-            Mat mat4 = Mat(cairo_image_surface_get_height(surface),cairo_image_surface_get_width(surface),CV_8UC4,cairo_image_surface_get_data(surface));
+            cv::Mat mat4 = cv::Mat(cairo_image_surface_get_height(surface),cairo_image_surface_get_width(surface),CV_8UC4,cairo_image_surface_get_data(surface));
 
-            vector<Mat> channels1;
-            vector<Mat> channels2;
+            vector<cv::Mat> channels1;
+            vector<cv::Mat> channels2;
 
             cv::split(mat,channels2);
             cv::split(mat4,channels1);
@@ -82,18 +81,18 @@ namespace cv{
             cv::merge(channels2,mat);
         }
 
-        void MTSImplementation::addGaussianNoise(Mat& out) {
+        void MTSImplementation::addGaussianNoise(cv::Mat& out) {
           // get and use user config parameters to set sigma
             double scale = getParam("noise_sigma_scale");
             double shift = getParam("noise_sigma_shift");
             double sigma = round((pow(1/(noise_gen() + 0.1), 0.5) * scale + shift) * 100) / 100;
 
             // create noise matrix
-            Mat noise = Mat(out.rows, out.cols, CV_32F);
+            cv::Mat noise = cv::Mat(out.rows, out.cols, CV_32F);
             
             // populate noise with random values
             randn(noise, 0, sigma);
-            vector<Mat> channels;
+            vector<cv::Mat> channels;
             cv::split(out,channels);
 
             // add noise to each channel
@@ -106,7 +105,7 @@ namespace cv{
             merge(channels,out);
         }
 
-        void MTSImplementation::addGaussianBlur(Mat& out) {
+        void MTSImplementation::addGaussianBlur(cv::Mat& out) {
             // get user config parameters for kernel size
             int size_min = (int)getParam("blur_kernel_size_min") / 2;
             int size_max = (int)getParam("blur_kernel_size_max") / 2;
@@ -115,7 +114,7 @@ namespace cv{
             GaussianBlur(out,out,Size(ker_size,ker_size),0,0,BORDER_REFLECT_101);
         }
 
-        void MTSImplementation::updateFontNameList(std::vector<String>& fntList) {
+void MTSImplementation::updateFontNameList(std::vector<cv::String>& fntList) {
           // clear existing fonts for a fresh load of available fonts
             fntList.clear(); 
 
@@ -131,7 +130,7 @@ namespace cv{
                 PangoFontFamily * family = families[k];
                 const char * family_name;
                 family_name = pango_font_family_get_name (family);
-                fntList.push_back(String(family_name));
+                fntList.push_back(cv::String(family_name));
             }   
             // clean up
             g_free (families);
@@ -139,9 +138,9 @@ namespace cv{
 
         MTSImplementation::MTSImplementation()
             : MapTextSynthesizer(),  // initialize class fields
-            fonts_{std::shared_ptr<std::vector<String> >(&(this->blockyFonts_)),
-                std::shared_ptr<std::vector<String> >(&(this->regularFonts_)),
-                std::shared_ptr<std::vector<String> >(&(this->cursiveFonts_))},
+            fonts_{std::shared_ptr<std::vector<cv::String> >(&(this->blockyFonts_)),
+                std::shared_ptr<std::vector<cv::String> >(&(this->regularFonts_)),
+                std::shared_ptr<std::vector<cv::String> >(&(this->cursiveFonts_))},
             utils(),
             helper(make_shared<MTS_BaseHelper>(MTS_BaseHelper(utils.params))),
             th(helper),
@@ -161,11 +160,11 @@ namespace cv{
 
             //set required fields for TextHelper instance (th)
             th.setFonts(fonts_);
-            th.setSampleCaptions(std::shared_ptr<std::vector<String> >(&(sampleCaptions_)));
+            th.setSampleCaptions(std::shared_ptr<std::vector<cv::String> >(&(sampleCaptions_)));
         }
 
-        void MTSImplementation::setBlockyFonts(std::vector<String>& fntList){
-            std::vector<String> dbList=this->availableFonts_;
+        void MTSImplementation::setBlockyFonts(std::vector<cv::String>& fntList){
+            std::vector<cv::String> dbList=this->availableFonts_;
             
             // loop through fonts in availableFonts_ to check if the system 
             // contains every font in the fntList
@@ -177,8 +176,8 @@ namespace cv{
             this->blockyFonts_=fntList;
         }
 
-        void MTSImplementation::setRegularFonts(std::vector<String>& fntList){
-            std::vector<String> dbList=this->availableFonts_;
+        void MTSImplementation::setRegularFonts(std::vector<cv::String>& fntList){
+            std::vector<cv::String> dbList=this->availableFonts_;
             
             // loop through fonts in availableFonts_ to check if the system 
             // contains every font in the fntList
@@ -190,8 +189,8 @@ namespace cv{
             this->regularFonts_=fntList;
         }
 
-        void MTSImplementation::setCursiveFonts(std::vector<String>& fntList){
-            std::vector<String> dbList=this->availableFonts_;
+        void MTSImplementation::setCursiveFonts(std::vector<cv::String>& fntList){
+            std::vector<cv::String> dbList=this->availableFonts_;
             
             // loop through fonts in availableFonts_ to check if the system 
             // contains every font in the fntList
@@ -203,11 +202,11 @@ namespace cv{
             this->cursiveFonts_=fntList;
         }
 
-        void MTSImplementation::setSampleCaptions (std::vector<String>& words) {
+        void MTSImplementation::setSampleCaptions (std::vector<cv::String>& words) {
             this->sampleCaptions_ = words;
         }
 
-        void MTSImplementation::generateSample(CV_OUT String &caption, CV_OUT Mat & sample){
+        void MTSImplementation::generateSample(CV_OUT cv::String &caption, CV_OUT cv::Mat & sample){
 
           //cout << "start generate sample" << endl;
             std::vector<BGFeature> bg_features;
@@ -235,7 +234,7 @@ namespace cv{
             int height_max = (int)getParam("height_max");
             height = (helper->rng()%(height_max-height_min+1))+height_min;
 
-            string text;
+            std::string text;
             //cout << "generating text sample" << endl;
             // use TextHelper instance to generate synthetic text
             if (find(bg_features.begin(), bg_features.end(), Distracttext)!= bg_features.end()) {
@@ -245,10 +244,10 @@ namespace cv{
                 // dont generate distractor text
                 th.generateTextSample(text,text_surface,height,width,text_color,false);
             }
-            caption = String(text);
+            caption = cv::String(text);
 
             //cout << "generating bg sample" << endl;
-            cout << "bg feature num " << bg_features.size() << endl; 
+            //cout << "bg feature num " << bg_features.size() << endl; 
 
             // use BackgroundHelper to generate the background image
             cairo_surface_t *bg_surface;
@@ -269,11 +268,11 @@ namespace cv{
                 cairo_paint(cr); // dont blend
             }
 
-            Mat sample_uchar = Mat(height,width,CV_8UC3,Scalar_<uchar>(0,0,0));
+            cv::Mat sample_uchar = cv::Mat(height,width,CV_8UC3,Scalar_<uchar>(0,0,0));
 
             // convert cairo image to openCV Mat object
             cairoToMat(bg_surface, sample_uchar);
-            sample = Mat(height, width, CV_32FC3);
+            sample = cv::Mat(height, width, CV_32FC3);
             sample_uchar.convertTo(sample, CV_32FC3, 1.0/255.0);
 
             // clean up cairo objects
@@ -285,6 +284,7 @@ namespace cv{
             addGaussianNoise(sample);
             addGaussianBlur(sample);
         }
-
+/*
     }  //namespace text
 }  //namespace cv
+*/

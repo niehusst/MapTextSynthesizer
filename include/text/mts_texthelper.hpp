@@ -13,10 +13,10 @@
 
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
-
+/*
 namespace cv{
     namespace text{
-
+*/
         /*
          * A class to handle text transformation in vector space, and pango
          * text rendering 
@@ -25,8 +25,8 @@ namespace cv{
             private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
 
                 /* See MapTextSynthesizer class for the documentation*/
-                std::shared_ptr<std::vector<String> > *fonts_;
-                std::shared_ptr<std::vector<String> > sampleCaptions_;
+                std::shared_ptr<std::vector<cv::String> > *fonts_;
+                std::shared_ptr<std::vector<cv::String> > sampleCaptions_;
 
                 /* Generator for the spacing degree */
                 beta_distribution<> spacing_dist;
@@ -38,7 +38,7 @@ namespace cv{
 
                 /* Returns the value of the parameter given key */
                 double
-                    getParam(string key);
+                getParam(std::string key);
 
                 /*
                  * Returns a random latin character or numeral
@@ -119,10 +119,10 @@ namespace cv{
             public:// --------------------- PUBLIC METHODS -------------------------------
 
                 /* The base helper */
-                shared_ptr<MTS_BaseHelper> helper;
+          std::shared_ptr<MTS_BaseHelper> helper;
 
                 /* Constructor */
-                MTS_TextHelper(shared_ptr<MTS_BaseHelper> h);
+          MTS_TextHelper(std::shared_ptr<MTS_BaseHelper> h);
 
                 /*
                  * A setter method for the private fonts_ field
@@ -130,7 +130,7 @@ namespace cv{
                  * data - an array of vectors of strings that are font names
                  */
                 void
-                    setFonts(std::shared_ptr<std::vector<String> > *data);
+                    setFonts(std::shared_ptr<std::vector<cv::String> > *data);
 
 
                 /*
@@ -139,7 +139,7 @@ namespace cv{
                  * data - a vector of strings containing words to be displayed
                  */
                 void
-                    setSampleCaptions(std::shared_ptr<std::vector<String> > data);
+                    setSampleCaptions(std::shared_ptr<std::vector<cv::String> > data);
 
 
                 /*
@@ -157,8 +157,8 @@ namespace cv{
                     generateTextSample(std::string &caption, cairo_surface_t *&text_surface, int height, int &width, int text_color, bool distract);
 
         };
-
+/*
     }
-}
+    }*/
 
 #endif

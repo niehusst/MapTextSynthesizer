@@ -10,13 +10,13 @@
 #include <pango/pangocairo.h>
 
 
-using namespace std;
+//using namespace std;
 using boost::random::mt19937;
-
+/*
 namespace cv
 {
     namespace text
-    {   
+    {   */
         // All possible features that can be incorporated into a background
         enum BGFeature {Colordiff=0, Distracttext, Boundry, Colorblob, 
             Straight, Grid, Citypoint, Parallel, 
@@ -144,10 +144,10 @@ namespace cv
                     points_to_arc_path(cairo_t *cr, std::vector<coords> points, double radius, 
                             double width, double height, bool direction);
 
-                RNG rng_;
+          cv::RNG rng_;
 
                 //All parameters
-                shared_ptr<unordered_map<string, double> > params;
+                std::shared_ptr<std::unordered_map<std::string, double> > params;
 
             public://----------------------- PUBLIC METHODS --------------------------
 
@@ -297,17 +297,17 @@ namespace cv
                 mt19937 rng2_;
 
                 //Constructor
-                MTS_BaseHelper(shared_ptr<unordered_map<string, double> > params);
+                MTS_BaseHelper(std::shared_ptr<std::unordered_map<std::string, double> > params);
 
                 /* Returns the value for key*/
-                double getParam(string key);
+                double getParam(std::string key);
 
                 /*
                  * Sets all the user configurable parameters from a text file
                  *
                  * params - a map from the name of the value to the value
                  */
-                void setParams(shared_ptr<unordered_map<string, double> > params);
+                void setParams(std::shared_ptr<std::unordered_map<std::string, double> > params);
 
 
                 /*
@@ -346,9 +346,9 @@ namespace cv
                 void addSpots(cairo_surface_t *surface, int num_min, int num_max, double size_min, double size_max, double diminish_rate, bool transparent, int color);
 
         };
-
+/*
     }
 
-}
+    }*/
 
 #endif

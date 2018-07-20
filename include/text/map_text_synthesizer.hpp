@@ -1,14 +1,18 @@
 #ifndef MAP_TEXT_SYNTHESIZER_HPP
 #define MAP_TEXT_SYNTHESIZER_HPP
 
-#include <opencv2/core/cvstd.hpp> // cv::String
-#include <opencv2/core/types_c.h> // CV_EXPORTS_W
-using namespace std;
+#include <vector>
+#include <memory>
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/cvstd.hpp> // cv::String
+//#include <opencv2/core/types_c.h> // CV_EXPORTS_W
+
+/*
 namespace cv
 {
     namespace text
-    {
+    {*/
         /*
          * Class that renders synthetic text images for training a CNN 
          * on word recognition in historical maps
@@ -28,7 +32,7 @@ namespace cv
                  * fntList - a list of fonts contained in a vector
                  */
                 CV_WRAP virtual void 
-                    setBlockyFonts (std::vector<String>& fntList) = 0;
+                    setBlockyFonts (std::vector<cv::String> &fntList) = 0;
 
 
                 /*
@@ -37,7 +41,7 @@ namespace cv
                  * fntList - a list of fonts contained in a vector
                  */
                 CV_WRAP virtual void 
-                    setRegularFonts (std::vector<String>& fntList) = 0;
+                    setRegularFonts (std::vector<cv::String> &fntList) = 0;
 
 
                 /*
@@ -46,7 +50,7 @@ namespace cv
                  * fntList - a list of fonts contained in a vector
                  */
                 CV_WRAP virtual void 
-                    setCursiveFonts (std::vector<String>& fntList) = 0;
+                    setCursiveFonts (std::vector<cv::String> &fntList) = 0;
 
 
                 /*
@@ -55,7 +59,7 @@ namespace cv
                  * words - a list of strings to be sampled
                  */
                 CV_WRAP virtual void 
-                    setSampleCaptions (std::vector<String>& words) = 0;
+                    setSampleCaptions (std::vector<cv::String> &words) = 0;
 
 
                 /*
@@ -66,13 +70,13 @@ namespace cv
                  * sample - the resulting text sample.
                  */
                 CV_WRAP virtual void 
-                    generateSample (CV_OUT String &caption, CV_OUT Mat& sample) = 0;
+                    generateSample (CV_OUT cv::String &caption, CV_OUT cv::Mat &sample) = 0;
 
                 /*
                  * A wrapper for the protected MapTextSynthesizer constructor.
                  * Use this method to create a MTS object.
                  */
-                CV_WRAP static Ptr<MapTextSynthesizer> 
+                CV_WRAP static std::shared_ptr<MapTextSynthesizer> 
                     create ();
 
 
@@ -81,7 +85,7 @@ namespace cv
                  */ 
                 virtual ~MapTextSynthesizer () {}
         };
-    }//text
+/*    }//text
 }//cv
-
+*/
 #endif // MAP_TEXT_SYNTHESIZER_HPP

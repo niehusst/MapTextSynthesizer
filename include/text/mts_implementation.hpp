@@ -16,14 +16,14 @@
 #include "mts_texthelper.hpp"
 #include "mts_bghelper.hpp"
 
-using namespace std;
+//using namespace std;
 using boost::random::mt19937;
 using boost::random::gamma_distribution;
 using boost::random::variate_generator;
-
+/*
 namespace cv{
     namespace text{
-
+*/
         class MTSImplementation: public MapTextSynthesizer{
 
             protected:
@@ -31,7 +31,7 @@ namespace cv{
                  *
                  * key - key in hashmap constructed from config.txt
                  */
-                double getParam(string key);
+          double getParam(std::string key);
 
                 /* Converts cairo surface to mat object in opencv
                  *
@@ -42,19 +42,19 @@ namespace cv{
                  * Original code for this method is from Andrey Smorodov
                  * url: https://stackoverflow.com/questions/19948319/how-to-convert-cairo-image-surface-to-opencv-mat-in-c
                  */
-                static void cairoToMat(cairo_surface_t *surface,Mat &mat);
+                static void cairoToMat(cairo_surface_t *surface,cv::Mat &mat);
 
                 /* Adds Gaussian noise to out
                  *
                  * out - the input and output image
                  */
-                void addGaussianNoise(Mat& out);
+                void addGaussianNoise(cv::Mat& out);
 
                 /* Adds Gaussian blur to out
                  *
                  * out - the input and output image
                  */
-                void addGaussianBlur(Mat& out);
+                void addGaussianBlur(cv::Mat& out);
 
                 /* Updates the list of available system fonts by 
                  * clearing and reloading fntList
@@ -63,29 +63,29 @@ namespace cv{
                  * Base of this method from Ben K. Bullock at
                  * url: https://www.lemoda.net/pango/list-fonts/index.html
                  */
-                void updateFontNameList(std::vector<String>& fntList);
+                void updateFontNameList(std::vector<cv::String>& fntList);
 
                 /* The list of blocky font names set by user. */
-                std::vector<String> blockyFonts_;
+                std::vector<cv::String> blockyFonts_;
 
                 /* The list of regular font names set by user. */
-                std::vector<String> regularFonts_;
+                std::vector<cv::String> regularFonts_;
 
                 /* The list of cursive font names set by user. */
-                std::vector<String> cursiveFonts_;
+                std::vector<cv::String> cursiveFonts_;
 
                 /* The list of available system font names. */
-                std::vector<String> availableFonts_;
+                std::vector<cv::String> availableFonts_;
 
                 /* Pointers pointing to blocky, regular, cursive font lists. */
-                std::shared_ptr<std::vector<String> > fonts_[3];
+                std::shared_ptr<std::vector<cv::String> > fonts_[3];
 
                 /* The list of captions to sample from.*/
-                std::vector<String> sampleCaptions_;
+                std::vector<cv::String> sampleCaptions_;
 
                 MTS_Utilities utils;
 
-                shared_ptr<MTS_BaseHelper> helper;
+          std::shared_ptr<MTS_BaseHelper> helper;
                 MTS_TextHelper th;
                 MTS_BackgroundHelper bh;
 
@@ -100,18 +100,18 @@ namespace cv{
 
                 /* See MapTextSynthesizer for documentations.*/
 
-                void setBlockyFonts(std::vector<String>& fntList);
+                void setBlockyFonts(std::vector<cv::String>& fntList);
 
-                void setRegularFonts(std::vector<String>& fntList);
+                void setRegularFonts(std::vector<cv::String>& fntList);
 
-                void setCursiveFonts(std::vector<String>& fntList);
+                void setCursiveFonts(std::vector<cv::String>& fntList);
 
-                void setSampleCaptions (std::vector<String>& words);
+                void setSampleCaptions (std::vector<cv::String>& words);
 
-                void generateSample(CV_OUT String &caption, CV_OUT Mat & sample);
+                void generateSample(CV_OUT cv::String &caption, CV_OUT cv::Mat & sample);
         };
-
+/*
     }  //namespace text
 }  //namespace cv
-
+*/
 #endif

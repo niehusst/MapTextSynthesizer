@@ -27,13 +27,13 @@
 
 #include "mts_utilities.hpp"
 
-
+/*
 using namespace std;
 
 namespace cv{ 
     namespace text{
-
-        shared_ptr<unordered_map<string, double> > MTS_Utilities::params = make_shared<unordered_map<string, double> >();
+*/
+std::shared_ptr<std::unordered_map<std::string, double> > MTS_Utilities::params = make_shared<std::unordered_map<std::string, double> >();
 
 
         MTS_Utilities::MTS_Utilities(){
@@ -43,16 +43,16 @@ namespace cv{
         }
 
 
-         void MTS_Utilities::parse(shared_ptr<unordered_map<string, double> >parameter_map, string filename) {
-            cout << "in parse" << endl;
+         void MTS_Utilities::parse(std::shared_ptr<unordered_map<std::string, double> >parameter_map, std::string filename) {
+           //cout << "in parse" << endl;
 
-            string delimiter = "=";
+            std::string delimiter = "=";
 
             // open file
             ifstream infile(filename);
             CV_Assert(infile.is_open());
 
-            string line, key, value;
+            std::string line, key, value;
             double val;
 
             // parse file line by line
@@ -76,17 +76,17 @@ namespace cv{
                 // check if strtod produced error in casting
                 if (value.c_str() == err_flag && val == 0) { 
                   // tell user there was an error at this point and exit failure
-                  cout << "An unparseable value was encountered for variable "
-                       << key <<".\nPlease enter a valid number.\n";
+                  std::cout << "An unparseable value was encountered for variable "
+                      << key <<".\nPlease enter a valid number.\n";
                   exit(1);
                 }
                 
-                parameter_map->insert(pair<string, double>(key, val));
+                parameter_map->insert(pair<std::string, double>(key, val));
             }   
             // close file
             infile.close();
         } 
-
+/*
     }  //namespace text
 }  //namespace cv
-
+*/

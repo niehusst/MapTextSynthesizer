@@ -29,26 +29,26 @@
 
 #include "mts_basehelper.hpp"
 
-using namespace std;
+//using namespace std;
 using boost::random::mt19937;
-
+/*
 namespace cv
 {
     namespace text
-    {   
+    {*/   
         // SEE mts_basehelper.hpp FOR ALL DOCUMENTATION
 
 
-        MTS_BaseHelper::MTS_BaseHelper(shared_ptr<unordered_map<string, double> > params){
+        MTS_BaseHelper::MTS_BaseHelper(std::shared_ptr<std::unordered_map<std::string, double> > params){
             this->params = params;
-            cout << "param number " << this->params->size() << endl;
+            //cout << "param number " << this->params->size() << endl;
         }
 
-        double MTS_BaseHelper::getParam(string key) {
+        double MTS_BaseHelper::getParam(std::string key) {
             return this->params->find(key)->second;
         }
 
-        void MTS_BaseHelper::setParams(shared_ptr<unordered_map<string, double> > params) {
+        void MTS_BaseHelper::setParams(std::shared_ptr<std::unordered_map<std::string, double> > params) {
             this->params = params;
         }
 
@@ -570,7 +570,7 @@ namespace cv
 
                 double coeff[4] = {a,b,c,d};
 
-                cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
+                //cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
 
                 double x1 = (2.0/3)*x + (1.0/3)*u;
                 double x2 = (1.0/3)*x + (2.0/3)*u;
@@ -883,5 +883,5 @@ namespace cv
             cairo_path_destroy (path);
           }
         }
-    }
-}
+/*    }
+      }*/

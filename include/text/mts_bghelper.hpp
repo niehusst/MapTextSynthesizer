@@ -6,18 +6,18 @@
 
 #include "mts_basehelper.hpp"
 
-using namespace std;
+//using namespace std;
 using boost::random::normal_distribution;
 using boost::random::gamma_distribution;
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
 
-
+/*
 namespace cv
 {
     namespace text
     {   
-
+*/
         /*
          * A class to handle the synthetic generation of all background features
          */
@@ -39,7 +39,7 @@ namespace cv
                  * key - the key name of a configurable parameter
                  */
                 double
-                    getParam(string key);
+                    getParam(std::string key);
 
                 /*
                  * Sets len number of elements in array, pattern.
@@ -386,9 +386,9 @@ namespace cv
             public://------------------------ PUBLIC METHODS ---------------------------
 
                 // a helper class memeber that holds important functions
-                shared_ptr<MTS_BaseHelper> helper;
+          std::shared_ptr<MTS_BaseHelper> helper;
 
-                MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h);
+          MTS_BackgroundHelper(std::shared_ptr<MTS_BaseHelper> h);
 
                 /*
                  * Generate bg features that will be drawn on current image
@@ -397,7 +397,7 @@ namespace cv
                  * bg_features - the ouput array of features
                  */
                 void
-                    generateBgFeatures(vector<BGFeature> &bg_features);
+                generateBgFeatures(std::vector<BGFeature> &bg_features);
 
                 /*
                  * Generates a map-like background 
@@ -411,7 +411,7 @@ namespace cv
                 void
                     generateBgSample(cairo_surface_t *&bg_surface, std::vector<BGFeature>&features, int height, int width, int bg_color, int contrast);
         };
-
+/*
     }
-}
+    }*/
 #endif

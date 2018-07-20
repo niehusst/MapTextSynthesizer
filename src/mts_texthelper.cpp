@@ -28,19 +28,19 @@
 
 #include "mts_texthelper.hpp"
 
-using namespace std;
+//using namespace std;
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
-
+/*
 namespace cv{
     namespace text{
-
-        double MTS_TextHelper::getParam(string key) {
+*/
+        double MTS_TextHelper::getParam(std::string key) {
             double val = helper->getParam(key);
             return val;
         }
 
-        MTS_TextHelper::MTS_TextHelper(shared_ptr<MTS_BaseHelper> h)
+        MTS_TextHelper::MTS_TextHelper(std::shared_ptr<MTS_BaseHelper> h)
             :helper(h),  // initialize fields
             spacing_dist(h->getParam("spacing_alpha"),h->getParam("spacing_beta")),
             spacing_gen(h->rng2_, spacing_dist),
@@ -53,7 +53,7 @@ namespace cv{
         void 
             MTS_TextHelper::generateFont(char *font, int fontsize){
 
-                cout << "in generate font" << endl;
+                //cout << "in generate font" << endl;
                 // get font probabilities from user configured parameters
                 int font_prob = helper->rng() % 10000;
                 double blockyProb=getParam("font_blocky");
@@ -93,7 +93,7 @@ namespace cv{
                     int min_deg = getParam("rotate_degree_min");
                     int max_deg = getParam("rotate_degree_max");
                     int degree = helper->rng() % (max_deg-min_deg+1) + min_deg;
-                    cout << "degree " << degree << endl;
+                    //cout << "degree " << degree << endl;
                     rotated_angle=((double)degree / 180) * M_PI;
                 } else {
                     rotated_angle= 0;
@@ -107,10 +107,10 @@ namespace cv{
                 }
 
                 spacing_deg = round((20*spacing_gen()-1)*100)/100;
-                cout << "spacing deg " << spacing_deg << endl;
+                //cout << "spacing deg " << spacing_deg << endl;
 
                 stretch_deg = round((3*stretch_gen()+0.5)*100)/100;
-                cout << "stretch deg " << stretch_deg << endl;
+                //cout << "stretch deg " << stretch_deg << endl;
 
                 double fontsize = (double)height;
                 spacing = fontsize / 20 * spacing_deg;
@@ -121,17 +121,17 @@ namespace cv{
                 int minpad=(int)(height*pad_min);
                 x_pad = helper->rng() % (maxpad-minpad+1) + minpad;
                 y_pad = helper->rng() % (maxpad-minpad+1) + minpad;
-                cout << "pad " << x_pad << " " << y_pad << endl;
+                //cout << "pad " << x_pad << " " << y_pad << endl;
 
                 int scale_max = (int)(100*getParam("scale_max"));
                 int scale_min = (int)(100*getParam("scale_min"));
                 scale = (helper->rng()%(scale_max-scale_min+1)+scale_min)/100.0;
-                cout << "scale " << scale << endl;
+                //cout << "scale " << scale << endl;
 
-                cout << "generate font" << endl;
+                //cout << "generate font" << endl;
                 char font[50];
                 generateFont(font,(int)fontsize);
-                cout << font << endl;
+                //cout << font << endl;
                 //cout << caption << endl;
 
                 //set font destcription
@@ -171,7 +171,7 @@ namespace cv{
 
         void 
             MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface, 
-                    string caption,int height,int &width, int text_color, bool distract){
+                    std::string caption,int height,int &width, int text_color, bool distract){
 
                 size_t len = caption.length();
 
@@ -205,8 +205,8 @@ namespace cv{
                 std::ostringstream stm;
                 stm << spacing_1024;
                 // set the markup string and put into pango layout
-                string mark = "<span letter_spacing='"+stm.str()+"'>"+caption+"</span>";
-                cout << "mark " << mark << endl;
+                std::string mark = "<span letter_spacing='"+stm.str()+"'>"+caption+"</span>";
+                //cout << "mark " << mark << endl;
 
                 pango_layout_set_markup(layout, mark.c_str(), -1);
 
@@ -217,7 +217,7 @@ namespace cv{
                 getTextExtents(layout, desc, ink_x, ink_y, ink_w, ink_h, size);
 
                 size = (int)((double)size/ink_h*height);
-                cout << "size " << size << endl;
+                //cout << "size " << size << endl;
                 pango_font_description_set_size(desc, size);
                 pango_layout_set_font_description (layout, desc);
 
@@ -228,7 +228,7 @@ namespace cv{
                 int patch_width = (int)ink_w;
 
                 if (rotated_angle!=0) {
-                    cout << "rotated angle" << rotated_angle << endl;
+                    //cout << "rotated angle" << rotated_angle << endl;
                     cairo_rotate(cr, rotated_angle);
 
                     double sine = abs(sin(rotated_angle));
@@ -244,7 +244,7 @@ namespace cv{
                     // adjust text attributes according to rotate angle
                     size = pango_font_description_get_size(desc);
                     size = (int)((double)size/ink_h*text_height);
-                    cout << "rotate size " << size << endl;
+                    //cout << "rotate size " << size << endl;
                     pango_font_description_set_size(desc, size);
                     pango_layout_set_font_description (layout, desc);
 
@@ -252,8 +252,8 @@ namespace cv{
 
                     std::ostringstream stm;
                     stm << spacing_1024;
-                    string mark = "<span letter_spacing='"+stm.str()+"'>"+caption+"</span>";
-                    cout << "mark " << mark << endl;
+                    std::string mark = "<span letter_spacing='"+stm.str()+"'>"+caption+"</span>";
+                    //cout << "mark " << mark << endl;
 
                     pango_layout_set_markup(layout, mark.c_str(), -1);
 
@@ -384,7 +384,7 @@ namespace cv{
 
                 cairo_destroy (cr_n);
 
-                cout << "add spots" << endl;
+                //cout << "add spots" << endl;
                 if(helper->rndProbUnder(getParam("missing_prob"))){
                     int num_min=(int)getParam("missing_num_min");
                     int num_max=(int)getParam("missing_num_max");
@@ -400,13 +400,13 @@ namespace cv{
             }
 
         void 
-            MTS_TextHelper::generateTextSample (string &caption, cairo_surface_t *&text_surface, int height, 
+            MTS_TextHelper::generateTextSample (std::string &caption, cairo_surface_t *&text_surface, int height, 
                                                int &width, int text_color, bool distract){
 
                 // if there are sample captions, select one randomly and generate text
                 if(sampleCaptions_->size() != 0){
                     caption = sampleCaptions_->at(helper->rng() % sampleCaptions_->size());
-                    cout << "generating text patch" << endl;
+                    //cout << "generating text patch" << endl;
                     generateTextPatch(text_surface,caption,height,width,text_color,distract);
 
                 } else { // otherwise, make a random caption string and generate text
@@ -421,7 +421,7 @@ namespace cv{
                     // then null terminate it
                     text[len] = '\0';
 
-                    caption = string(text);
+                    caption = std::string(text);
                     generateTextPatch(text_surface,caption,height,width,text_color,distract);
                 }
             }
@@ -430,7 +430,7 @@ namespace cv{
         char
             MTS_TextHelper::randomChar() {
                 // string containing available characters to select
-                string total("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+                std::string total("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
                 return total.at(helper->rng()%(total.length()));
             }
 
@@ -494,16 +494,16 @@ namespace cv{
 
 
         void
-        MTS_TextHelper::setFonts(std::shared_ptr<std::vector<String> > *data) {
+        MTS_TextHelper::setFonts(std::shared_ptr<std::vector<cv::String> > *data) {
           fonts_ = data;
         }
 
 
         void
-        MTS_TextHelper::setSampleCaptions(std::shared_ptr<std::vector<String> > data) {
+        MTS_TextHelper::setSampleCaptions(std::shared_ptr<std::vector<cv::String> > data) {
           sampleCaptions_ = data;
         }
 
-
+/*
     }
-}
+    }*/

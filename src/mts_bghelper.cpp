@@ -28,32 +28,32 @@
 #include "mts_bghelper.hpp"
 #include "mts_basehelper.hpp"
 
-using namespace std;
+//using namespace std;
 using boost::random::beta_distribution;
 using boost::random::normal_distribution;
 using boost::random::gamma_distribution;
 using boost::random::variate_generator;
-
+/*
 namespace cv
 {
     namespace text
     {   
-
+*/
         // SEE mts_bghelper.hpp FOR ALL DOCUMENTATION
 
 
       double
-      MTS_BackgroundHelper::getParam(string key) {
+      MTS_BackgroundHelper::getParam(std::string key) {
         return helper->getParam(key);
       }
 
-        MTS_BackgroundHelper::MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h)
+        MTS_BackgroundHelper::MTS_BackgroundHelper(std::shared_ptr<MTS_BaseHelper> h)
             :helper(h),  // initialize fields
-             bias_var_dist(h->getParam(string("bias_std_alpha")),
-                           h->getParam(string("bias_std_beta"))),
+             bias_var_dist(h->getParam(std::string("bias_std_alpha")),
+                           h->getParam(std::string("bias_std_beta"))),
              bias_var_gen(h->rng2_, bias_var_dist),
-             texture_distribution(h->getParam(string("texture_width_alpha")), 
-                                  h->getParam(string("texture_width_beta"))),
+             texture_distribution(h->getParam(std::string("texture_width_alpha")), 
+                                  h->getParam(std::string("texture_width_beta"))),
              texture_distrib_gen(h->rng2_, texture_distribution)
         {}
 
@@ -79,20 +79,20 @@ namespace cv
           cairo_get_dash(cr, dash, offset);
 
           // calculate a distance between lines
-          int dist_min = getParam(string("boundary_distance_min"));
-          int dist_max = getParam(string("boundary_distance_max"))+1 - dist_min;
+          int dist_min = getParam(std::string("boundary_distance_min"));
+          int dist_max = getParam(std::string("boundary_distance_max"))+1 - dist_min;
           double distance = (dist_min + helper->rng() % dist_max) * linewidth;
 
           // set boundary line characteristics
-          int width_min = getParam(string("boundary_linewidth_min"));
-          int width_max = getParam(string("boundary_linewidth_max"))+1 - width_min;
+          int width_min = getParam(std::string("boundary_linewidth_min"));
+          int width_max = getParam(std::string("boundary_linewidth_max"))+1 - width_min;
           double new_linewidth = linewidth * (width_min + helper->rng() % width_max);
           cairo_set_line_width(cr, new_linewidth);
           cairo_set_dash(cr, dash, 0,0); //set dash pattern to none
 
           // set boundary line gray-scale color (lighter than original)
-          int color_min = 100 * getParam(string("boundary_color_diff_min"));
-          int color_max = 100 * getParam(string("boundary_color_diff_max"))+1 - color_min;
+          int color_min = 100 * getParam(std::string("boundary_color_diff_min"));
+          int color_max = 100 * getParam(std::string("boundary_color_diff_max"))+1 - color_min;
           double color_diff = (color_min + helper->rng() % color_max) / 100;
           double color = og_col + color_diff;
           cairo_set_source_rgb(cr, color, color, color);
@@ -114,14 +114,14 @@ namespace cv
         MTS_BackgroundHelper::draw_hatched(cairo_t *cr, double linewidth) {
 
                 //set width of hatches (in multiples of original linewidth)
-                int width_min = getParam(string("railroad_cross_width_min"));
-                int width_max = getParam(string("railroad_cross_width_max"))+1 - width_min;
+                int width_min = getParam(std::string("railroad_cross_width_min"));
+                int width_max = getParam(std::string("railroad_cross_width_max"))+1 - width_min;
                 double wide = (width_min + (helper->rng() % width_max)) * linewidth;
                 cairo_set_line_width(cr, wide);
 
                 // set distance between hatches
-                int dist_min = getParam(string("railroad_distance_between_crosses_min"));
-                int dist_max = getParam(string("railroad_distance_between_crosses_max"))+1 - dist_min;
+                int dist_min = getParam(std::string("railroad_distance_between_crosses_min"));
+                int dist_max = getParam(std::string("railroad_distance_between_crosses_max"))+1 - dist_min;
 
                 // set apparent width of hatches
                 double on_len = 3 * linewidth / (1 + (helper->rng() % 5)); 
@@ -270,9 +270,9 @@ namespace cv
                 // set ratio to keep line scaled for image size
                 int ratio_min = (int)(getParam("line_width_scale_min") * 10000);
                 int ratio_max = 1 + (int)(getParam("line_width_scale_max") * 10000) - ratio_min;
-                cout << ratio_min << " " << ratio_max << endl;
+                //cout << ratio_min << " " << ratio_max << endl;
                 magic_line_ratio = (ratio_min + helper->rng() % ratio_max) / 10000.0; 
-                cout << "line width ratio " << magic_line_ratio << endl;
+                //cout << "line width ratio " << magic_line_ratio << endl;
                 line_width = std::min(width, height) * magic_line_ratio;
                 cairo_set_line_width(cr, line_width);
 
@@ -556,15 +556,15 @@ namespace cv
 
         void
             MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
-                cout << "start adding bias" << endl;
+                //cout << "start adding bias" << endl;
                 cairo_pattern_t *pattern_vertical = cairo_pattern_create_linear(helper->rng()%width, 0,
                                                                    helper->rng()%width, height);
                 cairo_pattern_t *pattern_horizontal = cairo_pattern_create_linear(0, helper->rng()%height,
                                                                     width, helper->rng()%height);
 
                 // set the number of points
-                int points_min = getParam(string("bias_vert_num_min"));
-                int points_max = getParam(string("bias_vert_num_max"))+1 - points_min;
+                int points_min = getParam(std::string("bias_vert_num_min"));
+                int points_max = getParam(std::string("bias_vert_num_max"))+1 - points_min;
                 int num_points_vertical = helper->rng()%points_max + points_min;
                 int num_points_horizontal = helper->rng()%points_max + points_min;
 
@@ -576,9 +576,9 @@ namespace cv
                 double offset_horizontal = 1.0 / (num_points_horizontal - 1);
                 
                 // get and set bias std variables
-                double std_scale = getParam(string("bias_std_scale"));
-                double std_shift = getParam(string("bias_std_shift"));
-                double mean = getParam(string("bias_mean"));
+                double std_scale = getParam(std::string("bias_std_scale"));
+                double std_shift = getParam(std::string("bias_std_shift"));
+                double mean = getParam(std::string("bias_mean"));
 
                 double bias_std = round((pow(1/(bias_var_gen() + 0.1), 0.5) 
                                          * std_scale + std_shift) * 100) / 100;
@@ -615,7 +615,7 @@ namespace cv
                 cairo_paint_with_alpha(cr,0.3);
                 cairo_set_source(cr, pattern_vertical);
                 cairo_paint_with_alpha(cr,0.3);
-                cout << "finished bias" << endl;
+                //cout << "finished bias" << endl;
 
             }
 
@@ -627,14 +627,14 @@ namespace cv
             //randomly choose number of lines 
           int lines_min, lines_max;
           if (grid) { // correctly get number of lines to draw from user config
-            lines_min = getParam(string("grid_num_min"));
-            lines_max = getParam(string("grid_num_max"))+1 - lines_min;
+            lines_min = getParam(std::string("grid_num_min"));
+            lines_max = getParam(std::string("grid_num_max"))+1 - lines_min;
           } else if (even) {
-            lines_min = getParam(string("para_num_min"));
-            lines_max = getParam(string("para_num_max"))+1 - lines_min;
+            lines_min = getParam(std::string("para_num_min"));
+            lines_max = getParam(std::string("para_num_max"))+1 - lines_min;
           } else {
-            lines_min = getParam(string("vpara_num_min"));
-            lines_max = getParam(string("vpara_num_max"))+1 - lines_min;
+            lines_min = getParam(std::string("vpara_num_min"));
+            lines_max = getParam(std::string("vpara_num_max"))+1 - lines_min;
           }
                 int num = helper->rng()%lines_max + lines_min;
 
@@ -714,15 +714,15 @@ namespace cv
                 double c_min, c_max, d_min, d_max;
 
                 if (even) {
-                    c_min = getParam(string("para_curve_c_min"));
-                    c_max = getParam(string("para_curve_c_max"));
-                    d_min = getParam(string("para_curve_d_min"));
-                    d_max = getParam(string("para_curve_d_max"));
+                    c_min = getParam(std::string("para_curve_c_min"));
+                    c_max = getParam(std::string("para_curve_c_max"));
+                    d_min = getParam(std::string("para_curve_d_min"));
+                    d_max = getParam(std::string("para_curve_d_max"));
                 } else {
-                    c_min = getParam(string("vpara_curve_c_min"));
-                    c_max = getParam(string("vpara_curve_c_max"));
-                    d_min = getParam(string("vpara_curve_d_min"));
-                    d_max = getParam(string("vpara_curve_d_max"));
+                    c_min = getParam(std::string("vpara_curve_c_min"));
+                    c_max = getParam(std::string("vpara_curve_c_max"));
+                    d_min = getParam(std::string("vpara_curve_d_min"));
+                    d_max = getParam(std::string("vpara_curve_d_max"));
                 }
 
                 // get line i and make the points into a cairo_path
@@ -754,8 +754,8 @@ namespace cv
             MTS_BackgroundHelper::colorDiff (cairo_t *cr, int width, int height, 
                     double color_min, double color_max) {
 
-                int num_colors_min = getParam(string("diff_num_colors_min"));
-                int num_colors_max = getParam(string("diff_num_colors_max"));
+                int num_colors_min = getParam(std::string("diff_num_colors_min"));
+                int num_colors_max = getParam(std::string("diff_num_colors_max"));
 
                 int num = (helper->rng() % (num_colors_max - num_colors_min + 1)) + num_colors_min; 
 
@@ -823,8 +823,8 @@ namespace cv
                 int x,y; // circle origin coordinates
 
                 // set point radius
-                int r_min = getParam(string("point_radius_min"));
-                int r_max = getParam(string("point_radius_max"))+1 - r_min;
+                int r_min = getParam(std::string("point_radius_min"));
+                int r_max = getParam(std::string("point_radius_max"))+1 - r_min;
                 if(r_max+r_min > ((height/2)+1)) r_max = (height/2) - 5; //verify perconditions
 
                 int radius = (helper->rng() % r_max) + r_min; 
@@ -906,7 +906,7 @@ namespace cv
                         }
                     }
                 }
-                cout << "got all features" << endl;
+                //cout << "got all features" << endl;
             }
 
 
@@ -915,7 +915,7 @@ namespace cv
 
                 double c_min, c_max, d_min, d_max, curve_prob;
                 int num_lines;
-                cout << "generating bg sample" << endl;
+                //cout << "generating bg sample" << endl;
                 // initialize the cairo image variables for background
                 cairo_surface_t *surface;
                 cairo_t *cr;
@@ -968,26 +968,26 @@ namespace cv
 
                 // add evenly spaced parallel lines by probability
                 if (find(features.begin(), features.end(), Parallel)!= features.end()) {
-                    curve_prob = getParam(string("para_curve_prob"));
+                    curve_prob = getParam(std::string("para_curve_prob"));
                     addBgPattern(cr, width, height, true, false, helper->rndProbUnder(curve_prob));
                 }
 
                 // add varied parallel lines by probability
                 if (find(features.begin(), features.end(), Vparallel)!= features.end()) {
-                    curve_prob = getParam(string("vpara_curve_prob"));
+                    curve_prob = getParam(std::string("vpara_curve_prob"));
                     addBgPattern(cr, width, height, false, false, helper->rndProbUnder(curve_prob));
                 }
 
                 // add grid lines by probability
                 if (find(features.begin(), features.end(), Grid)!= features.end()) {
-                    curve_prob = getParam(string("grid_curve_prob"));
+                    curve_prob = getParam(std::string("grid_curve_prob"));
                     addBgPattern(cr, width, height, true, true, helper->rndProbUnder(curve_prob));
                 }
 
                 // add railroads by probability
                 if (find(features.begin(), features.end(), Railroad)!= features.end()) {
-                    int railroad_min = getParam(string("railroad_num_lines_min"));
-                    int railroad_max = getParam(string("railroad_num_lines_max"))+1 - railroad_min;
+                    int railroad_min = getParam(std::string("railroad_num_lines_min"));
+                    int railroad_max = getParam(std::string("railroad_num_lines_max"))+1 - railroad_min;
                     c_min = getParam("railroad_curve_c_min");
                     c_max = getParam("railroad_curve_c_max");
                     d_min = getParam("railroad_curve_d_min");
@@ -1002,11 +1002,11 @@ namespace cv
 
                 // add boundary lines by probability
                 if (find(features.begin(), features.end(), Boundry)!= features.end()) {
-                    int boundary_min = getParam(string("boundary_num_lines_min"));
-                    int boundary_max = getParam(string("boundary_num_lines_max"))+1 - boundary_min;
+                    int boundary_min = getParam(std::string("boundary_num_lines_min"));
+                    int boundary_max = getParam(std::string("boundary_num_lines_max"))+1 - boundary_min;
 
                     num_lines = helper->rng()%boundary_max + boundary_min;
-                    double dash_probability = getParam(string("boundary_dashed_prob"));
+                    double dash_probability = getParam(std::string("boundary_dashed_prob"));
                     c_min = getParam("boundary_curve_c_min");
                     c_max = getParam("boundary_curve_c_max");
                     d_min = getParam("boundary_curve_d_min");
@@ -1021,8 +1021,8 @@ namespace cv
 
                 // add straight lines by probability
                 if (find(features.begin(), features.end(), Straight)!= features.end()) {
-                    int straight_min = getParam(string("straight_num_lines_min"));
-                    int straight_max = getParam(string("straight_num_lines_max"))+1 - straight_min;
+                    int straight_min = getParam(std::string("straight_num_lines_min"));
+                    int straight_max = getParam(std::string("straight_num_lines_max"))+1 - straight_min;
                     num_lines = helper->rng() % straight_max + straight_min;
 
                     // add num_lines lines iteratively
@@ -1034,8 +1034,8 @@ namespace cv
 
                 // add rivers by probability
                 if (find(features.begin(), features.end(), Riverline)!= features.end()) {
-                    int river_min = getParam(string("river_num_lines_min"));
-                    int river_max = getParam(string("river_num_lines_max"))+1 - river_min;
+                    int river_min = getParam(std::string("river_num_lines_min"));
+                    int river_max = getParam(std::string("river_num_lines_max"))+1 - river_min;
 
                     num_lines = helper->rng()%river_max + river_min;
                     c_min = getParam("river_curve_c_min");
@@ -1057,6 +1057,6 @@ namespace cv
 
                 bg_surface = surface;
             }
-
+/*
     }
-}
+    }*/

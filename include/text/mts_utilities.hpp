@@ -3,20 +3,20 @@
 
 #include <unordered_map>
 #include <memory>
-
+/*
 using namespace std;
 
 namespace cv
 {
     namespace text
     {   
-
+*/
         class MTS_Utilities{
 
             public:
 
                 // a map from user configured variable names to their values
-                static shared_ptr<unordered_map<string, double> > params;
+          static std::shared_ptr<std::unordered_map<std::string, double> > params;
 
 
                 /*
@@ -27,16 +27,16 @@ namespace cv
                  *                 variable name to variable value
                  * filename - the name of the file to parse for values
                  */
-                static void parse(shared_ptr<unordered_map<string, double> > parameter_map, string filename);
+          static void parse(std::shared_ptr<std::unordered_map<std::string, double> > parameter_map, std::string filename);
 
 
                 //constructor
                 MTS_Utilities();
 
         };
-
+/*
 
     }//text
 }//cv
-
+*/
 #endif // MTS_UTILITIES_HPP
