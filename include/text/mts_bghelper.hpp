@@ -6,412 +6,415 @@
 
 #include "mts_basehelper.hpp"
 
-//using namespace std;
 using boost::random::normal_distribution;
 using boost::random::gamma_distribution;
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
 
+
 /*
-namespace cv
-{
-    namespace text
-    {   
-*/
-        /*
-         * A class to handle the synthetic generation of all background features
-         */
-        class MTS_BackgroundHelper {
-            private://---------------------- PRIVATE METHODS --------------------------
+ * A class to handle the synthetic generation of all background features
+ */
+class MTS_BackgroundHelper {
+private://---------------------- PRIVATE METHODS --------------------------
 
-                /* Generator for variance in bg bias */
-                gamma_distribution<> bias_var_dist;
-                variate_generator<mt19937, gamma_distribution<> > bias_var_gen;
+  /* Generator for variance in bg bias */
+  gamma_distribution<> bias_var_dist;
+  variate_generator<mt19937, gamma_distribution<> > bias_var_gen;
 
-                /* Generator for texture width*/
-                beta_distribution<> texture_distribution;
-                variate_generator<mt19937, beta_distribution<> > texture_distrib_gen;
+  /* Generator for texture width*/
+  beta_distribution<> texture_distribution;
+  variate_generator<mt19937, beta_distribution<> > texture_distrib_gen;
 
-                /*
-                 * A method to get the value pairing for the input key from the
-                 * user configurable parameters
-                 *
-                 * key - the key name of a configurable parameter
-                 */
-                double
-                    getParam(std::string key);
+  /*
+   * A method to get the value pairing for the input key from the
+   * user configurable parameters
+   *
+   * key - the key name of a configurable parameter
+   */
+  double
+  getParam(std::string key);
 
-                /*
-                 * Sets len number of elements in array, pattern.
-                 * For arbitrarily setting the dash pattern of a line
-                 *
-                 * pattern - an array 
-                 * len - the length of pattern
-                 */
-                void
-                    make_dash_pattern(double *pattern, int len);
+  /*
+   * Sets len number of elements in array, pattern.
+   * For arbitrarily setting the dash pattern of a line
+   *
+   * pattern - an array 
+   * len - the length of pattern
+   */
+  void
+  make_dash_pattern(double *pattern, int len);
 
-                /*
-                 * Makes a thicker line behind the original that is a different gray-scale hue
-                 *
-                 * cr - cairo context
-                 * linewidth - the width of the original line (used in scaling for new line)
-                 * og_col - the color of the original line
-                 * horizontal - the orientation of the line (false = vertical)
-                 */
-                void
-                    draw_boundary(cairo_t *cr, double linewidth, double og_col, bool horizontal);
+  /*
+   * Makes a thicker line behind the original that is a different gray-scale hue
+   *
+   * cr - cairo context
+   * linewidth - the width of the original line (used in scaling for new line)
+   * og_col - the color of the original line
+   * horizontal - the orientation of the line (false = vertical)
+   */
+  void
+  draw_boundary(cairo_t *cr, double linewidth, double og_col, bool horizontal);
 
-                /*
-                 * Draws the main line (thin) and then another line (thick) with a specific
-                 * dash pattern over it such that it looks as if the 2nd line is actually 
-                 * small perpendicular lines
-                 *
-                 * cr - cairo context
-                 * linewidth - the width of the original line (used in scaling for new line)
-                 */
-                void
-                    draw_hatched(cairo_t *cr, double linewidth);
+  /*
+   * Draws the main line (thin) and then another line (thick) with a specific
+   * dash pattern over it such that it looks as if the 2nd line is actually 
+   * small perpendicular lines
+   *
+   * cr - cairo context
+   * linewidth - the width of the original line (used in scaling for new line)
+   */
+  void
+  draw_hatched(cairo_t *cr, double linewidth);
 
-                /*
-                 * Copies the current path and then moves it distance in direction
-                 * specified by horizontal, finally strokes new parallel line to surface
-                 *
-                 * cr - cairo context
-                 * horizontal - the orientation of the line (false = vertical)
-                 * distance - the distance between the original line and the new parallel line
-                 * stroke - flag that dictates whether or not to stroke the parallel line.
-                 *          (optional parameter, defaults to true)
-                 */
-                void
-                    draw_parallel(cairo_t *cr, bool horizontal, double distance,
-                            bool stroke=true);
+  /*
+   * Copies the current path and then moves it distance in direction
+   * specified by horizontal, finally strokes new parallel line to surface
+   *
+   * cr - cairo context
+   * horizontal - the orientation of the line (false = vertical)
+   * distance - the distance between the original line and the new parallel line
+   * stroke - flag that dictates whether or not to stroke the parallel line.
+   *          (optional parameter, defaults to true)
+   */
+  void
+  draw_parallel(cairo_t *cr, bool horizontal, double distance,
+                bool stroke=true);
 
-                /*
-                 * Sets an arbitrary dash pattern to the path stored by cr
-                 *
-                 * cr - cairo context
-                 */
-                void
-                    set_dash_pattern(cairo_t *cr);
+  /*
+   * Sets an arbitrary dash pattern to the path stored by cr
+   *
+   * cr - cairo context
+   */
+  void
+  set_dash_pattern(cairo_t *cr);
 
 
-                /*
-                 * Generates a wiggly line path (but doesn't stroke it to surface)
-                 *
-                 * cr - cairo context
-                 * horizontal - gives the orientation of the line (false = vertical)
-                 * width - surface width
-                 * height - surface height
-                 * c_min - the min range value for squared variable in the first cubic 
-                 *        curving equation
-                 * c_max - the max range value for squared variable in the first cubic 
-                 *        curving equation
-                 * d_min - the min range value for cubed variable in the first cubic 
-                 *        curving equation
-                 * d_max - the max range value for cubed variable in the first cubic 
-                 *        curving equation
+  /*
+   * Generates a wiggly line path (but doesn't stroke it to surface)
+   *
+   * cr - cairo context
+   * horizontal - gives the orientation of the line (false = vertical)
+   * width - surface width
+   * height - surface height
+   * c_min - the min range value for squared variable in the first cubic 
+   *        curving equation
+   * c_max - the max range value for squared variable in the first cubic 
+   *        curving equation
+   * d_min - the min range value for cubed variable in the first cubic 
+   *        curving equation
+   * d_max - the max range value for cubed variable in the first cubic 
+   *        curving equation
 
-                 */
-                void
-                    generate_curve(cairo_t *cr, bool horizontal, int width, int height, double c_min, double c_max, double d_min, double d_max);
-
-
-                /*
-                 * Sets path orientation through rotation and translation
-                 *
-                 * cr - cairo context
-                 * horizontal - gives the orientation of the line (false = vertical)
-                 * curved - informs whether the line will be curved (false = straight)
-                 * width - surface width
-                 * height - surface height
-                 */
-                coords
-                    orient_path(cairo_t *cr, bool horizontal, bool curved, int width, int height);
+   */
+  void
+  generate_curve(cairo_t *cr, bool horizontal, int width, int height, 
+                 double c_min, double c_max, double d_min, double d_max);
 
 
-                /*
-                 * Draws a simple texture of parallel lines angled from lower left to
-                 * upper right using recursion. 
-                 *
-                 * cr - cairo context
-                 * x1 - x position of the point that line is drawn from
-                 * y1 - y position of the point that line is drawn from
-                 * x2 - x position of the point that line is drawn to
-                 * y2 - y position of the point that line is drawn to
-                 * spacing - the spacing between lines (must be greater than 1)
-                 * width - surface width in pixels
-                 * height - surface height in pixels
-                 */
-                static void
-                    diagonal_lines(cairo_t *cr, int x1, int y1, int x2, int y2, int spacing, int width, int height);
-
-                /*
-                 * Draws a perpendicular, crossed lines texture using recursion.
-                 *
-                 * cr - cairo context
-                 * x1 - x position of the point that line is drawn from
-                 * y1 - y position of the point that line is drawn from
-                 * x2 - x position of the point that line is drawn to
-                 * y2 - y position of the point that line is drawn to
-                 * spacing - the spacing between lines (must be greater than 1)
-                 * width - surface width in pixels
-                 * height - surface height in pixels
-                 */
-                static void
-                    crossed_lines(cairo_t *cr, int x1, int y1, int x2, int y2, int spacing, int width, int height);
+  /*
+   * Sets path orientation through rotation and translation
+   *
+   * cr - cairo context
+   * horizontal - gives the orientation of the line (false = vertical)
+   * curved - informs whether the line will be curved (false = straight)
+   * width - surface width
+   * height - surface height
+   */
+  coords
+  orient_path(cairo_t *cr, bool horizontal, bool curved, int width, int height);
 
 
-                /*
-                 * Calculates and returns the edge-length of a shape with
-                 * num_sides edges, and a width of diameter
-                 *
-                 * num_sides - the number of sides of the shape
-                 * radius - the width of the shape
-                 */
-                static double
-                    get_edge_len(int num_sides, int radius);
+  /*
+   * Draws a simple texture of parallel lines angled from lower left to
+   * upper right using recursion. 
+   *
+   * cr - cairo context
+   * x1 - x position of the point that line is drawn from
+   * y1 - y position of the point that line is drawn from
+   * x2 - x position of the point that line is drawn to
+   * y2 - y position of the point that line is drawn to
+   * spacing - the spacing between lines (must be greater than 1)
+   * width - surface width in pixels
+   * height - surface height in pixels
+   */
+  static void
+  diagonal_lines(cairo_t *cr, int x1, int y1, int x2, int y2, int spacing, 
+                 int width, int height);
+
+  /*
+   * Draws a perpendicular, crossed lines texture using recursion.
+   *
+   * cr - cairo context
+   * x1 - x position of the point that line is drawn from
+   * y1 - y position of the point that line is drawn from
+   * x2 - x position of the point that line is drawn to
+   * y2 - y position of the point that line is drawn to
+   * spacing - the spacing between lines (must be greater than 1)
+   * width - surface width in pixels
+   * height - surface height in pixels
+   */
+  static void
+  crossed_lines(cairo_t *cr, int x1, int y1, int x2, int y2, int spacing,
+                int width, int height);
 
 
-                /*
-                 * Draws a single shape by recursively drawing edges
-                 *
-                 * cr - cairo context
-                 * x - x start coordinate
-                 * y - y start coordinate
-                 * angle - the angle in radians from 0 to the next edge
-                 * edge_len - the length to draw for each edge of the shape
-                 * num_sides - the number of sides to draw 
-                 * counter - a counter to keep track of how many sides have been drawn
-                 */
-                static void
-                    shape_helper(cairo_t *cr, double x, double y, double angle, double edge_len, int num_sides, int counter);
+  /*
+   * Calculates and returns the edge-length of a shape with
+   * num_sides edges, and a width of diameter
+   *
+   * num_sides - the number of sides of the shape
+   * radius - the width of the shape
+   */
+  static double
+  get_edge_len(int num_sides, int radius);
 
 
-                /*
-                 * Draws a shape of specified sides and diameter starting from x,y
-                 *
-                 * cr - cairo context
-                 * x - x start coordinate
-                 * y - y start coordinate
-                 * num_sides - the number of sides to draw on a shape. if < 2, draws a circle
-                 * radius - half the width of the shape
-                 */
-                static void 
-                    draw_shape(cairo_t *cr, int x, int y, int num_sides, int radius);
+  /*
+   * Draws a single shape by recursively drawing edges
+   *
+   * cr - cairo context
+   * x - x start coordinate
+   * y - y start coordinate
+   * angle - the angle in radians from 0 to the next edge
+   * edge_len - the length to draw for each edge of the shape
+   * num_sides - the number of sides to draw 
+   * counter - a counter to keep track of how many sides have been drawn
+   */
+  static void
+  shape_helper(cairo_t *cr, double x, double y, double angle, double edge_len,
+               int num_sides, int counter);
 
 
-                /*
-                 * A recursive helper function for make_shape_texture
-                 *
-                 * cr - cairo context
-                 * origin_x - x coordinate for shape
-                 * origin_y - y coordinate for shape
-                 * num_sides - the number of sides to draw on a shape. if < 2, draws a circle
-                 * distance - the distance to put between shapes
-                 * even - helps the recursive function stagger the rows
-                 * radius - half the width of the shape
-                 * width - width of the surface
-                 * height - height of the surface
-                 */
-                static void
-                    shape_texture_helper(cairo_t *cr, int origin_x, int origin_y, int num_sides, int distance, bool even, int radius, int width, int height);
+  /*
+   * Draws a shape of specified sides and diameter starting from x,y
+   *
+   * cr - cairo context
+   * x - x start coordinate
+   * y - y start coordinate
+   * num_sides - the number of sides to draw on a shape. if < 2, draws a circle
+   * radius - half the width of the shape
+   */
+  static void 
+  draw_shape(cairo_t *cr, int x, int y, int num_sides, int radius);
 
 
-                /*
-                 * Draws a texture of repeated shapes, each row is staggered a little
-                 * 
-                 * cr - cairo context
-                 * x - x position of top of shape 
-                 * y - y position of top of shape 
-                 * diameter - width of each shape
-                 * num_sides - number of sides of the shape (must be positive)
-                 * spacing - space between shapes
-                 * width - surface width in pixels
-                 * height - surface height in pixels
-                 */
-                static void
-                    make_shape_texture(cairo_t *cr, int x, int y, int diameter, int num_sides, int spacing, int width, int height);
+  /*
+   * A recursive helper function for make_shape_texture
+   *
+   * cr - cairo context
+   * origin_x - x coordinate for shape
+   * origin_y - y coordinate for shape
+   * num_sides - the number of sides to draw on a shape. if < 2, draws a circle
+   * distance - the distance to put between shapes
+   * even - helps the recursive function stagger the rows
+   * radius - half the width of the shape
+   * width - width of the surface
+   * height - height of the surface
+   */
+  static void
+  shape_texture_helper(cairo_t *cr, int origin_x, int origin_y, int num_sides,
+                       int distance, bool even, int radius, int width, 
+                       int height);
 
 
-                /*
-                 * Selects a texture function based on the input index and draws it
-                 * onto the surface stored in cr.
-                 *
-                 * cr - cairo context
-                 * texture - the index choice for the background texture (must be between 0 and 2 inclusive)
-                 *           ( 0 - diagonal lines )
-                 *           ( 1 - crossed lines  )
-                 *           ( 2 - shapes         )
-                 * brightness - the grayscale brightness level to make the texture
-                 * linewidth - width of the lines drawn (if it is a shape texture, this is unused)
-                 * diameter - the diameter of each shape 
-                 *            (if texture != 2, then this parameter is set to 0)
-                 * num_sides - the number of sides of each shape 
-                 *             (if texture != 2, then this parameter is set to 0)
-                 * spacing - the spacing between lines or dots in the texture
-                 * width - surface width in pixels
-                 * height - surface height in pixels
-                 */
-                void
-                    draw_texture(cairo_t *cr, int texture, double brightness, double linewidth, int diameter, int num_sides, int spacing, int width, int height);
+  /*
+   * Draws a texture of repeated shapes, each row is staggered a little
+   * 
+   * cr - cairo context
+   * x - x position of top of shape 
+   * y - y position of top of shape 
+   * diameter - width of each shape
+   * num_sides - number of sides of the shape (must be positive)
+   * spacing - space between shapes
+   * width - surface width in pixels
+   * height - surface height in pixels
+   */
+  static void
+  make_shape_texture(cairo_t *cr, int x, int y, int diameter, int num_sides, 
+                     int spacing, int width, int height);
 
 
-                /*
-                 * Sets the source of cr to be a texture that is selected by the texture
-                 * parameter.
-                 *
-                 * cr - cairo context
-                 * texture - the index choice for the background texture (must be between 0 and 2 inclusive)
-                 *           ( 0 - diagonal lines )
-                 *           ( 1 - crossed lines  )
-                 *           ( 2 - shapes         )
-                 * brightness - the grayscale brightness level to make the texture
-                 * linewidth - width of the lines drawn (if it is a shape texture, this is unused)
-                 * spacing - the spacing between lines or dots in the texture 
-                 *           (if texture == 2, spacing must be at least equal to diameter) 
-                 * width - surface width in pixels
-                 * height - surface height in pixels
-                 */
-                void
-                    set_texture_source(cairo_t *cr, int texture, double brightness, double linewidth, int spacing, int width, int height);
+  /*
+   * Selects a texture function based on the input index and draws it
+   * onto the surface stored in cr.
+   *
+   * cr - cairo context
+   * texture - choice of background texture (only between 0 and 2 inclusive)
+   *           ( 0 - diagonal lines )
+   *           ( 1 - crossed lines  )
+   *           ( 2 - shapes         )
+   * brightness - the grayscale brightness level to make the texture
+   * linewidth - width of the lines drawn (unused if texture==2)
+   * diameter - the diameter of each shape 
+   *            (if texture != 2, then this parameter is set to 0)
+   * num_sides - the number of sides of each shape 
+   *             (if texture != 2, then this parameter is set to 0)
+   * spacing - the spacing between lines or dots in the texture
+   * width - surface width in pixels
+   * height - surface height in pixels
+   */
+  void
+  draw_texture(cairo_t *cr, int texture, double brightness, double linewidth,
+               int diameter, int num_sides, int spacing, int width, int height);
 
 
-                /*
-                 * Draws num_lines thick swaths of texture onto the surface
-                 *
-                 * cr - cairo context
-                 * curved - describes if line will be curved (false = not curved)
-                 * horizontal - describes orientation of line (false = vertical)
-                 * brightness - the grayscale brightness level of the texture
-                 * width - surface width
-                 * height - surface height
-                 * c_min - the min range value for squared variable in the first cubic 
-                 *        curving equation
-                 * c_max - the max range value for squared variable in the first cubic 
-                 *        curving equation
-                 * d_min - the min range value for cubed variable in the first cubic 
-                 *        curving equation
-                 * d_max - the max range value for cubed variable in the first cubic 
-                 *        curving equation
-
-                 */
-                void
-                    addTexture(cairo_t *cr, bool curved, bool horizontal, double brightness, 
-                            int width, int height, double c_min, double c_max, double d_min, double d_max);
+  /*
+   * Sets the source of cr to be a texture that is selected by the texture
+   * parameter.
+   *
+   * cr - cairo context
+   * texture - choice of background texture (only between 0 and 2 inclusive)
+   *           ( 0 - diagonal lines )
+   *           ( 1 - crossed lines  )
+   *           ( 2 - shapes         )
+   * brightness - the grayscale brightness level to make the texture
+   * linewidth - width of the lines drawn (unused if texture==2)
+   * spacing - the spacing between lines or dots in the texture 
+   *           (if texture == 2, spacing must be at least equal to diameter) 
+   * width - surface width in pixels
+   * height - surface height in pixels
+   */
+  void
+  set_texture_source(cairo_t *cr, int texture, double brightness,
+                     double linewidth, int spacing, int width, int height);
 
 
-                /* 
-                 * Draws a line with random placement that has the characteristics
-                 * specified by the boolean parameters
-                 *
-                 * cr - cairo context
-                 * boundary - if true, add a colored line that runs next to the original
-                 * hatched - if true, add short perpendicular lines through the original
-                 * dashed - if true, make line dashed with arbitrary pattern
-                 * curved - if true, add curvature with create_curved_path from pc
-                 * doubleline - if true, add another line parallel next to the original
-                 * horizontal - if true, lines and transformations go left to right, 
-                 *              else top to bottom
-                 * width - the width of the layout in pixels
-                 * height - the height of the layout in pixels
-                 * c_min - the min range value for squared variable in the first cubic 
-                 *        curving equation
-                 * c_max - the max range value for squared variable in the first cubic 
-                 *        curving equation
-                 * d_min - the min range value for cubed variable in the first cubic 
-                 *        curving equation
-                 * d_max - the max range value for cubed variable in the first cubic 
-                 *        curving equation
-
-                 */
-                void
-                    addLines(cairo_t *cr, bool boundary, bool hatched, bool dashed, 
-                            bool curved, bool doubleline, bool horizontal, int width, 
-                            int height, double color, double c_min, double c_max, 
-                            double d_min, double d_max);
+  /*
+   * Draws num_lines thick swaths of texture onto the surface
+   *
+   * cr - cairo context
+   * curved - describes if line will be curved (false = not curved)
+   * horizontal - describes orientation of line (false = vertical)
+   * brightness - the grayscale brightness level of the texture
+   * width - surface width
+   * height - surface height
+   * c_min - the min range value for squared variable in the first cubic 
+   *        curving equation
+   * c_max - the max range value for squared variable in the first cubic 
+   *        curving equation
+   * d_min - the min range value for cubed variable in the first cubic 
+   *        curving equation
+   * d_max - the max range value for cubed variable in the first cubic 
+   *        curving equation
+   */
+  void
+  addTexture(cairo_t *cr, bool curved, bool horizontal, double brightness, 
+             int width, int height, double c_min, double c_max, double d_min, 
+             double d_max);
 
 
-                /*
-                 * Makes the background variably colored to simulate
-                 * stained or worn map paper
-                 *
-                 * cr - cairo context
-                 * width - width of canvas
-                 * height - height of canvas
-                 * color - the original bg color
-                 */
-                void
-                    addBgBias(cairo_t *cr, int width, int height, int color);
-
-                /* 
-                 * Add bg patters to the cr like even-spaced straight line, uneven-spaced
-                 * straight line, grid, etc.
-                 *
-                 * cr - cairo context
-                 * width - width of the canvas
-                 * height - height of the canvas
-                 * even - whether the lines are evenly spaced or not
-                 * grid - whether the pattern is a grid or not
-                 * curved - whether the lines are curved or not
-                 */
-                void
-                    addBgPattern(cairo_t *cr, int width, int height, 
-                            bool even, bool grid, bool curved);
-
-                /*
-                 * Makes differently colored areas in the background (at most 2)
-                 *
-                 * cr - cairo context
-                 * width - width of the canvas
-                 * height - height of the canvas
-                 * color_min - darkest color
-                 * color_max - brightest color
-                 */
-                void
-                    colorDiff(cairo_t *cr, int width, int height, double color_min, double color_max); 
+  /* 
+   * Draws a line with random placement that has the characteristics
+   * specified by the boolean parameters
+   *
+   * cr - cairo context
+   * boundary - if true, add a colored line that runs next to the original
+   * hatched - if true, add short perpendicular lines through the original
+   * dashed - if true, make line dashed with arbitrary pattern
+   * curved - if true, add curvature with create_curved_path from pc
+   * doubleline - if true, add another line parallel next to the original
+   * horizontal - if true, lines and transformations go left to right, 
+   *              else top to bottom
+   * width - the width of the layout in pixels
+   * height - the height of the layout in pixels
+   * c_min - the min range value for squared variable in the first cubic 
+   *        curving equation
+   * c_max - the max range value for squared variable in the first cubic 
+   *        curving equation
+   * d_min - the min range value for cubed variable in the first cubic 
+   *        curving equation
+   * d_max - the max range value for cubed variable in the first cubic 
+   *        curving equation
+   */
+  void
+  addLines(cairo_t *cr, bool boundary, bool hatched, bool dashed, 
+           bool curved, bool doubleline, bool horizontal, int width, 
+           int height, double color, double c_min, double c_max, 
+           double d_min, double d_max);
 
 
-                /*
-                 * Draws a circle along an arbitrary edge of the surface
-                 * 
-                 * cr - cairo context
-                 * width - surface width
-                 * height - surface height
-                 */
-                void
-                    cityPoint(cairo_t *cr, int width, int height);
+  /*
+   * Makes the background variably colored to simulate
+   * stained or worn map paper
+   *
+   * cr - cairo context
+   * width - width of canvas
+   * height - height of canvas
+   * color - the original bg color
+   */
+  void
+  addBgBias(cairo_t *cr, int width, int height, int color);
+
+  /* 
+   * Add bg patters to the cr like even-spaced straight line, uneven-spaced
+   * straight line, grid, etc.
+   *
+   * cr - cairo context
+   * width - width of the canvas
+   * height - height of the canvas
+   * even - whether the lines are evenly spaced or not
+   * grid - whether the pattern is a grid or not
+   * curved - whether the lines are curved or not
+   */
+  void
+  addBgPattern(cairo_t *cr, int width, int height, 
+               bool even, bool grid, bool curved);
+
+  /*
+   * Makes differently colored areas in the background (at most 2)
+   *
+   * cr - cairo context
+   * width - width of the canvas
+   * height - height of the canvas
+   * color_min - darkest color
+   * color_max - brightest color
+   */
+  void
+  colorDiff(cairo_t *cr, int width, int height, double color_min,
+            double color_max); 
 
 
-            public://------------------------ PUBLIC METHODS ---------------------------
+  /*
+   * Draws a circle along an arbitrary edge of the surface
+   * 
+   * cr - cairo context
+   * width - surface width
+   * height - surface height
+   */
+  void
+  cityPoint(cairo_t *cr, int width, int height);
 
-                // a helper class memeber that holds important functions
-          std::shared_ptr<MTS_BaseHelper> helper;
 
-          MTS_BackgroundHelper(std::shared_ptr<MTS_BaseHelper> h);
+public://------------------------ PUBLIC METHODS ---------------------------
 
-                /*
-                 * Generate bg features that will be drawn on current image
-                 * basing on the probabilities the user gives
-                 *
-                 * bg_features - the ouput array of features
-                 */
-                void
-                generateBgFeatures(std::vector<BGFeature> &bg_features);
+  // a helper class memeber that holds important functions
+  std::shared_ptr<MTS_BaseHelper> helper;
 
-                /*
-                 * Generates a map-like background 
-                 *
-                 * bg_surface - the image surface
-                 * features - the list of features to be added
-                 * width - surface width in pixels
-                 * bg_color - the grayscale color value for the background
-                 * contrast - the contrast level
-                 */
-                void
-                    generateBgSample(cairo_surface_t *&bg_surface, std::vector<BGFeature>&features, int height, int width, int bg_color, int contrast);
-        };
-/*
-    }
-    }*/
+  MTS_BackgroundHelper(std::shared_ptr<MTS_BaseHelper> h);
+
+  /*
+   * Generate bg features that will be drawn on current image
+   * basing on the probabilities the user gives
+   *
+   * bg_features - the ouput array of features
+   */
+  void
+  generateBgFeatures(std::vector<BGFeature> &bg_features);
+
+  /*
+   * Generates a map-like background 
+   *
+   * bg_surface - the image surface
+   * features - the list of features to be added
+   * width - surface width in pixels
+   * bg_color - the grayscale color value for the background
+   * contrast - the contrast level
+   */
+  void
+  generateBgSample(cairo_surface_t *&bg_surface, 
+                   std::vector<BGFeature>&features, int height, int width, 
+                   int bg_color, int contrast);
+};
+
 #endif

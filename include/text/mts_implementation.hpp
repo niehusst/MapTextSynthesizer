@@ -20,98 +20,93 @@
 using boost::random::mt19937;
 using boost::random::gamma_distribution;
 using boost::random::variate_generator;
-/*
-namespace cv{
-    namespace text{
-*/
-        class MTSImplementation: public MapTextSynthesizer{
 
-            protected:
-                /* Returns the corresponding value given key in config.txt
-                 *
-                 * key - key in hashmap constructed from config.txt
-                 */
-          double getParam(std::string key);
 
-                /* Converts cairo surface to mat object in opencv
-                 *
-                 * surface - the cairo surface to be converted
-                 * mat - the output map object containing the RGB channel
-                 *      of surface. alpha channel is thrown away.
-                 *
-                 * Original code for this method is from Andrey Smorodov
-                 * url: https://stackoverflow.com/questions/19948319/how-to-convert-cairo-image-surface-to-opencv-mat-in-c
-                 */
-                static void cairoToMat(cairo_surface_t *surface,cv::Mat &mat);
+class MTSImplementation: public MapTextSynthesizer{
 
-                /* Adds Gaussian noise to out
-                 *
-                 * out - the input and output image
-                 */
-                void addGaussianNoise(cv::Mat& out);
+protected:
+  /* Returns the corresponding value given key in config.txt
+   *
+   * key - key in hashmap constructed from config.txt
+   */
+  double getParam(std::string key);
 
-                /* Adds Gaussian blur to out
-                 *
-                 * out - the input and output image
-                 */
-                void addGaussianBlur(cv::Mat& out);
+  /* Converts cairo surface to mat object in opencv
+   *
+   * surface - the cairo surface to be converted
+   * mat - the output map object containing the RGB channel
+   *      of surface. alpha channel is thrown away.
+   *
+   * Original code for this method is from Andrey Smorodov
+   * url: https://stackoverflow.com/questions/19948319/how-to-convert-cairo-image-surface-to-opencv-mat-in-c
+   */
+  static void cairoToMat(cairo_surface_t *surface,cv::Mat &mat);
 
-                /* Updates the list of available system fonts by 
-                 * clearing and reloading fntList
-                 *
-                 * fntList - the output
-                 * Base of this method from Ben K. Bullock at
-                 * url: https://www.lemoda.net/pango/list-fonts/index.html
-                 */
-                void updateFontNameList(std::vector<cv::String>& fntList);
+  /* Adds Gaussian noise to out
+   *
+   * out - the input and output image
+   */
+  void addGaussianNoise(cv::Mat& out);
 
-                /* The list of blocky font names set by user. */
-                std::vector<cv::String> blockyFonts_;
+  /* Adds Gaussian blur to out
+   *
+   * out - the input and output image
+   */
+  void addGaussianBlur(cv::Mat& out);
 
-                /* The list of regular font names set by user. */
-                std::vector<cv::String> regularFonts_;
+  /* Updates the list of available system fonts by 
+   * clearing and reloading fntList
+   *
+   * fntList - the output
+   * Base of this method from Ben K. Bullock at
+   * url: https://www.lemoda.net/pango/list-fonts/index.html
+   */
+  void updateFontNameList(std::vector<cv::String>& fntList);
 
-                /* The list of cursive font names set by user. */
-                std::vector<cv::String> cursiveFonts_;
+  /* The list of blocky font names set by user. */
+  std::vector<cv::String> blockyFonts_;
 
-                /* The list of available system font names. */
-                std::vector<cv::String> availableFonts_;
+  /* The list of regular font names set by user. */
+  std::vector<cv::String> regularFonts_;
 
-                /* Pointers pointing to blocky, regular, cursive font lists. */
-                std::shared_ptr<std::vector<cv::String> > fonts_[3];
+  /* The list of cursive font names set by user. */
+  std::vector<cv::String> cursiveFonts_;
 
-                /* The list of captions to sample from.*/
-                std::vector<cv::String> sampleCaptions_;
+  /* The list of available system font names. */
+  std::vector<cv::String> availableFonts_;
 
-                MTS_Utilities utils;
+  /* Pointers pointing to blocky, regular, cursive font lists. */
+  std::shared_ptr<std::vector<cv::String> > fonts_[3];
 
-          std::shared_ptr<MTS_BaseHelper> helper;
-                MTS_TextHelper th;
-                MTS_BackgroundHelper bh;
+  /* The list of captions to sample from.*/
+  std::vector<cv::String> sampleCaptions_;
 
-                /* Generator for sigma used in Gaussian noise method. */
-                gamma_distribution<> noise_dist;
-                variate_generator<mt19937, gamma_distribution<> > noise_gen;
+  MTS_Utilities utils;
 
-            public:
+  std::shared_ptr<MTS_BaseHelper> helper;
+  MTS_TextHelper th;
+  MTS_BackgroundHelper bh;
 
-                /* Constructor */
-                MTSImplementation();
+  /* Generator for sigma used in Gaussian noise method. */
+  gamma_distribution<> noise_dist;
+  variate_generator<mt19937, gamma_distribution<> > noise_gen;
 
-                /* See MapTextSynthesizer for documentations.*/
+public:
 
-                void setBlockyFonts(std::vector<cv::String>& fntList);
+  /* Constructor */
+  MTSImplementation();
 
-                void setRegularFonts(std::vector<cv::String>& fntList);
+  /* See MapTextSynthesizer for documentations.*/
 
-                void setCursiveFonts(std::vector<cv::String>& fntList);
+  void setBlockyFonts(std::vector<cv::String>& fntList);
 
-                void setSampleCaptions (std::vector<cv::String>& words);
+  void setRegularFonts(std::vector<cv::String>& fntList);
 
-                void generateSample(CV_OUT cv::String &caption, CV_OUT cv::Mat & sample);
-        };
-/*
-    }  //namespace text
-}  //namespace cv
-*/
+  void setCursiveFonts(std::vector<cv::String>& fntList);
+
+  void setSampleCaptions (std::vector<cv::String>& words);
+
+  void generateSample(CV_OUT cv::String &caption, CV_OUT cv::Mat & sample);
+};
+
 #endif

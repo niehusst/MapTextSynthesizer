@@ -22,18 +22,11 @@
 #include "map_text_synthesizer.hpp"
 #include "mts_implementation.hpp"
 
-/*
-namespace cv{
-    namespace text{
-*/
+
 MapTextSynthesizer::MapTextSynthesizer(){}
 
 std::shared_ptr<MapTextSynthesizer> MapTextSynthesizer::create(){
   std::shared_ptr<MapTextSynthesizer> mts(new MTSImplementation());
   return mts;
 }
-/*
-    }  //namespace text
-}  //namespace cv
-*/
 

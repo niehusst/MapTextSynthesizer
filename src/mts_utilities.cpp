@@ -27,14 +27,8 @@
 
 #include "mts_utilities.hpp"
 
-/*
-using namespace std;
 
-namespace cv{ 
-    namespace text{
-*/
 std::shared_ptr<std::unordered_map<std::string, double> > MTS_Utilities::params = std::make_shared<std::unordered_map<std::string, double> >();
-
 
 MTS_Utilities::MTS_Utilities(){
   if (params->size() == 0) {
@@ -89,7 +83,3 @@ void MTS_Utilities::parse(std::shared_ptr<std::unordered_map<std::string, double
   // close file
   infile.close();
 } 
-/*
-  }  //namespace text
-  }  //namespace cv
-*/
