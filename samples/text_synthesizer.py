@@ -5,13 +5,6 @@ import numpy as np
 
 # Global Variable definition
 
-words=[]
-#words=['PM','Charlie','Jerod','Anya','Titus']
-#fonts=['cmmi10','eufm10','MathJax_Fraktur','Sans','Serif','URW Chancery L']
-blocky_fonts=['MathJax_Fraktur','eufm10']
-regular_fonts=['cmmi10','Sans','Serif']
-cursive_fonts=['URW Chancery L']
-        
 s = mtsynth.MapTextSynthesizer()
 pause=200
 
@@ -21,6 +14,7 @@ def updateTime(x):
     global pause
     pause=x
 
+'''
 def read_words(words_file):
     open_file = open(words_file, 'r')
     words_list =[]
@@ -29,18 +23,16 @@ def read_words(words_file):
        words_list.append(contents[i].strip('\n'))
     return words_list    
     open_file.close()
+'''
 
 def initialiseSynthesizers():
     global s
-    global words
-    global fonts
 
-    words = read_words("IA/Civil.txt")
-    s.setSampleCaptions(words)
+    s.setSampleCaptions("IA/Civil.txt")
 
-    s.setBlockyFonts(blocky_fonts)
-    s.setRegularFonts(regular_fonts)
-    s.setCursiveFonts(cursive_fonts)
+    s.setBlockyFonts("blocky_fonts.txt")
+    s.setRegularFonts("regular_fonts.txt")
+    s.setCursiveFonts("cursive_fonts.txt")
 
 # Other functions
 

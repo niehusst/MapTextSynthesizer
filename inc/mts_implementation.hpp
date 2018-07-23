@@ -63,13 +63,13 @@ class MTSImplementation: public MapTextSynthesizer{
         void addGaussianBlur(Mat& out);
 
         /* Updates the list of available system fonts by 
-         * clearing and reloading fntList
+         * clearing and reloading font_list
          *
-         * fntList - the output
+         * font_list - the output
          * Base of this method from Ben K. Bullock at
          * url: https://www.lemoda.net/pango/list-fonts/index.html
          */
-        void updateFontNameList(std::vector<String>& fntList);
+        void updateFontNameList(std::vector<String>& font_list);
 
         /* The list of blocky font names set by user. */
         std::vector<String> blockyFonts_ = std::vector<String>();
@@ -108,13 +108,17 @@ class MTSImplementation: public MapTextSynthesizer{
 
         /* See MapTextSynthesizer for documentations.*/
 
-        void setBlockyFonts(std::vector<String>& fntList);
+        void setBlockyFonts(std::vector<String>& font_list);
+        void setBlockyFonts(string font_file);
 
-        void setRegularFonts(std::vector<String>& fntList);
+        void setRegularFonts(std::vector<String>& font_list);
+        void setRegularFonts(string font_file);
 
-        void setCursiveFonts(std::vector<String>& fntList);
+        void setCursiveFonts(std::vector<String>& font_list);
+        void setCursiveFonts(string font_file);
 
-        void setSampleCaptions (std::vector<String>& words);
+        void setSampleCaptions(std::vector<String>& words);
+        void setSampleCaptions(string caption_file);
 
         void generateSample(CV_OUT String &caption, CV_OUT Mat & sample);
 };

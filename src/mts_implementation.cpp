@@ -119,9 +119,9 @@ void MTSImplementation::addGaussianBlur(Mat& out) {
     GaussianBlur(out,out,Size(ker_size,ker_size),0,0,BORDER_REFLECT_101);
 }
 
-void MTSImplementation::updateFontNameList(std::vector<String>& fntList) {
+void MTSImplementation::updateFontNameList(std::vector<String>& font_list) {
     // clear existing fonts for a fresh load of available fonts
-    fntList.clear(); 
+    font_list.clear(); 
 
     PangoFontFamily ** families;
     int num_families;
@@ -130,12 +130,12 @@ void MTSImplementation::updateFontNameList(std::vector<String>& fntList) {
     fontmap = pango_cairo_font_map_get_default();
     pango_font_map_list_families (fontmap, &families, &num_families);
 
-    // iterativly add all available fonts to fntList
+    // iterativly add all available fonts to font_list
     for (int k = 0; k < num_families; k++) {
         PangoFontFamily * family = families[k];
         const char * family_name;
         family_name = pango_font_family_get_name (family);
-        fntList.push_back(String(family_name));
+        font_list.push_back(String(family_name));
     }   
     // clean up
     free (families);
@@ -174,50 +174,70 @@ MTSImplementation::MTSImplementation(string config_file)
 }
 
 MTSImplementation::~MTSImplementation() {
-    cout << "Hey I'm called" << endl;
+    cout << "impl destructed" << endl;
 }
 
-void MTSImplementation::setBlockyFonts(std::vector<String>& fntList){
+void MTSImplementation::setBlockyFonts(std::vector<String>& font_list){
     std::vector<String> availableList=this->availableFonts_;
 
     // loop through fonts in availableFonts_ to check if the system 
-    // contains every font in the fntList
-    for(size_t k = 0; k < fntList.size(); k++){
-        if(std::find(availableList.begin(), availableList.end(), fntList[k]) == availableList.end()){
+    // contains every font in the font_list
+    for(size_t k = 0; k < font_list.size(); k++){
+        if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
             CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
         }
     }
-    this->blockyFonts_.assign(fntList.begin(),fntList.end());
+    this->blockyFonts_.assign(font_list.begin(),font_list.end());
 }
 
-void MTSImplementation::setRegularFonts(std::vector<String>& fntList){
+void MTSImplementation::setBlockyFonts(string font_file){
+    std::vector<String> fonts = MapTextSynthesizer::readLines(font_file);
+    setBlockyFonts(fonts);
+}
+
+void MTSImplementation::setRegularFonts(std::vector<String>& font_list){
     std::vector<String> availableList=this->availableFonts_;
 
     // loop through fonts in availableFonts_ to check if the system 
-    // contains every font in the fntList
-    for(size_t k = 0; k < fntList.size(); k++){
-        if(std::find(availableList.begin(), availableList.end(), fntList[k]) == availableList.end()){
+    // contains every font in the font_list
+    for(size_t k = 0; k < font_list.size(); k++){
+        if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
             CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
         }
     }
-    this->regularFonts_.assign(fntList.begin(),fntList.end());
+    this->regularFonts_.assign(font_list.begin(),font_list.end());
 }
 
-void MTSImplementation::setCursiveFonts(std::vector<String>& fntList){
+void MTSImplementation::setRegularFonts(string font_file){
+    std::vector<String> fonts = MapTextSynthesizer::readLines(font_file);
+    setRegularFonts(fonts);
+}
+
+void MTSImplementation::setCursiveFonts(std::vector<String>& font_list){
     std::vector<String> availableList=this->availableFonts_;
 
     // loop through fonts in availableFonts_ to check if the system 
-    // contains every font in the fntList
-    for(size_t k = 0; k < fntList.size(); k++){
-        if(std::find(availableList.begin(), availableList.end(), fntList[k]) == availableList.end()){
+    // contains every font in the font_list
+    for(size_t k = 0; k < font_list.size(); k++){
+        if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
             CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
         }
     }
-    this->cursiveFonts_.assign(fntList.begin(),fntList.end());
+    this->cursiveFonts_.assign(font_list.begin(),font_list.end());
 }
 
-void MTSImplementation::setSampleCaptions (std::vector<String>& words) {
+void MTSImplementation::setCursiveFonts(string font_file){
+    std::vector<String> fonts = MapTextSynthesizer::readLines(font_file);
+    setCursiveFonts(fonts);
+}
+
+void MTSImplementation::setSampleCaptions(std::vector<String>& words) {
     this->sampleCaptions_.assign(words.begin(),words.end());
+}
+
+void MTSImplementation::setSampleCaptions(string caption_file){
+    std::vector<String> captions = MapTextSynthesizer::readLines(caption_file);
+    setSampleCaptions(captions);
 }
 
 void MTSImplementation::generateSample(CV_OUT String &caption, CV_OUT Mat & sample){

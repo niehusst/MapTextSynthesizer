@@ -33,6 +33,22 @@ class mts_wrapper {
             return list;
         }
 
+        void setSampleCaptions(string capfile) {
+            mts->setSampleCaptions(capfile);
+        }
+
+        void setBlockyFonts(string fontfile) {
+            mts->setBlockyFonts(fontfile);
+        }
+
+        void setRegularFonts(string fontfile) {
+            mts->setRegularFonts(fontfile);
+        }
+
+        void setCursiveFonts(string fontfile) {
+            mts->setCursiveFonts(fontfile);
+        }
+       /*
         void setSampleCaptions(boost::python::list words) {
             std::vector<cv::String> vec_words = list_to_vec(words);
             mts->setSampleCaptions(vec_words);
@@ -52,6 +68,7 @@ class mts_wrapper {
             std::vector<cv::String> vec_fonts = list_to_vec(fonts);
             mts->setCursiveFonts(vec_fonts);
         }
+        */
 
         object generateSample() {
 

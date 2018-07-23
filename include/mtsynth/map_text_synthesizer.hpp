@@ -23,26 +23,35 @@ class CV_EXPORTS_W MapTextSynthesizer{
         /*
          * Setter method to initialize the blockyFonts_ field
          *
-         * fntList - a list of fonts contained in a vector
+         * font_list - a list of fonts contained in a vector
          */
         CV_WRAP virtual void 
-            setBlockyFonts(std::vector<String>& fntList) = 0;
+            setBlockyFonts(std::vector<String>& font_list) = 0;
+
+        CV_WRAP virtual void 
+            setBlockyFonts(string font_file) = 0;
 
         /*
          * Setter method to initialize the regularFonts_ field
          *
-         * fntList - a list of fonts contained in a vector
+         * font_list - a list of fonts contained in a vector
          */
         CV_WRAP virtual void 
-            setRegularFonts(std::vector<String>& fntList) = 0;
+            setRegularFonts(std::vector<String>& font_list) = 0;
+
+        CV_WRAP virtual void 
+            setRegularFonts(string font_file) = 0;
 
         /*
          * Setter method to initialize the cursiveFonts_ field
          *
-         * fntList - a list of fonts contained in a vector
+         * font_list - a list of fonts contained in a vector
          */
         CV_WRAP virtual void 
-            setCursiveFonts(std::vector<String>& fntList) = 0;
+            setCursiveFonts(std::vector<String>& font_list) = 0;
+
+        CV_WRAP virtual void 
+            setCursiveFonts(string font_file) = 0;
 
         /*
          * Set the collection of words to be displayed 
@@ -52,9 +61,12 @@ class CV_EXPORTS_W MapTextSynthesizer{
         CV_WRAP virtual void 
             setSampleCaptions(std::vector<String>& words) = 0;
 
+        CV_WRAP virtual void 
+            setSampleCaptions(string caption_file) = 0;
+
         /*
          * Generates a random bounded map-like text sample given a string
-         * This is the principal function of the text synthciser
+         * This is the principal function of the text synthesizer
          *
          * caption - the label of the image. 
          * sample - the resulting text sample.
@@ -62,6 +74,13 @@ class CV_EXPORTS_W MapTextSynthesizer{
         CV_WRAP virtual void 
             generateSample (CV_OUT String &caption, CV_OUT Mat& sample) = 0;
 
+        /*
+         * A Helper method for users to easily read lines from a file
+         *
+         * filename - the path to the file. 
+         */
+        CV_WRAP static vector<String> 
+            readLines(string filename);
         /*
          * A wrapper for the protected MapTextSynthesizer constructor.
          * Use this method to create a MTS object.
