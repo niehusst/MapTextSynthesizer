@@ -9,6 +9,7 @@
 
 #include <pango/pangocairo.h>
 
+#include <opencv2/core/core.hpp> //cv::RNG
 
 //using namespace std;
 using boost::random::mt19937;
