@@ -33,60 +33,64 @@ using namespace std;
 namespace cv{ 
     namespace text{
 */
-std::shared_ptr<std::unordered_map<std::string, double> > MTS_Utilities::params = make_shared<std::unordered_map<std::string, double> >();
+std::shared_ptr<std::unordered_map<std::string, double> > MTS_Utilities::params = std::make_shared<std::unordered_map<std::string, double> >();
 
 
-        MTS_Utilities::MTS_Utilities(){
-            if (params->size() == 0) {
-                parse(params, "config.txt");
-            }
-        }
+MTS_Utilities::MTS_Utilities(){
+  if (params->size() == 0) {
+    parse(params, "config.txt");
+  }
+}
 
 
-         void MTS_Utilities::parse(std::shared_ptr<unordered_map<std::string, double> >parameter_map, std::string filename) {
-           //cout << "in parse" << endl;
+void MTS_Utilities::parse(std::shared_ptr<std::unordered_map<std::string, double> > parameter_map, std::string filename) {
+  //cout << "in parse" << endl;
 
-            std::string delimiter = "=";
+  std::string delimiter = "=";
 
-            // open file
-            ifstream infile(filename);
-            CV_Assert(infile.is_open());
+  // open file
+  std::ifstream infile(filename);
+  // if file failed to open, report error and exit
+  if(!infile.is_open()) {
+    std::cout << "The file " << filename << " could not be opened.\n";
+    exit(1);
+  }
 
-            std::string line, key, value;
-            double val;
+  std::string line, key, value;
+  double val;
 
-            // parse file line by line
-            while (getline(infile, line)) {
-                // if line is empty or is a comment, erase it
-                size_t com_pos = line.find("//");
-                if (com_pos != line.npos) {
-                    line.erase(com_pos);
-                } 
-                if (line.length()==0) {
-                    continue;
-                }
-                size_t pos = line.find(delimiter);
-                CV_Assert(pos != line.npos);
+  // parse file line by line
+  while (getline(infile, line)) {
+    // if line is empty or is a comment, erase it
+    size_t com_pos = line.find("//");
+    if (com_pos != line.npos) {
+      line.erase(com_pos);
+    } 
+    if (line.length()==0) {
+      continue;
+    }
+    size_t pos = line.find(delimiter);
+    //CV_Assert(pos != line.npos);
                 
-                key = line.substr(0, pos);
-                value = line.substr(pos+1, line.npos-pos);
-                char * err_flag;
-                val = strtod(value.c_str(), &err_flag); 
+    key = line.substr(0, pos);
+    value = line.substr(pos+1, line.npos-pos);
+    char * err_flag;
+    val = strtod(value.c_str(), &err_flag); 
                 
-                // check if strtod produced error in casting
-                if (value.c_str() == err_flag && val == 0) { 
-                  // tell user there was an error at this point and exit failure
-                  std::cout << "An unparseable value was encountered for variable "
-                      << key <<".\nPlease enter a valid number.\n";
-                  exit(1);
-                }
+    // check if strtod produced error in casting
+    if (value.c_str() == err_flag && val == 0) { 
+      // tell user there was an error at this point and exit failure
+      std::cout << "An unparseable value was encountered for variable "
+                << key <<".\nPlease enter a valid number.\n";
+      exit(1);
+    }
                 
-                parameter_map->insert(pair<std::string, double>(key, val));
-            }   
-            // close file
-            infile.close();
-        } 
+    parameter_map->insert(std::pair<std::string, double>(key, val));
+  }   
+  // close file
+  infile.close();
+} 
 /*
-    }  //namespace text
-}  //namespace cv
+  }  //namespace text
+  }  //namespace cv
 */

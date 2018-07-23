@@ -594,8 +594,8 @@ namespace cv
                 for (int i = 0; i < num_points_vertical; i++){
                     color_stop_val = color + (int)round(bias_gen());
                     // bound the number between 0 and 255
-                    color_stop_val = min(color_stop_val, 255);
-                    color_stop_val = max(color_stop_val, 0);
+                    color_stop_val = std::min(color_stop_val, 255);
+                    color_stop_val = std::max(color_stop_val, 0);
                     dcolor = color_stop_val / 255.0;
 
                     cairo_pattern_add_color_stop_rgb(pattern_vertical, i*offset_vertical, dcolor,dcolor,dcolor);
@@ -604,8 +604,8 @@ namespace cv
                 for (int i = 0; i < num_points_horizontal; i++){
                     color_stop_val = color + (int)round(bias_gen());
                     // bound the number between 0 and 255
-                    color_stop_val = min(color_stop_val, 255);
-                    color_stop_val = max(color_stop_val, 0);
+                    color_stop_val = std::min(color_stop_val, 255);
+                    color_stop_val = std::max(color_stop_val, 0);
                     dcolor = color_stop_val / 255.0;
 
                     cairo_pattern_add_color_stop_rgb(pattern_horizontal, i*offset_horizontal, dcolor,dcolor,dcolor);

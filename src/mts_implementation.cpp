@@ -68,8 +68,8 @@ void MTSImplementation::cairoToMat(cairo_surface_t *surface,cv::Mat &mat) {
           // make a 4 channel opencv matrix
             cv::Mat mat4 = cv::Mat(cairo_image_surface_get_height(surface),cairo_image_surface_get_width(surface),CV_8UC4,cairo_image_surface_get_data(surface));
 
-            vector<cv::Mat> channels1;
-            vector<cv::Mat> channels2;
+            std::vector<cv::Mat> channels1;
+            std::vector<cv::Mat> channels2;
 
             cv::split(mat,channels2);
             cv::split(mat4,channels1);
@@ -92,17 +92,17 @@ void MTSImplementation::cairoToMat(cairo_surface_t *surface,cv::Mat &mat) {
             
             // populate noise with random values
             randn(noise, 0, sigma);
-            vector<cv::Mat> channels;
+            std::vector<cv::Mat> channels;
             cv::split(out,channels);
 
             // add noise to each channel
             for (int i = 0; i < 3; i++) {
-                channels[i]+=noise;
-                threshold(channels[i],channels[i],1.0,1.0,THRESH_TRUNC);
-                threshold(channels[i],channels[i],0,1.0,THRESH_TOZERO);
+                channels[i] += noise;
+                cv::threshold(channels[i],channels[i],1.0,1.0,cv::THRESH_TRUNC);
+                cv::threshold(channels[i],channels[i],0,1.0,cv::THRESH_TOZERO);
             }
             // merge target image Mat with the new noise Mat
-            merge(channels,out);
+            cv::merge(channels,out);
         }
 
         void MTSImplementation::addGaussianBlur(cv::Mat& out) {
@@ -111,7 +111,7 @@ void MTSImplementation::cairoToMat(cairo_surface_t *surface,cv::Mat &mat) {
             int size_max = (int)getParam("blur_kernel_size_max") / 2;
             int ker_size = (helper->rng() % (size_max-size_min) + size_min) * 2 + 1;
 
-            GaussianBlur(out,out,Size(ker_size,ker_size),0,0,BORDER_REFLECT_101);
+            cv::GaussianBlur(out,out,cv::Size(ker_size,ker_size),0,0,cv::BORDER_REFLECT_101);
         }
 
 void MTSImplementation::updateFontNameList(std::vector<cv::String>& fntList) {
@@ -142,16 +142,16 @@ void MTSImplementation::updateFontNameList(std::vector<cv::String>& fntList) {
                 std::shared_ptr<std::vector<cv::String> >(&(this->regularFonts_)),
                 std::shared_ptr<std::vector<cv::String> >(&(this->cursiveFonts_))},
             utils(),
-            helper(make_shared<MTS_BaseHelper>(MTS_BaseHelper(utils.params))),
+          helper(std::make_shared<MTS_BaseHelper>(MTS_BaseHelper(utils.params))),
             th(helper),
             bh(helper),
             noise_dist(getParam("noise_sigma_alpha"),
                        getParam("noise_sigma_beta")),
             noise_gen(helper->rng2_, noise_dist)
         {
-            namedWindow("__w");
-            waitKey(1);
-            destroyWindow("__w");
+            cv::namedWindow("__w");
+            cv::waitKey(1);
+            cv::destroyWindow("__w");
             this->updateFontNameList(this->availableFonts_);
 
             //initialize rng in BaseHelper
@@ -170,7 +170,9 @@ void MTSImplementation::updateFontNameList(std::vector<cv::String>& fntList) {
             // contains every font in the fntList
             for(size_t k = 0; k < fntList.size(); k++){
                 if(std::find(dbList.begin(), dbList.end(), fntList[k]) == dbList.end()){
-                    CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
+                  //alert the user and exit the program if font not found
+                  std::cout << "The font name list must only contain fonts in your system.\nThe font " << fntList[k] << " is not in your system.\n";
+                  exit(1);
                 }
             }
             this->blockyFonts_=fntList;
@@ -183,7 +185,9 @@ void MTSImplementation::updateFontNameList(std::vector<cv::String>& fntList) {
             // contains every font in the fntList
             for(size_t k = 0; k < fntList.size(); k++){
                 if(std::find(dbList.begin(), dbList.end(), fntList[k]) == dbList.end()){
-                    CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
+                  //alert the user and exit the program if font not found
+                  std::cout << "The font name list must only contain fonts in your system.\nThe font " << fntList[k] << " is not in your system.\n";
+                  exit(1);
                 }
             }
             this->regularFonts_=fntList;
@@ -196,7 +200,9 @@ void MTSImplementation::updateFontNameList(std::vector<cv::String>& fntList) {
             // contains every font in the fntList
             for(size_t k = 0; k < fntList.size(); k++){
                 if(std::find(dbList.begin(), dbList.end(), fntList[k]) == dbList.end()){
-                    CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
+                  //alert the user and exit the program if font not found
+                  std::cout << "The font name list must only contain fonts in your system.\nThe font " << fntList[k] << " is not in your system.\n";
+                  exit(1);  
                 }
             }
             this->cursiveFonts_=fntList;
@@ -268,7 +274,7 @@ void MTSImplementation::updateFontNameList(std::vector<cv::String>& fntList) {
                 cairo_paint(cr); // dont blend
             }
 
-            cv::Mat sample_uchar = cv::Mat(height,width,CV_8UC3,Scalar_<uchar>(0,0,0));
+            cv::Mat sample_uchar = cv::Mat(height,width,CV_8UC3,cv::Scalar_<uchar>(0,0,0));
 
             // convert cairo image to openCV Mat object
             cairoToMat(bg_surface, sample_uchar);

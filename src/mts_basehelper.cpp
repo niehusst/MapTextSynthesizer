@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 
-#include <pango/pangocairo.h>
 #include <vector>
 #include <math.h>
 #include <algorithm>
@@ -26,6 +25,8 @@
 #include <iostream> 
 #include <unordered_map>
 #include <memory>
+
+#include <pango/pangocairo.h>
 
 #include "mts_basehelper.hpp"
 
@@ -832,7 +833,7 @@ namespace cv
                                             int num_points, double c_min, double c_max, double d_min, 
                                             double d_max) {
 
-                CV_Assert(num_points >= 3); //verify preconditions
+                if(num_points < 3) num_points = 3; //verify preconditions
 
                 //set the points for the path
                 std::vector<coords> points= make_points_wave(width, height, num_points);

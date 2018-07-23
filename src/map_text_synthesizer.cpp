@@ -36,4 +36,4 @@ std::shared_ptr<MapTextSynthesizer> MapTextSynthesizer::create(){
     }  //namespace text
 }  //namespace cv
 */
-int main(void) {}
+

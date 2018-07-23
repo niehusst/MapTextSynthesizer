@@ -15,7 +15,7 @@ LDLIBS := $(addprefix -l, $(LIBS))
 SHELL=/bin/bash
 
 # Source and object files
-SOURCES=main.cpp map_text_synthesizer.cpp mts_basehelper.cpp mts_bghelper.cpp mts_implementation.cpp mts_texthelper.cpp mts_utilities.cpp
+SOURCES=map_text_synthesizer.cpp mts_basehelper.cpp mts_bghelper.cpp mts_implementation.cpp mts_texthelper.cpp mts_utilities.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 
 #all: ${TARGETS}
@@ -27,12 +27,12 @@ all: $(SOURCES) $(EXECUTABLE)
 
 # Produce a .so (shared object) file
 $(EXECUTABLE): $(OBJECTS) 
-		$(CXX) $(LDLIBS) -shared $(OBJECTS) -o $@
+		$(CXX) $(LDLIBS) -shared -o $@
 
 .cpp.o:
-		$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+		$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $<
 
 clean:
-		rm -f ${TARGETS} *~
+		rm -f *.o *.so core* *~
 
 
