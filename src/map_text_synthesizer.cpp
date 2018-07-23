@@ -17,20 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 
-#include "text/map_text_synthesizer.hpp"
-#include "text/mts_implementation.hpp"
+#include <memory>
 
-using namespace std;
+#include "map_text_synthesizer.hpp"
+#include "mts_implementation.hpp"
 
-namespace cv{
-    namespace text{
 
-        MapTextSynthesizer::MapTextSynthesizer(){}
+MapTextSynthesizer::MapTextSynthesizer(){}
 
-        Ptr<MapTextSynthesizer> MapTextSynthesizer::create(){
-            Ptr<MapTextSynthesizer> mts(new MTSImplementation());
-            return mts;
-        }
+std::shared_ptr<MapTextSynthesizer> MapTextSynthesizer::create(){
+  std::shared_ptr<MapTextSynthesizer> mts(new MTSImplementation());
+  return mts;
+}
 
-    }  //namespace text
-}  //namespace cv
