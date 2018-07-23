@@ -13,6 +13,7 @@
 using namespace std;
 using namespace cv;
 using boost::random::beta_distribution;
+using boost::random::gamma_distribution;
 using boost::random::variate_generator;
 
 /*
@@ -36,15 +37,25 @@ class MTS_TextHelper {
         beta_distribution<> stretch_dist;
         variate_generator<mt19937, beta_distribution<> > stretch_gen;
 
+        /* Generator for the digit length*/
+        gamma_distribution<> digit_len_dist;
+        variate_generator<mt19937, gamma_distribution<> > digit_len_gen;
+
         /* Returns the value of the parameter given key */
         double
             getParam(string key);
 
         /*
-         * Returns a random latin character or numeral
+         * Returns a random latin character or numeral or punctuation
          */
         char
             randomChar();
+
+        /*
+         * Returns a random digit
+         */
+        char
+            randomDigit();
 
         /*
          * Generates distractor text with random size and rotation to appear

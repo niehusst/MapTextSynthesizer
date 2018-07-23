@@ -24,7 +24,9 @@ MTS_TextHelper::MTS_TextHelper(shared_ptr<MTS_BaseHelper> h)
     spacing_dist(h->getParam("spacing_alpha"),h->getParam("spacing_beta")),
     spacing_gen(h->rng2_, spacing_dist),
     stretch_dist(h->getParam("stretch_alpha"),h->getParam("stretch_beta")),
-    stretch_gen(h->rng2_, stretch_dist)
+    stretch_gen(h->rng2_, stretch_dist),
+    digit_len_dist(h->getParam("digit_len_alpha"),h->getParam("digit_len_beta")),
+    digit_len_gen(h->rng2_, digit_len_dist)
 {}
 
 MTS_TextHelper::~MTS_TextHelper(){
@@ -390,37 +392,40 @@ void
 MTS_TextHelper::generateTextSample (string &caption, cairo_surface_t *&text_surface, int height, 
         int &width, int text_color, bool distract){
 
-    // if there are sample captions, select one randomly and generate text
-    if(sampleCaptions_->size() != 0){
-        caption = sampleCaptions_->at(helper->rng() % sampleCaptions_->size());
-        cout << "generating text patch" << endl;
-        generateTextPatch(text_surface,caption,height,width,text_color,distract);
-
-    } else { // otherwise, make a random caption string and generate text
-        // the random string will have a length in range 5-10
-        int len = helper->rng()%6 + 5;
-        char text[len+1];
-
-        // make a string of arbitrary characters
-        for (int i = 0; i < len; i++) {
-            text[i] = randomChar();
-        }   
-        // then null terminate it
-        text[len] = '\0';
-
-        caption = string(text);
-        generateTextPatch(text_surface,caption,height,width,text_color,distract);
+    if (helper->rndProbUnder(getParam("digit_prob"))) {
+        caption = "";
+        int digit_len = int(ceil(1/digit_len_gen()));
+        int max_len = int(getParam("digit_len_max"));
+        if (digit_len>max_len) digit_len=max_len;
+        for (int i = 0; i < digit_len; i++) {
+            caption+=randomDigit();
+        }
+    } else {
+        if(sampleCaptions_->size() != 0){
+            // if there are sample captions, select one randomly and generate text
+            caption = sampleCaptions_->at(helper->rng() % sampleCaptions_->size());
+        } else {
+            caption = "MapTextSynthesizer";
+        }
     }
+    cout << "generating text patch" << endl;
+    generateTextPatch(text_surface,caption,height,width,text_color,distract);
 }
 
 
 char
 MTS_TextHelper::randomChar() {
     // string containing available characters to select
-    string total("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    string total("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,'");
     return total.at(helper->rng()%(total.length()));
 }
 
+char
+MTS_TextHelper::randomDigit() {
+    // string containing available digits
+    string total("0123456789");
+    return total.at(helper->rng()%(total.length()));
+}
 
 void
 MTS_TextHelper::distractText (cairo_t *cr, int width, int height, char *font) {
