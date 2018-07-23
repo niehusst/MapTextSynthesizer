@@ -3,7 +3,7 @@ IDIR=../include/text/
 
 # Compiler, flags, and packages
 CXX=g++
-CXXFLAGS=`pkg-config --cflags --libs pangocairo glib-2.0 opencv` -g -Wall -std=c++11
+CXXFLAGS=`pkg-config --cflags --libs pangocairo glib-2.0 opencv` -g -Wall -std=c++11 -fPIC
 CPPFLAGS=-I. -I$(IDIR)
 
 # Link libraries
@@ -21,12 +21,13 @@ OBJECTS=$(SOURCES:.cpp=.o)
 #all: ${TARGETS}
 # explicitly compile each file
 
-EXECUTABLE=a.out
+EXECUTABLE=mts.so
 
 all: $(SOURCES) $(EXECUTABLE)
 
+# Produce a .so (shared object) file
 $(EXECUTABLE): $(OBJECTS) 
-		$(CXX) $(LDLIBS) $(OBJECTS) -o $@
+		$(CXX) $(LDLIBS) -shared $(OBJECTS) -o $@
 
 .cpp.o:
 		$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< -o $@
