@@ -44,7 +44,6 @@ MTS_Utilities::MTS_Utilities(){
 
 
 void MTS_Utilities::parse(std::shared_ptr<std::unordered_map<std::string, double> > parameter_map, std::string filename) {
-  //cout << "in parse" << endl;
 
   std::string delimiter = "=";
 
