@@ -72,7 +72,7 @@ class CV_EXPORTS_W MapTextSynthesizer{
          * sample - the resulting text sample.
          */
         CV_WRAP virtual void 
-            generateSample (CV_OUT String &caption, CV_OUT Mat& sample) = 0;
+            generateSample (CV_OUT String &caption, CV_OUT Mat &sample, CV_OUT int &actual_height) = 0;
 
         /*
          * A Helper method for users to easily read lines from a file

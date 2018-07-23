@@ -120,7 +120,7 @@ class MTSImplementation: public MapTextSynthesizer{
         void setSampleCaptions(std::vector<String>& words);
         void setSampleCaptions(string caption_file);
 
-        void generateSample(CV_OUT String &caption, CV_OUT Mat & sample);
+        void generateSample(CV_OUT String &caption, CV_OUT Mat &sample, CV_OUT int &actual_height);
 };
 
 #endif

@@ -55,10 +55,11 @@ def guiLoop():
     k=''
     while ord('q')!=k:
         if pause<500:
-            [caption, [h,w,img_data]] = s.generateSample()
+            [caption, [h,w,img_data], actual_h] = s.generateSample()
             img = np.reshape(np.fromiter(img_data, np.uint8),(h,w))
             cv2.imshow('Text Synthesizer Demo',img)
             print caption
+            print "actual: ", actual_h
         k=cv2.waitKey(pause+1)
 
 # Main Programm

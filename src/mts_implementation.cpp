@@ -240,7 +240,7 @@ void MTSImplementation::setSampleCaptions(string caption_file){
     setSampleCaptions(captions);
 }
 
-void MTSImplementation::generateSample(CV_OUT String &caption, CV_OUT Mat & sample){
+void MTSImplementation::generateSample(CV_OUT String &caption, CV_OUT Mat &sample, CV_OUT int &actual_height){
 
     //cout << "start generate sample" << endl;
     std::vector<BGFeature> bg_features;
@@ -267,6 +267,7 @@ void MTSImplementation::generateSample(CV_OUT String &caption, CV_OUT Mat & samp
     int height_min = (int)getParam("height_min");
     int height_max = (int)getParam("height_max");
     height = (helper->rng()%(height_max-height_min+1))+height_min;
+    actual_height = height;
 
     string text;
     //cout << "generating text sample" << endl;
@@ -303,11 +304,12 @@ void MTSImplementation::generateSample(CV_OUT String &caption, CV_OUT Mat & samp
     }
 
     Mat sample_uchar = Mat(height,width,CV_8UC1,Scalar_<uchar>(0,0,0));
+    Mat sample_float = Mat(height,width,CV_32FC1,Scalar_<float>(0,0,0));
 
     // convert cairo image to openCV Mat object
     cairoToMat(bg_surface, sample_uchar);
-    sample = Mat(height, width, CV_32FC1);
-    sample_uchar.convertTo(sample, CV_32FC1, 1.0/255.0);
+
+    sample_uchar.convertTo(sample_float, CV_32FC1, 1.0/255.0);
 
     // clean up cairo objects
     cairo_destroy(cr);
@@ -315,9 +317,21 @@ void MTSImplementation::generateSample(CV_OUT String &caption, CV_OUT Mat & samp
     cairo_surface_destroy(bg_surface);
 
     // add image smoothing using blur and noise
-    addGaussianNoise(sample);
-    addGaussianBlur(sample);
+    addGaussianNoise(sample_float);
+    addGaussianBlur(sample_float);
 
-    sample.convertTo(sample_uchar, CV_8UC1, 255.0);
-    sample = sample_uchar;
+    bool zero_padding = true;
+    if (getParam("zero_padding")==0) zero_padding = false;
+
+    if (!zero_padding) {
+        sample = Mat(height,width,CV_8UC1,Scalar_<uchar>(0,0,0));
+    } else {
+        int height_max = int(getParam("height_max"));
+        sample = Mat(height_max,width,CV_8UC1,Scalar_<uchar>(0,0,0));
+    }
+
+    sample_float.convertTo(sample_uchar, CV_8UC1, 255.0);
+
+    Mat sample_roi = sample(Rect(0, 0, width, height));
+    sample_uchar.copyTo(sample_roi);
 }

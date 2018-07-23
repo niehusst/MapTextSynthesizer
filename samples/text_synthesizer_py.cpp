@@ -89,7 +89,8 @@ class mts_wrapper {
 
             String caption;
             Mat sample;
-            mts->generateSample(caption, sample);
+            int actual_h;
+            mts->generateSample(caption, sample, actual_h);
             
 
             int height = sample.rows;
@@ -108,7 +109,7 @@ class mts_wrapper {
             //auto image_data = boost::python::make_tuple(height, width, image_arr);
             //Mat py_image(np_sample);
 
-            return boost::python::make_tuple(py_caption, image_data);
+            return boost::python::make_tuple(py_caption, image_data, actual_h);
         }
 };
 
