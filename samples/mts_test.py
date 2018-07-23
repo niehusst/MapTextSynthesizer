@@ -1,6 +1,5 @@
 import numpy as np
 import mtsynth
-import cv2
 import time
 
 def read_words(words_file):

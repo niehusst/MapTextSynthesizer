@@ -1,7 +1,7 @@
 #include <boost/python.hpp>
 #include <boost/python/numpy.hpp>
 #include <boost/python/numpy/ndarray.hpp>
-#include <map_text_synthesizer.hpp>
+#include <mtsynth/map_text_synthesizer.hpp>
 #include <vector>
 #include <string>
 
@@ -11,7 +11,7 @@ typedef std::vector<cv::String> py_vec;
 class mts_wrapper {
     public:
 
-        shared_ptr<MapTextSynthesizer> mts;
+        cv::Ptr<MapTextSynthesizer> mts;
 
         mts_wrapper() {
             this->mts = MapTextSynthesizer::create();

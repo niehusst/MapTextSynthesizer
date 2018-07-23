@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import cv2
+import mtsynth
 import sys
 import numpy as np
 
@@ -13,7 +12,7 @@ blocky_fonts=['MathJax_Fraktur','eufm10']
 regular_fonts=['cmmi10','Sans','Serif']
 cursive_fonts=['URW Chancery L']
         
-s=cv2.text.MapTextSynthesizer_create()
+s = mtsynth.MapTextSynthesizer()
 pause=200
 
 # GUI Callsback functions
@@ -64,8 +63,9 @@ def guiLoop():
     k=''
     while ord('q')!=k:
         if pause<500:
-            caption,mat=s.generateSample()
-            cv2.imshow('Text Synthesizer Demo',mat)
+            [caption, [h,w,img_data]] = s.generateSample()
+            img = np.reshape(np.fromiter(img_data, np.uint8),(h,w))
+            cv2.imshow('Text Synthesizer Demo',img)
             print caption
         k=cv2.waitKey(pause+1)
 
