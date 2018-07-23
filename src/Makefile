@@ -3,7 +3,7 @@ IDIR=../include/text/
 
 # Compiler, flags, and packages
 CXX=g++
-CXXFLAGS=`pkg-config --cflags --libs pangocairo glib-2.0 opencv` -g -Wall
+CXXFLAGS=`pkg-config --cflags --libs pangocairo glib-2.0 opencv` -g -Wall -std=c++11
 CPPFLAGS=-I. -I$(IDIR)
 
 # Link libraries
@@ -14,39 +14,22 @@ LDLIBS := $(addprefix -l, $(LIBS))
 # Ensure Unix shell
 SHELL=/bin/bash
 
-# Source files
-SOURCES := $(wildcard *.cpp)
-# Target files
-TARGETS := $(basename ${SOURCES})
+# Source and object files
+SOURCES=main.cpp map_text_synthesizer.cpp mts_basehelper.cpp mts_bghelper.cpp mts_implementation.cpp mts_texthelper.cpp mts_utilities.cpp
+OBJECTS=$(SOURCES:.cpp=.o)
 
 #all: ${TARGETS}
+# explicitly compile each file
 
-# 
-all:  main
+EXECUTABLE=a.out
 
-main:  main.o map_text_synthesizer.o mts_utilities.o mts_basehelper.o mst_implementation.o mts_bghelper.o mts_texthelper.o
-		$(CXX) $(LDLIBS) -o $@ $^
+all: $(SOURCES) $(EXECUTABLE)
 
-main.o:  main.cpp map_text_synthesizer.hpp
-		$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $<
+$(EXECUTABLE): $(OBJECTS) 
+		$(CXX) $(LDLIBS) $(OBJECTS) -o $@
 
-map_text_synthesizer.o:  map_text_synthesizer.cpp map_text_synthesizer.hpp mts_implementation.hpp
-		$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $<
-
-mts_utilities.o:  mts_utilities.cpp mts_utilities.hpp
-		$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $<
-
-mts_basehelper.o:  mts_basehelper.cpp mts_basehelper.hpp
-		$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $<
-
-mts_implementation.o:  mts_implementation.cpp mts_implementation.hpp map_text_synthesizer.hpp mts_utilities.hpp mts_basehelper.hpp mts_texthelper.hpp mts_bghelper.hpp
-		$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $<
-
-mts_bghelper.o:  mts_bghelper.cpp mts_bghelper.hpp mts_basehelper.hpp
-		$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $<
-
-mts_texthelper.o:  mts_texthelper.cpp mts_texthelper.hpp
-		$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $<
+.cpp.o:
+		$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
 clean:
 		rm -f ${TARGETS} *~
