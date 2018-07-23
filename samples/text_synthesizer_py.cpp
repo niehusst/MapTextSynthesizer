@@ -14,7 +14,7 @@ class mts_wrapper {
         cv::Ptr<MapTextSynthesizer> mts;
 
         mts_wrapper() {
-            this->mts = MapTextSynthesizer::create();
+            this->mts = MapTextSynthesizer::create("config.txt");
         }
 
         static std::vector<cv::String> list_to_vec(boost::python::list words) {

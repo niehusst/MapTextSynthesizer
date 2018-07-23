@@ -5,8 +5,8 @@ using namespace std;
 
 MapTextSynthesizer::MapTextSynthesizer(){}
 
-Ptr<MapTextSynthesizer> MapTextSynthesizer::create(){
-    Ptr<MapTextSynthesizer> mts(new MTSImplementation());
+Ptr<MapTextSynthesizer> MapTextSynthesizer::create(string config_file){
+    Ptr<MapTextSynthesizer> mts(new MTSImplementation(config_file));
     return mts;
 }
 /*

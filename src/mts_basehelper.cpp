@@ -16,9 +16,9 @@ using boost::random::mt19937;
 
 // SEE mts_basehelper.hpp FOR ALL DOCUMENTATION
 
-MTS_BaseHelper::MTS_BaseHelper(shared_ptr<unordered_map<string, double> > params){
+MTS_BaseHelper::MTS_BaseHelper(unordered_map<string, double> params){
     this->params = params;
-    cout << "param number " << this->params->size() << endl;
+    cout << "param number " << this->params.size() << endl;
 }
 
 MTS_BaseHelper::~MTS_BaseHelper(){
@@ -26,10 +26,10 @@ MTS_BaseHelper::~MTS_BaseHelper(){
 }
 
 double MTS_BaseHelper::getParam(string key) {
-    return this->params->find(key)->second;
+    return this->params.find(key)->second;
 }
 
-void MTS_BaseHelper::setParams(shared_ptr<unordered_map<string, double> > params) {
+void MTS_BaseHelper::setParams(unordered_map<string, double> params) {
     this->params = params;
 }
 

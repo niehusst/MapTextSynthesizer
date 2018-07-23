@@ -1,6 +1,7 @@
 #ifndef MAP_TEXT_SYNTHESIZER_HPP
 #define MAP_TEXT_SYNTHESIZER_HPP
 
+#include <string>
 #include <opencv2/opencv.hpp>
 
 using namespace std;
@@ -67,7 +68,7 @@ class CV_EXPORTS_W MapTextSynthesizer{
          */
         CV_WRAP static Ptr<MapTextSynthesizer> 
         //CV_WRAP static MapTextSynthesizer* 
-            create();
+            create(string config_file);
 
         /*
          * The destructor for the MapTextSynthesizer class 

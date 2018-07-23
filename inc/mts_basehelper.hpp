@@ -144,7 +144,7 @@ class MTS_BaseHelper {
         RNG rng_;
 
         //All parameters
-        shared_ptr<unordered_map<string, double> > params;
+        unordered_map<string, double> params;
 
     public://----------------------- PUBLIC METHODS --------------------------
 
@@ -294,7 +294,7 @@ class MTS_BaseHelper {
         mt19937 rng2_;
 
         //Constructor
-        MTS_BaseHelper(shared_ptr<unordered_map<string, double> > params);
+        MTS_BaseHelper(unordered_map<string, double> params);
 
         //Destructor
         ~MTS_BaseHelper();
@@ -307,7 +307,7 @@ class MTS_BaseHelper {
          *
          * params - a map from the name of the value to the value
          */
-        void setParams(shared_ptr<unordered_map<string, double> > params);
+        void setParams(unordered_map<string, double> params);
 
 
         /*

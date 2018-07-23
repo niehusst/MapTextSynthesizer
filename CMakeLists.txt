@@ -13,7 +13,6 @@ add_library(mtsynth SHARED
     src/mts_bghelper.cpp
     src/mts_implementation.cpp
     src/mts_texthelper.cpp
-    src/mts_utilities.cpp
     )
 
 set_target_properties(mtsynth PROPERTIES

@@ -16,6 +16,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <unordered_map>
 
 // Pango/cairo includes
 #include <glib.h>
@@ -31,6 +32,52 @@ using boost::random::variate_generator;
 double MTSImplementation::getParam(string key) {
     double val = helper->getParam(key);
     return val;
+}
+
+unordered_map<string, double> MTSImplementation::parseConfig(string filename) {
+
+    unordered_map<string, double> params = unordered_map<string, double>();
+
+    string delimiter = "=";
+
+    // open file
+    ifstream infile(filename);
+    CV_Assert(infile.is_open());
+
+    string line, key, value;
+    double val;
+
+    // parse file line by line
+    while (getline(infile, line)) {
+        // if line is empty or is a comment, erase it
+        size_t com_pos = line.find("//");
+        if (com_pos != line.npos) {
+            line.erase(com_pos);
+        }
+        if (line.length()==0) {
+            continue;
+        }
+        size_t pos = line.find(delimiter);
+        CV_Assert(pos != line.npos);
+
+        key = line.substr(0, pos);
+        value = line.substr(pos+1, line.npos-pos);
+        char * err_flag;
+        val = strtod(value.c_str(), &err_flag);
+
+        // check if strtod produced error in casting
+        if (value.c_str() == err_flag && val == 0) { 
+            // tell user there was an error at this point and exit failure
+            cout << "An unparseable value was encountered for variable "
+                << key <<".\nPlease enter a valid number.\n";
+            exit(1);
+        }
+        params.insert(pair<string, double>(key, val));
+
+    }   
+    // close file
+    infile.close();
+    return params;
 }
 
 void MTSImplementation::cairoToMat(cairo_surface_t *surface,Mat &mat) {
@@ -94,7 +141,7 @@ void MTSImplementation::updateFontNameList(std::vector<String>& fntList) {
     free (families);
 }
 
-MTSImplementation::MTSImplementation()
+MTSImplementation::MTSImplementation(string config_file)
     : MapTextSynthesizer(),  // initialize class fields
     fonts_{(&(this->blockyFonts_)),
         (&(this->regularFonts_)),
@@ -104,8 +151,7 @@ MTSImplementation::MTSImplementation()
         std::shared_ptr<std::vector<String> >(&(this->regularFonts_)),
         std::shared_ptr<std::vector<String> >(&(this->cursiveFonts_))},
         */
-        utils(),
-        helper(make_shared<MTS_BaseHelper>(MTS_BaseHelper(utils.params))),
+        helper(make_shared<MTS_BaseHelper>(MTS_BaseHelper(parseConfig(config_file)))),
         th(helper),
         bh(helper),
         noise_dist(getParam("noise_sigma_alpha"),

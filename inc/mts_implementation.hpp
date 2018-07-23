@@ -1,6 +1,8 @@
 #ifndef MTS_IMPLEMENTATION_HPP
 #define MTS_IMPLEMENTATION_HPP
 
+#include <string>
+
 // pango/cairo includes
 #include <glib.h>
 #include <pango/pangocairo.h>
@@ -10,7 +12,6 @@
 
 // our method includes
 #include "mtsynth/map_text_synthesizer.hpp"
-#include "mts_utilities.hpp"
 #include "mts_basehelper.hpp"
 #include "mts_texthelper.hpp"
 #include "mts_bghelper.hpp"
@@ -29,6 +30,14 @@ class MTSImplementation: public MapTextSynthesizer{
          * key - key in hashmap constructed from config.txt
          */
         double getParam(string key);
+
+        /*
+         * Parses a text file for variable names and values, using '='
+         * as the delimeter, and places the data into parameter_map.
+         *
+         * filename - the name of the file to parse for values
+         */
+        static unordered_map<string, double> parseConfig(string filename);
 
         /* Converts cairo surface to mat object in opencv
          *
@@ -81,8 +90,6 @@ class MTSImplementation: public MapTextSynthesizer{
         /* The list of captions to sample from.*/
         std::vector<String> sampleCaptions_ = std::vector<String>();
 
-        MTS_Utilities utils;
-
         shared_ptr<MTS_BaseHelper> helper;
         MTS_TextHelper th;
         MTS_BackgroundHelper bh;
@@ -94,7 +101,7 @@ class MTSImplementation: public MapTextSynthesizer{
     public:
 
         /* Constructor */
-        MTSImplementation();
+        MTSImplementation(string config_file);
 
         /* Destructor */
         ~MTSImplementation();
