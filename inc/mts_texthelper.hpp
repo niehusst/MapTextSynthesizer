@@ -24,10 +24,10 @@ class MTS_TextHelper {
     private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
 
         /* See MapTextSynthesizer class for the documentation*/
-        //std::shared_ptr<std::vector<String> > *fonts_;
-        std::vector<String> **fonts_;
-        //std::shared_ptr<std::vector<String> > sampleCaptions_;
-        std::vector<String> *sampleCaptions_;
+        //std::shared_ptr<std::vector<string> > *fonts_;
+        std::vector<string> **fonts_;
+        //std::shared_ptr<std::vector<string> > sampleCaptions_;
+        std::vector<string> *sampleCaptions_;
 
         /* Generator for the spacing degree */
         beta_distribution<> spacing_dist;
@@ -145,8 +145,8 @@ class MTS_TextHelper {
          * data - an array of vectors of strings that are font names
          */
         void
-            //setFonts(std::shared_ptr<std::vector<String> > *data);
-            setFonts(std::vector<String> **data);
+            //setFonts(std::shared_ptr<std::vector<string> > *data);
+            setFonts(std::vector<string> **data);
 
 
         /*
@@ -155,8 +155,8 @@ class MTS_TextHelper {
          * data - a vector of strings containing words to be displayed
          */
         void
-            //setSampleCaptions(std::shared_ptr<std::vector<String> > data);
-            setSampleCaptions(std::vector<String> *data);
+            //setSampleCaptions(std::shared_ptr<std::vector<string> > data);
+            setSampleCaptions(std::vector<string> *data);
 
 
         /*

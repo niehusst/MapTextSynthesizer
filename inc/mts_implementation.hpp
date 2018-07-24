@@ -69,26 +69,26 @@ class MTSImplementation: public MapTextSynthesizer{
          * Base of this method from Ben K. Bullock at
          * url: https://www.lemoda.net/pango/list-fonts/index.html
          */
-        void updateFontNameList(std::vector<String>& font_list);
+        void updateFontNameList(std::vector<string>& font_list);
 
         /* The list of blocky font names set by user. */
-        std::vector<String> blockyFonts_ = std::vector<String>();
+        std::vector<string> blockyFonts_ = std::vector<string>();
 
         /* The list of regular font names set by user. */
-        std::vector<String> regularFonts_ = std::vector<String>();
+        std::vector<string> regularFonts_ = std::vector<string>();
 
         /* The list of cursive font names set by user. */
-        std::vector<String> cursiveFonts_ = std::vector<String>();
+        std::vector<string> cursiveFonts_ = std::vector<string>();
 
         /* The list of available system font names. */
-        std::vector<String> availableFonts_ = std::vector<String>();
+        std::vector<string> availableFonts_ = std::vector<string>();
 
         /* Pointers pointing to blocky, regular, cursive font lists. */
-        //std::shared_ptr<std::vector<String> > fonts_[3];
-        std::vector<String>* fonts_[3];
+        //std::shared_ptr<std::vector<string> > fonts_[3];
+        std::vector<string>* fonts_[3];
 
         /* The list of captions to sample from.*/
-        std::vector<String> sampleCaptions_ = std::vector<String>();
+        std::vector<string> sampleCaptions_ = std::vector<string>();
 
         shared_ptr<MTS_BaseHelper> helper;
         MTS_TextHelper th;
@@ -108,19 +108,19 @@ class MTSImplementation: public MapTextSynthesizer{
 
         /* See MapTextSynthesizer for documentations.*/
 
-        void setBlockyFonts(std::vector<String>& font_list);
+        void setBlockyFonts(std::vector<string>& font_list);
         void setBlockyFonts(string font_file);
 
-        void setRegularFonts(std::vector<String>& font_list);
+        void setRegularFonts(std::vector<string>& font_list);
         void setRegularFonts(string font_file);
 
-        void setCursiveFonts(std::vector<String>& font_list);
+        void setCursiveFonts(std::vector<string>& font_list);
         void setCursiveFonts(string font_file);
 
-        void setSampleCaptions(std::vector<String>& words);
+        void setSampleCaptions(std::vector<string>& words);
         void setSampleCaptions(string caption_file);
 
-        void generateSample(CV_OUT String &caption, CV_OUT Mat &sample, CV_OUT int &actual_height);
+        void generateSample(CV_OUT string &caption, CV_OUT Mat &sample, CV_OUT int &actual_height);
 };
 
 #endif

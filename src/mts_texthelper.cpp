@@ -486,14 +486,14 @@ MTS_TextHelper::distractText (cairo_t *cr, int width, int height, char *font) {
 
 
 void
-//MTS_TextHelper::setFonts(std::shared_ptr<std::vector<String> > *data) {
-MTS_TextHelper::setFonts(std::vector<String> **data) {
+//MTS_TextHelper::setFonts(std::shared_ptr<std::vector<string> > *data) {
+MTS_TextHelper::setFonts(std::vector<string> **data) {
     fonts_ = data;
 }
 
 
 void
-//MTS_TextHelper::setSampleCaptions(std::shared_ptr<std::vector<String> > data) {
-MTS_TextHelper::setSampleCaptions(std::vector<String> *data) {
+//MTS_TextHelper::setSampleCaptions(std::shared_ptr<std::vector<string> > data) {
+MTS_TextHelper::setSampleCaptions(std::vector<string> *data) {
     sampleCaptions_ = data;
 }

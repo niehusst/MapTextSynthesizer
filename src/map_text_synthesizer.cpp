@@ -10,14 +10,14 @@ using namespace std;
 
 MapTextSynthesizer::MapTextSynthesizer(){}
 
-vector<String> MapTextSynthesizer::readLines(string filename) {
-    vector<String> lines;
+vector<string> MapTextSynthesizer::readLines(string filename) {
+    vector<string> lines;
     ifstream infile(filename);
     CV_Assert(infile.is_open());
 
     string line;
     while (std::getline(infile, line)) {   
-        lines.push_back(String(line));
+        lines.push_back(string(line));
     }
     return lines;
 }

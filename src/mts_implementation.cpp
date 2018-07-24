@@ -119,7 +119,7 @@ void MTSImplementation::addGaussianBlur(Mat& out) {
     GaussianBlur(out,out,Size(ker_size,ker_size),0,0,BORDER_REFLECT_101);
 }
 
-void MTSImplementation::updateFontNameList(std::vector<String>& font_list) {
+void MTSImplementation::updateFontNameList(std::vector<string>& font_list) {
     // clear existing fonts for a fresh load of available fonts
     font_list.clear(); 
 
@@ -135,7 +135,7 @@ void MTSImplementation::updateFontNameList(std::vector<String>& font_list) {
         PangoFontFamily * family = families[k];
         const char * family_name;
         family_name = pango_font_family_get_name (family);
-        font_list.push_back(String(family_name));
+        font_list.push_back(string(family_name));
     }   
     // clean up
     free (families);
@@ -147,9 +147,9 @@ MTSImplementation::MTSImplementation(string config_file)
         (&(this->regularFonts_)),
         (&(this->cursiveFonts_))},
         /*
-    fonts_{std::shared_ptr<std::vector<String> >(&(this->blockyFonts_)),
-        std::shared_ptr<std::vector<String> >(&(this->regularFonts_)),
-        std::shared_ptr<std::vector<String> >(&(this->cursiveFonts_))},
+    fonts_{std::shared_ptr<std::vector<string> >(&(this->blockyFonts_)),
+        std::shared_ptr<std::vector<string> >(&(this->regularFonts_)),
+        std::shared_ptr<std::vector<string> >(&(this->cursiveFonts_))},
         */
         helper(make_shared<MTS_BaseHelper>(MTS_BaseHelper(parseConfig(config_file)))),
         th(helper),
@@ -169,7 +169,7 @@ MTSImplementation::MTSImplementation(string config_file)
 
     //set required fields for TextHelper instance (th)
     th.setFonts(fonts_);
-    //th.setSampleCaptions(std::shared_ptr<std::vector<String> >(&(sampleCaptions_)));
+    //th.setSampleCaptions(std::shared_ptr<std::vector<string> >(&(sampleCaptions_)));
     th.setSampleCaptions(&(sampleCaptions_));
 }
 
@@ -177,8 +177,8 @@ MTSImplementation::~MTSImplementation() {
     cout << "impl destructed" << endl;
 }
 
-void MTSImplementation::setBlockyFonts(std::vector<String>& font_list){
-    std::vector<String> availableList=this->availableFonts_;
+void MTSImplementation::setBlockyFonts(std::vector<string>& font_list){
+    std::vector<string> availableList=this->availableFonts_;
 
     // loop through fonts in availableFonts_ to check if the system 
     // contains every font in the font_list
@@ -191,12 +191,12 @@ void MTSImplementation::setBlockyFonts(std::vector<String>& font_list){
 }
 
 void MTSImplementation::setBlockyFonts(string font_file){
-    std::vector<String> fonts = MapTextSynthesizer::readLines(font_file);
+    std::vector<string> fonts = MapTextSynthesizer::readLines(font_file);
     setBlockyFonts(fonts);
 }
 
-void MTSImplementation::setRegularFonts(std::vector<String>& font_list){
-    std::vector<String> availableList=this->availableFonts_;
+void MTSImplementation::setRegularFonts(std::vector<string>& font_list){
+    std::vector<string> availableList=this->availableFonts_;
 
     // loop through fonts in availableFonts_ to check if the system 
     // contains every font in the font_list
@@ -209,12 +209,12 @@ void MTSImplementation::setRegularFonts(std::vector<String>& font_list){
 }
 
 void MTSImplementation::setRegularFonts(string font_file){
-    std::vector<String> fonts = MapTextSynthesizer::readLines(font_file);
+    std::vector<string> fonts = MapTextSynthesizer::readLines(font_file);
     setRegularFonts(fonts);
 }
 
-void MTSImplementation::setCursiveFonts(std::vector<String>& font_list){
-    std::vector<String> availableList=this->availableFonts_;
+void MTSImplementation::setCursiveFonts(std::vector<string>& font_list){
+    std::vector<string> availableList=this->availableFonts_;
 
     // loop through fonts in availableFonts_ to check if the system 
     // contains every font in the font_list
@@ -227,20 +227,20 @@ void MTSImplementation::setCursiveFonts(std::vector<String>& font_list){
 }
 
 void MTSImplementation::setCursiveFonts(string font_file){
-    std::vector<String> fonts = MapTextSynthesizer::readLines(font_file);
+    std::vector<string> fonts = MapTextSynthesizer::readLines(font_file);
     setCursiveFonts(fonts);
 }
 
-void MTSImplementation::setSampleCaptions(std::vector<String>& words) {
+void MTSImplementation::setSampleCaptions(std::vector<string>& words) {
     this->sampleCaptions_.assign(words.begin(),words.end());
 }
 
 void MTSImplementation::setSampleCaptions(string caption_file){
-    std::vector<String> captions = MapTextSynthesizer::readLines(caption_file);
+    std::vector<string> captions = MapTextSynthesizer::readLines(caption_file);
     setSampleCaptions(captions);
 }
 
-void MTSImplementation::generateSample(CV_OUT String &caption, CV_OUT Mat &sample, CV_OUT int &actual_height){
+void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sample, CV_OUT int &actual_height){
 
     //cout << "start generate sample" << endl;
     std::vector<BGFeature> bg_features;
@@ -279,7 +279,7 @@ void MTSImplementation::generateSample(CV_OUT String &caption, CV_OUT Mat &sampl
         // dont generate distractor text
         th.generateTextSample(text,text_surface,height,width,text_color,false);
     }
-    caption = String(text);
+    caption = string(text);
 
     //cout << "generating bg sample" << endl;
     cout << "bg feature num " << bg_features.size() << endl; 

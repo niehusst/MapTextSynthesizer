@@ -26,7 +26,7 @@ class CV_EXPORTS_W MapTextSynthesizer{
          * font_list - a list of fonts contained in a vector
          */
         CV_WRAP virtual void 
-            setBlockyFonts(std::vector<String>& font_list) = 0;
+            setBlockyFonts(std::vector<string>& font_list) = 0;
 
         CV_WRAP virtual void 
             setBlockyFonts(string font_file) = 0;
@@ -37,7 +37,7 @@ class CV_EXPORTS_W MapTextSynthesizer{
          * font_list - a list of fonts contained in a vector
          */
         CV_WRAP virtual void 
-            setRegularFonts(std::vector<String>& font_list) = 0;
+            setRegularFonts(std::vector<string>& font_list) = 0;
 
         CV_WRAP virtual void 
             setRegularFonts(string font_file) = 0;
@@ -48,7 +48,7 @@ class CV_EXPORTS_W MapTextSynthesizer{
          * font_list - a list of fonts contained in a vector
          */
         CV_WRAP virtual void 
-            setCursiveFonts(std::vector<String>& font_list) = 0;
+            setCursiveFonts(std::vector<string>& font_list) = 0;
 
         CV_WRAP virtual void 
             setCursiveFonts(string font_file) = 0;
@@ -59,7 +59,7 @@ class CV_EXPORTS_W MapTextSynthesizer{
          * words - a list of strings to be sampled
          */
         CV_WRAP virtual void 
-            setSampleCaptions(std::vector<String>& words) = 0;
+            setSampleCaptions(std::vector<string>& words) = 0;
 
         CV_WRAP virtual void 
             setSampleCaptions(string caption_file) = 0;
@@ -72,14 +72,14 @@ class CV_EXPORTS_W MapTextSynthesizer{
          * sample - the resulting text sample.
          */
         CV_WRAP virtual void 
-            generateSample (CV_OUT String &caption, CV_OUT Mat &sample, CV_OUT int &actual_height) = 0;
+            generateSample (CV_OUT string &caption, CV_OUT Mat &sample, CV_OUT int &actual_height) = 0;
 
         /*
          * A Helper method for users to easily read lines from a file
          *
          * filename - the path to the file. 
          */
-        CV_WRAP static vector<String> 
+        CV_WRAP static vector<string> 
             readLines(string filename);
         /*
          * A wrapper for the protected MapTextSynthesizer constructor.

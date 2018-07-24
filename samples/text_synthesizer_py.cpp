@@ -17,10 +17,10 @@ class mts_wrapper {
             this->mts = MapTextSynthesizer::create("config.txt");
         }
 
-        static std::vector<cv::String> list_to_vec(boost::python::list words) {
-            std::vector<cv::String> vec;
+        static std::vector<string> list_to_vec(boost::python::list words) {
+            std::vector<string> vec;
             for (int i=0; i<len(words); i++) {
-                vec.push_back(cv::String(boost::python::extract<string>(words[i])));
+                vec.push_back(string(boost::python::extract<string>(words[i])));
             }
             return vec;
         }
@@ -87,7 +87,7 @@ class mts_wrapper {
 	    boost::python::numpy::ndarray image_arr = boost::python::numpy::from_data(data, dt, shape, stride, own);
 	  */
 
-            String caption;
+            string caption;
             Mat sample;
             int actual_h;
             mts->generateSample(caption, sample, actual_h);
