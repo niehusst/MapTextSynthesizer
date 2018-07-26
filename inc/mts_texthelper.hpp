@@ -1,18 +1,18 @@
 #ifndef MTS_TEXTHELPER_HPP
 #define MTS_TEXTHELPER_HPP
 
+#include <pango/pangocairo.h>
+#include <opencv2/opencv.hpp>
+
 #include <vector>
 #include <string>
 #include <memory>
 
-#include <pango/pangocairo.h>
-#include <opencv2/core/cvstd.hpp> // cv::String
-
 #include "mts_basehelper.hpp"
 
 using boost::random::beta_distribution;
+using boost::random::gamma_distribution;
 using boost::random::variate_generator;
-
 
 /*
  * A class to handle text transformation in vector space, and pango
@@ -21,9 +21,9 @@ using boost::random::variate_generator;
 class MTS_TextHelper {
 private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
 
-  /* See MapTextSynthesizer class for the documentation*/
-  std::shared_ptr<std::vector<cv::String> > *fonts_;
-  std::shared_ptr<std::vector<cv::String> > sampleCaptions_;
+        /* See MapTextSynthesizer class for the documentation*/
+  std::vector<std::string> **fonts_;
+  std::vector<std::string> *sampleCaptions_;
 
   /* Generator for the spacing degree */
   beta_distribution<> spacing_dist;
@@ -33,15 +33,25 @@ private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
   beta_distribution<> stretch_dist;
   variate_generator<mt19937, beta_distribution<> > stretch_gen;
 
+  /* Generator for the digit length*/
+  gamma_distribution<> digit_len_dist;
+  variate_generator<mt19937, gamma_distribution<> > digit_len_gen;
+
   /* Returns the value of the parameter given key */
   double
   getParam(std::string key);
 
   /*
-   * Returns a random latin character or numeral
+   * Returns a random latin character or numeral or punctuation
    */
   char
   randomChar();
+
+  /*
+   * Returns a random digit
+   */
+  char
+  randomDigit();
 
   /*
    * Generates distractor text with random size and rotation to appear
@@ -97,8 +107,7 @@ private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
    * size - the size of the text
    */
   void
-  getTextExtents(PangoLayout *layout, PangoFontDescription *desc, int &x, 
-                 int &y, int &w, int &h, int &size);
+  getTextExtents(PangoLayout *layout, PangoFontDescription *desc, int &x, int &y, int &w, int &h, int &size);
 
   /*
    * Generates a text image without background
@@ -117,11 +126,14 @@ private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
 
 public:// --------------------- PUBLIC METHODS -------------------------------
 
-  /* The base helper */
-  std::shared_ptr<MTS_BaseHelper> helper;
+  /* The base helper instance */
+  MTS_BaseHelper* helper;
 
   /* Constructor */
   MTS_TextHelper(std::shared_ptr<MTS_BaseHelper> h);
+
+  /* Destructor */
+  ~MTS_TextHelper();
 
   /*
    * A setter method for the private fonts_ field
@@ -129,7 +141,7 @@ public:// --------------------- PUBLIC METHODS -------------------------------
    * data - an array of vectors of strings that are font names
    */
   void
-  setFonts(std::shared_ptr<std::vector<cv::String> > *data);
+  setFonts(std::vector<std::string> **data);
 
 
   /*
@@ -138,7 +150,7 @@ public:// --------------------- PUBLIC METHODS -------------------------------
    * data - a vector of strings containing words to be displayed
    */
   void
-  setSampleCaptions(std::shared_ptr<std::vector<cv::String> > data);
+  setSampleCaptions(std::vector<std::string> *data);
 
 
   /*
@@ -153,7 +165,7 @@ public:// --------------------- PUBLIC METHODS -------------------------------
    * distract - flag that dictates whether distractor text will be present
    */
   void 
-  generateTextSample(std::string &caption, cairo_surface_t *&text_surface, 
+  generateTextSample(std::string &caption, cairo_surface_t *&text_surface,
                      int height, int &width, int text_color, bool distract);
 
 };

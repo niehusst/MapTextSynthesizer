@@ -8,8 +8,7 @@
 #include <boost/random.hpp>
 
 #include <pango/pangocairo.h>
-
-#include <opencv2/core/core.hpp> //cv::RNG
+#include <opencv2/core/core.hpp> // cv::RNG
 
 using boost::random::mt19937;
 
@@ -21,6 +20,7 @@ enum BGFeature {Colordiff=0, Distracttext, Boundry, Colorblob,
 
 // rename pair of doubles for readability as coordinates (x,y)
 typedef std::pair<double, double> coords;
+
 
 ////////////// from Behdad's cairotwisted.c (required functions) /////////////
 typedef double parametrization_t;  
@@ -43,10 +43,10 @@ typedef void (*transform_point_func_t) (void *closure, double *x, double *y);
 class MTS_BaseHelper {
 private://----------------------- PRIVATE METHODS --------------------------
 
-  ////////////// from Behdad's cairotwisted.c (required functions) /////////////
+        ////////////// from Behdad's cairotwisted.c (required functions) /////////////
 
 
-  /* Returns Euclidean distance between two points */
+        /* Returns Euclidean distance between two points */
   double
   two_points_distance (cairo_path_data_t *a, 
                        cairo_path_data_t *b);
@@ -134,7 +134,7 @@ private://----------------------- PRIVATE METHODS --------------------------
    * radius - the radius of the curvature
    * width - width of the surface
    * height - height of the surface
-   * direction - a flag that tells whether the returned points will be along the 
+   * direction - a flag that tells whether the returned points will be along the
    *             top or bottom of the circle. true : top, false : bottom 
    */
   void 
@@ -144,7 +144,7 @@ private://----------------------- PRIVATE METHODS --------------------------
   cv::RNG rng_;
 
   //All parameters
-  std::shared_ptr<std::unordered_map<std::string, double> > params;
+  std::unordered_map<std::string, double> params;
 
 public://----------------------- PUBLIC METHODS --------------------------
 
@@ -155,17 +155,19 @@ public://----------------------- PUBLIC METHODS --------------------------
    *
    * cr - cairo context
    * c_min - the min range value for squared variable in the first cubic 
-   *        curving equation
+   *        curving equation (default: -2)
    * c_max - the max range value for squared variable in the first cubic 
-   *        curving equation
+   *        curving equation (default: 2)
    * d_min - the min range value for cubed variable in the first cubic 
-   *        curving equation
+   *        curving equation (default: -2)
    * d_max - the max range value for cubed variable in the first cubic 
-   *        curving equation
+   *        curving equation (default: 2)
    * points - a vector of x,y coordinate pairs 
    *          (precondition: must contain at least 2 elements)
    */
-  void points_to_path(cairo_t *cr, std::vector<coords> points, double c_min=-2, double c_max=2, double d_min=-2, double d_max=2);
+  void
+  points_to_path(cairo_t *cr, std::vector<coords> points, double c_min=-2,
+                 double c_max=2, double d_min=-2, double d_max=2);
 
 
   /*
@@ -176,10 +178,11 @@ public://----------------------- PUBLIC METHODS --------------------------
    * width - surface width in pixels
    * height - surface height in pixels
    * radius - the curve radius of the arc (precondition: radius >= 1/2 * width)
-   * direction - a flag that tells whether the returned points will be along the 
+   * direction - a flag that tells whether the returned points will be along the
    *             top or bottom of the circle. true : top, false : bottom 
    */
-  std::vector<coords> make_points_arc(double width, double height, double radius, bool direction);
+  std::vector<coords>
+  make_points_arc(double width, double height, double radius, bool direction);
 
   /*
    * Makes and returns a vector of x,y coordinate points for
@@ -192,7 +195,8 @@ public://----------------------- PUBLIC METHODS --------------------------
    * num_points - the number of points to push onto the vector 
    *              (minimum 3) (range 3-5 for least text distortion)
    */
-  std::vector<coords> make_points_wave(double width, double height, int num_points);
+  std::vector<coords> make_points_wave(double width, double height,
+                                       int num_points);
 
   /*
    * Iterativly translates each cairo movement stored in path and 
@@ -204,8 +208,9 @@ public://----------------------- PUBLIC METHODS --------------------------
    * xtrans - the translation distance in pixels in the x direction
    * ytrans - the translation distance in pixels in the y direction
    */
-  void manual_translate(cairo_t *cr, cairo_path_t *path, cairo_path_data_t *data, 
-                        double xtrans, double ytrans);
+  void
+  manual_translate(cairo_t *cr, cairo_path_t *path,
+                        cairo_path_data_t *data, double xtrans, double ytrans);
 
   /*
    * Creates an arc path that allows for text to be drawn along
@@ -225,7 +230,7 @@ public://----------------------- PUBLIC METHODS --------------------------
    *          (precondition: radius >= .5*width)
    * width - the width of the surface
    * height - the height of the surface
-   * direction - a flag that tells whether the returned points will be along the 
+   * direction - a flag that tells whether the returned points will be along the
    *             top or bottom of the circle. true : top, false : bottom 
    */
   void create_arc_path (cairo_t *cr, cairo_path_t *path, PangoLayoutLine *line, 
@@ -259,11 +264,12 @@ public://----------------------- PUBLIC METHODS --------------------------
    *        curving equation
    * d_max - the max range value for cubed variable in the first cubic 
    *        curving equation
-
    */
-  void create_curved_path (cairo_t *cr, cairo_path_t *path, PangoLayoutLine *line, 
-                           PangoLayout *layout, double width, double height, 
-                           double x, double y, int num_points, double c_min, double c_max, double d_min, double d_max);
+  void create_curved_path (cairo_t *cr, cairo_path_t *path,
+                           PangoLayoutLine *line, PangoLayout *layout,
+                           double width, double height, double x, double y,
+                           int num_points, double c_min, double c_max,
+                           double d_min, double d_max);
 
   /*
    * An overload for create_curved_path that allows for the points vector
@@ -281,12 +287,14 @@ public://----------------------- PUBLIC METHODS --------------------------
    *        curving equation
    * d_max - the max range value for cubed variable in the first cubic 
    *        curving equation
-
+   * stroke - an optional parameter that dictates whether or not the line is
+   *          stroked while drawing the path
    */
-  void create_curved_path (cairo_t *cr, cairo_path_t *path, PangoLayoutLine *line,
-                           PangoLayout *layout, double width, double height,
-                           double x, double y, std::vector<coords> points,
-                           double c_min, double c_max, double d_min, double d_max,
+  void create_curved_path (cairo_t *cr, cairo_path_t *path,
+                           PangoLayoutLine *line, PangoLayout *layout,
+                           double width, double height, double x, double y,
+                           std::vector<coords> points, double c_min,
+                           double c_max, double d_min, double d_max,
                            bool stroke=false);
 
 
@@ -294,7 +302,10 @@ public://----------------------- PUBLIC METHODS --------------------------
   mt19937 rng2_;
 
   //Constructor
-  MTS_BaseHelper(std::shared_ptr<std::unordered_map<std::string, double> > params);
+  MTS_BaseHelper(std::unordered_map<std::string, double> params);
+
+  //Destructor
+  ~MTS_BaseHelper();
 
   /* Returns the value for key*/
   double getParam(std::string key);
@@ -304,7 +315,7 @@ public://----------------------- PUBLIC METHODS --------------------------
    *
    * params - a map from the name of the value to the value
    */
-  void setParams(std::shared_ptr<std::unordered_map<std::string, double> > params);
+  void setParams(std::unordered_map<std::string, double> params);
 
 
   /*
@@ -340,7 +351,9 @@ public://----------------------- PUBLIC METHODS --------------------------
    * transparent - whether the holes will be transparent or not
    * color - if not trans, then the color of the holes
    */
-  void addSpots(cairo_surface_t *surface, int num_min, int num_max, double size_min, double size_max, double diminish_rate, bool transparent, int color);
+  void addSpots(cairo_surface_t *surface, int num_min, int num_max,
+                double size_min, double size_max, double diminish_rate,
+                bool transparent, int color);
 
 };
 

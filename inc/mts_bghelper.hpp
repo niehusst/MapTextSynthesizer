@@ -1,8 +1,9 @@
 #ifndef MTS_BACKGROUND_HELPER_HPP
 #define MTS_BACKGROUND_HELPER_HPP
 
-#include <pango/pangocairo.h>
 #include <vector>
+
+#include <pango/pangocairo.h>
 
 #include "mts_basehelper.hpp"
 
@@ -10,7 +11,6 @@ using boost::random::normal_distribution;
 using boost::random::gamma_distribution;
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
-
 
 /*
  * A class to handle the synthetic generation of all background features
@@ -78,8 +78,7 @@ private://---------------------- PRIVATE METHODS --------------------------
    *          (optional parameter, defaults to true)
    */
   void
-  draw_parallel(cairo_t *cr, bool horizontal, double distance,
-                bool stroke=true);
+  draw_parallel(cairo_t *cr, bool horizontal, double distance,bool stroke=true);
 
   /*
    * Sets an arbitrary dash pattern to the path stored by cr
@@ -105,10 +104,9 @@ private://---------------------- PRIVATE METHODS --------------------------
    *        curving equation
    * d_max - the max range value for cubed variable in the first cubic 
    *        curving equation
-
    */
   void
-  generate_curve(cairo_t *cr, bool horizontal, int width, int height, 
+  generate_curve(cairo_t *cr, bool horizontal, int width, int height,
                  double c_min, double c_max, double d_min, double d_max);
 
 
@@ -139,7 +137,7 @@ private://---------------------- PRIVATE METHODS --------------------------
    * height - surface height in pixels
    */
   static void
-  diagonal_lines(cairo_t *cr, int x1, int y1, int x2, int y2, int spacing, 
+  diagonal_lines(cairo_t *cr, int x1, int y1, int x2, int y2, int spacing,
                  int width, int height);
 
   /*
@@ -214,7 +212,7 @@ private://---------------------- PRIVATE METHODS --------------------------
    */
   static void
   shape_texture_helper(cairo_t *cr, int origin_x, int origin_y, int num_sides,
-                       int distance, bool even, int radius, int width, 
+                       int distance, bool even, int radius, int width,
                        int height);
 
 
@@ -231,7 +229,7 @@ private://---------------------- PRIVATE METHODS --------------------------
    * height - surface height in pixels
    */
   static void
-  make_shape_texture(cairo_t *cr, int x, int y, int diameter, int num_sides, 
+  make_shape_texture(cairo_t *cr, int x, int y, int diameter, int num_sides,
                      int spacing, int width, int height);
 
 
@@ -240,7 +238,7 @@ private://---------------------- PRIVATE METHODS --------------------------
    * onto the surface stored in cr.
    *
    * cr - cairo context
-   * texture - choice of background texture (only between 0 and 2 inclusive)
+   * texture - the index choice for the background texture (0 - 2 inclusive)
    *           ( 0 - diagonal lines )
    *           ( 1 - crossed lines  )
    *           ( 2 - shapes         )
@@ -264,7 +262,7 @@ private://---------------------- PRIVATE METHODS --------------------------
    * parameter.
    *
    * cr - cairo context
-   * texture - choice of background texture (only between 0 and 2 inclusive)
+   * texture - the index choice for the background texture (0 - 2 inclusive)
    *           ( 0 - diagonal lines )
    *           ( 1 - crossed lines  )
    *           ( 2 - shapes         )
@@ -297,10 +295,11 @@ private://---------------------- PRIVATE METHODS --------------------------
    *        curving equation
    * d_max - the max range value for cubed variable in the first cubic 
    *        curving equation
+
    */
   void
   addTexture(cairo_t *cr, bool curved, bool horizontal, double brightness, 
-             int width, int height, double c_min, double c_max, double d_min, 
+             int width, int height, double c_min, double c_max, double d_min,
              double d_max);
 
 
@@ -326,6 +325,7 @@ private://---------------------- PRIVATE METHODS --------------------------
    *        curving equation
    * d_max - the max range value for cubed variable in the first cubic 
    *        curving equation
+
    */
   void
   addLines(cairo_t *cr, bool boundary, bool hatched, bool dashed, 
@@ -389,9 +389,13 @@ private://---------------------- PRIVATE METHODS --------------------------
 public://------------------------ PUBLIC METHODS ---------------------------
 
   // a helper class memeber that holds important functions
-  std::shared_ptr<MTS_BaseHelper> helper;
+  MTS_BaseHelper* helper;
 
+  //Constructor
   MTS_BackgroundHelper(std::shared_ptr<MTS_BaseHelper> h);
+
+  //Destructor
+  ~MTS_BackgroundHelper();
 
   /*
    * Generate bg features that will be drawn on current image
@@ -412,8 +416,8 @@ public://------------------------ PUBLIC METHODS ---------------------------
    * contrast - the contrast level
    */
   void
-  generateBgSample(cairo_surface_t *&bg_surface, 
-                   std::vector<BGFeature>&features, int height, int width, 
+  generateBgSample(cairo_surface_t *&bg_surface,
+                   std::vector<BGFeature>&features, int height, int width,
                    int bg_color, int contrast);
 };
 

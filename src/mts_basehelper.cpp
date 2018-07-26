@@ -32,19 +32,20 @@
 
 using boost::random::mt19937;
 
+
 // SEE mts_basehelper.hpp FOR ALL DOCUMENTATION
 
 
-MTS_BaseHelper::MTS_BaseHelper(std::shared_ptr<std::unordered_map<std::string, double> > params){
+MTS_BaseHelper::MTS_BaseHelper(std::unordered_map<std::string, double> params){
   this->params = params;
   //cout << "param number " << this->params->size() << endl;
 }
 
 double MTS_BaseHelper::getParam(std::string key) {
-  return this->params->find(key)->second;
+  return this->params.find(key)->second;
 }
 
-void MTS_BaseHelper::setParams(std::shared_ptr<std::unordered_map<std::string, double> > params) {
+void MTS_BaseHelper::setParams(std::unordered_map<std::string, double> params) {
   this->params = params;
 }
 
@@ -465,7 +466,6 @@ MTS_BaseHelper::four_point_to_cp(coords start,
      f1=(1-t)^3 start + 3(1-t)^2 t cp1 + 3(1-t) t^2 cp2 + t^3 end
      f1=8/27 start + 12/27 cp1 + 6/27 cp2 + 1/27 end
      f2=1/27 start + 6/27 cp1 + 12/27 cp2 + 8/27 end
-
 
      f1.x - 1/27 end.x - 8/27 start.x = 12/27 cp1.x + 6/27 cp2.x
      f1.y - 1/27 end.y - 8/27 start.y = 12/27 cp1.y + 6/27 cp2.y

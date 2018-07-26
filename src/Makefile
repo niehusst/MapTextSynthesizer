@@ -1,5 +1,5 @@
 # File paths 
-IDIR=../include/text/
+IDIR=../inc/
 
 # Compiler, flags, and packages
 CXX=g++
@@ -12,11 +12,12 @@ LIBS := opencv_ml opencv_calib3d opencv_features2d opencv_highgui \
 LDLIBS := $(addprefix -l, $(LIBS)) `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
 
 # Source and object files
-SOURCES=map_text_synthesizer.cpp mts_basehelper.cpp mts_bghelper.cpp mts_implementation.cpp mts_texthelper.cpp mts_utilities.cpp
+SOURCES=map_text_synthesizer.cpp mts_basehelper.cpp mts_bghelper.cpp \
+	mts_implementation.cpp mts_texthelper.cpp mts_utilities.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 
 # Shared object file name
-EXECUTABLE=libmts.so
+EXECUTABLE=libmtsynth.so
 
 all: $(SOURCES) $(EXECUTABLE)
 

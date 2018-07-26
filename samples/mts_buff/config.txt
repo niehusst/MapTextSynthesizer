@@ -192,13 +192,6 @@ line_width_scale_max=0.025    //with respect to min(width,height)
 
 // GENERAL PARAMS
 
-digit_prob=0.3
-digit_len_alpha=3
-digit_len_beta=0.2                 //inverse gamma
-digit_len_max=20
-
-zero_padding=1                   //0 for false, and other value for true
-
 height_min=32
 height_max=70
 

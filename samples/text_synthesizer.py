@@ -1,19 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import cv2
+import mtsynth
 import sys
 import numpy as np
 
 # Global Variable definition
 
-words=[]
-#words=['PM','Charlie','Jerod','Anya','Titus']
-#fonts=['cmmi10','eufm10','MathJax_Fraktur','Sans','Serif','URW Chancery L']
-blocky_fonts=['MathJax_Fraktur','eufm10']
-regular_fonts=['cmmi10','Sans','Serif']
-cursive_fonts=['URW Chancery L']
-        
-s=cv2.text.MapTextSynthesizer_create()
+s = mtsynth.MapTextSynthesizer()
 pause=200
 
 # GUI Callsback functions
@@ -22,6 +14,7 @@ def updateTime(x):
     global pause
     pause=x
 
+'''
 def read_words(words_file):
     open_file = open(words_file, 'r')
     words_list =[]
@@ -30,18 +23,17 @@ def read_words(words_file):
        words_list.append(contents[i].strip('\n'))
     return words_list    
     open_file.close()
+'''
 
 def initialiseSynthesizers():
     global s
-    global words
-    global fonts
 
-    words = read_words("IA/Civil.txt")
-    s.setSampleCaptions(words)
+    s.setSampleCaptions("IA/Civil.txt")
+    #s.setSampleCaptions("latin_extended_additional.txt")
 
-    s.setBlockyFonts(blocky_fonts)
-    s.setRegularFonts(regular_fonts)
-    s.setCursiveFonts(cursive_fonts)
+    s.setBlockyFonts("blocky.txt")
+    s.setRegularFonts("regular.txt")
+    s.setCursiveFonts("cursive.txt")
 
 # Other functions
 
@@ -64,9 +56,11 @@ def guiLoop():
     k=''
     while ord('q')!=k:
         if pause<500:
-            caption,mat=s.generateSample()
-            cv2.imshow('Text Synthesizer Demo',mat)
+            [caption, [h,w,img_data], actual_h] = s.generateSample()
+            img = np.reshape(np.fromiter(img_data, np.uint8),(h,w))
+            cv2.imshow('Text Synthesizer Demo',img)
             print caption
+            print "actual: ", actual_h
         k=cv2.waitKey(pause+1)
 
 # Main Programm

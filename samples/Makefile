@@ -1,16 +1,14 @@
 # File paths 
-IDIR=../include/text/
+IDIR=../inc/
 LIBDIR=../src
 
 # Compiler, flags, and packages
 CXX=g++
 CXXFLAGS=-std=c++11 `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
-CPPFLAGS=-I. -I$(IDIR)
+CPPFLAGS=-I/usr/include/python2.7
 
 # Link libraries
-LIBS := opencv_ml opencv_calib3d opencv_features2d opencv_highgui \
-		opencv_imgproc opencv_flann opencv_imgcodecs opencv_core png tiff jpeg \
-		mts
+LIBS :=`pkg-config --cflags --libs mtsynth` -lpthread -lboost_python -lpython2.7
 LDLIBS := -L$(LIBDIR) $(addprefix -l, $(LIBS)) 
 LOADLIBES := `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
 
@@ -22,7 +20,14 @@ TARGETS := $(basename ${SOURCES})
 # Compile all targets into executables
 all: ${TARGETS}
 
+library : text_synthesizer_py.cpp
+	$(CXX) -shared text_synthesizer_py.cpp $(CPPFLAGS) \
+	$(LIBS) -fPIC -o mtsynth.so
+
 clean:
-		rm -f ${TARGETS}
+	rm -f ${TARGETS}
+
+
+
 
 

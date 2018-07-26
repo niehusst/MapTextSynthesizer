@@ -17,16 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 
+#include <fstream>
+#include <string>
+#include <vector>
 #include <memory>
 
-#include "map_text_synthesizer.hpp"
+#include "mtsynth/map_text_synthesizer.hpp"
 #include "mts_implementation.hpp"
 
+//SEE map_text_synthesizer.hpp FOR ALL DOCUMENTATION
 
 MapTextSynthesizer::MapTextSynthesizer(){}
 
-std::shared_ptr<MapTextSynthesizer> MapTextSynthesizer::create(){
-  std::shared_ptr<MapTextSynthesizer> mts(new MTSImplementation());
+std::vector<std::string> MapTextSynthesizer::readLines(std::string filename) {
+  std::vector<std::string> lines;
+  std::ifstream infile(filename);
+
+  string line;
+  while (std::getline(infile, line)) {   
+    lines.push_back(std::string(line));
+  }
+  return lines;
+}
+
+std::Ptr<MapTextSynthesizer> MapTextSynthesizer::create(std::string config_file){
+  std::Ptr<MapTextSynthesizer> mts(new MTSImplementation(config_file));
   return mts;
 }
 
