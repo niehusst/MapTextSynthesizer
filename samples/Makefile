@@ -4,7 +4,7 @@ LIBDIR=../src
 
 # Compiler, flags, and packages
 CXX=g++
-CXXFLAGS=-std=c++11 
+CXXFLAGS=-std=c++11 `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
 CPPFLAGS=-I. -I$(IDIR)
 
 # Link libraries

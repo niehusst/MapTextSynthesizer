@@ -3,7 +3,7 @@ IDIR=../include/text/
 
 # Compiler, flags, and packages
 CXX=g++
-CXXFLAGS=-std=c++11 -fPIC
+CXXFLAGS=-std=c++11 -fPIC `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
 CPPFLAGS=-I. -I$(IDIR)
 
 # Link libraries
