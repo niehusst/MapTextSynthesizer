@@ -12,9 +12,10 @@ To run a sample usage of the code, fork or clone this repository, run **add make
 
 #### Prerequisites/Dependencies
 
-* **Pango** comes preinstalled on many Linux machines. Otherwise, follow download from their [website](https://www.pango.org/).
-* **Cairo** comes preinstalled on many Linux machines. Otherwise, follow download from their [website](https://cairographics.org/).
-* **OpenCV** computer vision repository can be found on [github](https://github.com/opencv) .
+* **Pango**, a text formatting library. It comes preinstalled on many Linux machines. Otherwise, follow download from their [website](https://www.pango.org/).
+* **Cairo**, a vector graphics library. It comes preinstalled on many Linux machines. Otherwise, follow download from their [website](https://cairographics.org/).
+* **OpenCV**, a computer vision repository. It can be found on [github](https://github.com/opencv) .
+* **glib-2.0**, a low-level Gnome library. Download can be found [here](https://lazka.github.io/pgi-docs/GLib-2.0/index.html).
 
 ## Authors
 
