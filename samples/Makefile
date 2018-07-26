@@ -1,21 +1,28 @@
 # File paths 
 IDIR=../include/text/
+LIBDIR=../src
 
-# Compile variables, flags, and libraries
-CC=g++
-CFLAGS=`pkg-config --cflags --libs pangocairo glib-2.0`
-CPPFLAGS=-I. -I$(IDIR) $(CFLAGS)
-LDFLAGS+=-lopencv2  #/user/local/include/opencv2/
-#LIBS=`pkg-include --cflags --libs pangocairo glib-2.0`
+# Compiler, flags, and packages
+CXX=g++
+CXXFLAGS=-std=c++11 
+CPPFLAGS=-I. -I$(IDIR)
 
-SHELL=/bin/sh
+# Link libraries
+LIBS := opencv_ml opencv_calib3d opencv_features2d opencv_highgui \
+		opencv_imgproc opencv_flann opencv_imgcodecs opencv_core png tiff jpeg \
+		mts
+LDLIBS := -L$(LIBDIR) $(addprefix -l, $(LIBS)) 
+LOADLIBES := `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
 
 # Source files
 SOURCES := $(wildcard *.cpp)
 # Target files
 TARGETS := $(basename ${SOURCES})
 
+# Compile all targets into executables
 all: ${TARGETS}
 
 clean:
 		rm -f ${TARGETS}
+
+

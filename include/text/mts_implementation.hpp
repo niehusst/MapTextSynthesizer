@@ -31,6 +31,7 @@ protected:
    */
   double getParam(std::string key);
 
+
   /* Converts cairo surface to mat object in opencv
    *
    * surface - the cairo surface to be converted
@@ -42,17 +43,20 @@ protected:
    */
   static void cairoToMat(cairo_surface_t *surface,cv::Mat &mat);
 
+
   /* Adds Gaussian noise to out
    *
    * out - the input and output image
    */
   void addGaussianNoise(cv::Mat& out);
 
+
   /* Adds Gaussian blur to out
    *
    * out - the input and output image
    */
   void addGaussianBlur(cv::Mat& out);
+
 
   /* Updates the list of available system fonts by 
    * clearing and reloading fntList
@@ -62,6 +66,7 @@ protected:
    * url: https://www.lemoda.net/pango/list-fonts/index.html
    */
   void updateFontNameList(std::vector<cv::String>& fntList);
+
 
   /* The list of blocky font names set by user. */
   std::vector<cv::String> blockyFonts_;
@@ -96,17 +101,18 @@ public:
   /* Constructor */
   MTSImplementation();
 
+
   /* See MapTextSynthesizer for documentations.*/
 
-  void setBlockyFonts(std::vector<cv::String>& fntList);
+  void setBlockyFonts(std::vector<cv::String> &fntList);
 
-  void setRegularFonts(std::vector<cv::String>& fntList);
+  void setRegularFonts(std::vector<cv::String> &fntList);
 
-  void setCursiveFonts(std::vector<cv::String>& fntList);
+  void setCursiveFonts(std::vector<cv::String> &fntList);
 
-  void setSampleCaptions (std::vector<cv::String>& words);
+  void setSampleCaptions (std::vector<cv::String> &words);
 
-  void generateSample(CV_OUT cv::String &caption, CV_OUT cv::Mat & sample);
+  void generateSample(CV_OUT cv::String &caption, CV_OUT cv::Mat &sample);
 };
 
 #endif

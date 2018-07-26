@@ -204,11 +204,11 @@ void MTSImplementation::setCursiveFonts(std::vector<cv::String>& fntList){
   this->cursiveFonts_=fntList;
 }
 
-void MTSImplementation::setSampleCaptions (std::vector<cv::String>& words) {
+void MTSImplementation::setSampleCaptions (std::vector<cv::String> &words) {
   this->sampleCaptions_ = words;
 }
 
-void MTSImplementation::generateSample(CV_OUT cv::String &caption, CV_OUT cv::Mat & sample){
+void MTSImplementation::generateSample(CV_OUT cv::String &caption, CV_OUT cv::Mat &sample){
 
   //cout << "start generate sample" << endl;
   std::vector<BGFeature> bg_features;
@@ -219,12 +219,12 @@ void MTSImplementation::generateSample(CV_OUT cv::String &caption, CV_OUT cv::Ma
   int bgcolor_min = (int)getParam("bg_color_min");
   int textcolor_max = (int)getParam("text_color_max");
   // assert colors are valid values
-  CV_Assert(bgcolor_min<=255);
-  CV_Assert(textcolor_max>=0);
-  CV_Assert(bgcolor_min>textcolor_max);
+  CV_Assert(bgcolor_min <= 255);
+  CV_Assert(textcolor_max >= 0);
+  CV_Assert(bgcolor_min > textcolor_max);
 
-  int bg_brightness = helper->rng()%(255-bgcolor_min+1)+bgcolor_min;
-  int text_color = helper->rng()%(textcolor_max+1);
+  int bg_brightness = helper->rng() % (255 - bgcolor_min + 1) + bgcolor_min;
+  int text_color = helper->rng() % (textcolor_max + 1);
   int contrast = bg_brightness - text_color;
 
   cairo_surface_t *text_surface;
@@ -234,7 +234,7 @@ void MTSImplementation::generateSample(CV_OUT cv::String &caption, CV_OUT cv::Ma
   // set image height from user configured parameters
   int height_min = (int)getParam("height_min");
   int height_max = (int)getParam("height_max");
-  height = (helper->rng()%(height_max-height_min+1))+height_min;
+  height = (helper->rng() % (height_max - height_min + 1)) + height_min;
 
   std::string text;
   //cout << "generating text sample" << endl;
@@ -248,9 +248,6 @@ void MTSImplementation::generateSample(CV_OUT cv::String &caption, CV_OUT cv::Ma
   }
   caption = cv::String(text);
 
-  //cout << "generating bg sample" << endl;
-  //cout << "bg feature num " << bg_features.size() << endl; 
-
   // use BackgroundHelper to generate the background image
   cairo_surface_t *bg_surface;
   bh.generateBgSample(bg_surface, bg_features, height, width, bg_brightness, contrast);
@@ -261,7 +258,7 @@ void MTSImplementation::generateSample(CV_OUT cv::String &caption, CV_OUT cv::Ma
   int blend_min=(int)(100 * getParam("blend_alpha_min"));
   int blend_max=(int)(100 * getParam("blend_alpha_max"));
 
-  double blend_alpha=(helper->rng()%(blend_max-blend_min+1)+blend_min)/100.0;
+  double blend_alpha=(helper->rng()%(blend_max - blend_min+1)+blend_min)/100.0;
 
   // blend with alpha or not based on user set probability
   if(helper->rndProbUnder(getParam("blend_prob"))){
