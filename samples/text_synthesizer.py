@@ -28,12 +28,12 @@ def read_words(words_file):
 def initialiseSynthesizers():
     global s
 
-    #s.setSampleCaptions("IA/Civil.txt")
-    s.setSampleCaptions("latin_extended_additional.txt")
+    s.setSampleCaptions("IA/Civil.txt")
+    #s.setSampleCaptions("latin_extended_additional.txt")
 
-    s.setBlockyFonts("blocky_fonts.txt")
-    s.setRegularFonts("regular_fonts.txt")
-    s.setCursiveFonts("cursive_fonts.txt")
+    s.setBlockyFonts("blocky.txt")
+    s.setRegularFonts("regular.txt")
+    s.setCursiveFonts("cursive.txt")
 
 # Other functions
 
