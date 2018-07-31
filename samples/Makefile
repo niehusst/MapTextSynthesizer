@@ -17,8 +17,6 @@ PKG-CONFIG := `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
 
 # Source files
 SOURCES := $(wildcard ${SRCDIR}*.cpp)
-# Target files
-TARGETS := $(basename ${SOURCES})
 
 # Compile the shared library 
 libmtsynth.so: ${SOURCES} 
