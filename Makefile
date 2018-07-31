@@ -11,5 +11,5 @@ sample:
 
 # Clean rule for getting rid of stray object files
 clean:
-	rm -f src/*.o *~ core* src/*~ samples/*.o samples/*~
+	rm -f src/*.o *~ core* src/*~ samples/*.o samples/*~ samples/a.out
 	rm -rf bin

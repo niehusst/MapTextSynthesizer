@@ -7,7 +7,7 @@ BINDIR=../bin/
 # Compiler, flags, and packages
 CXX=g++
 FLAGS=-I. -I$(IDIR) -I$(LIBDIR) -shared -fPIC -std=c++11 -Wall
-SFLAGS=-I. -I$(IDIR) -I${BINDIR} -L/home/chenziwe/MapTextSynthesizer/bin -lmtsynth -std=c++11 -Wall
+SFLAGS=-I. -I$(IDIR) -L${BINDIR} -lmtsynth -std=c++11 -Wall
 
 # Link libraries
 LIBS := opencv_ml opencv_calib3d opencv_features2d opencv_highgui \
@@ -21,13 +21,13 @@ SOURCES := $(wildcard ${SRCDIR}*.cpp)
 TARGETS := $(basename ${SOURCES})
 
 # Compile the shared library 
-${BINDIR}libmtsynth.so: ${SOURCES} 
+$libmtsynth.so: ${SOURCES} 
 	if [ ! -d ${BINDIR} ];then mkdir ${BINDIR};fi
 	${CXX} -o ${BINDIR}$@ $^ ${PKG-CONFIG} ${FLAGS}
 
 # Compile a cpp example
 sample: text_synthesizer.cpp
-	LD_LIBRARY_PATH=/home/chenziwe/MapTextSynthesizer/bin ${CXX} $^ ${SFLAGS} ${LDLIBS}
+	${CXX} $^ ${SFLAGS} ${LDLIBS}
 
 clean:
 	rm -f a.out *.o *~
