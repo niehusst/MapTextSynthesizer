@@ -8,45 +8,42 @@
 using namespace std;
 using namespace cv;
 
-void read_words(string path, vector<String> &caps){
+void read_words(string path, vector<string> &caps){
     ifstream infile(path);
     string line;
     while (std::getline(infile, line))
     {
-        caps.push_back(String(line));
+        caps.push_back(line);
     }
 }
 
 int main() {
-    auto s = MapTextSynthesizer::create();
+    auto s = MapTextSynthesizer::create("config.txt");
 
-    vector<String> caps;
-    read_words("IA/Civil.txt",caps);
+    vector<string> blocky;
+    blocky.push_back("Chromaletter");
 
-    vector<String> blocky;
-    blocky.push_back("MathJax_Fraktur");
-    blocky.push_back("eufm10");
-
-    vector<String> regular;
-    regular.push_back("cmmi10");
+    vector<string> regular;
+    regular.push_back("jsMath-cmmi10");
     regular.push_back("Sans");
     regular.push_back("Serif");
 
-    vector<String> cursive;
+    vector<string> cursive;
     cursive.push_back("URW Chancery L");
 
-    s->setSampleCaptions(caps);
+    s->setSampleCaptions("IA/Civil.txt");
     s->setBlockyFonts(blocky);
     s->setRegularFonts(regular);
     s->setCursiveFonts(cursive);
 
 
     int k=0;
-    String label;
+    string label;
     Mat image;
+    int height;
     int start = time(NULL);
     while (k<10000) {
-        s->generateSample(label, image);
+        s->generateSample(label, image, height);
         k++;
     }
     int end = time(NULL);
