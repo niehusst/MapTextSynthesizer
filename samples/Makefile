@@ -21,7 +21,7 @@ SOURCES := $(wildcard ${SRCDIR}*.cpp)
 TARGETS := $(basename ${SOURCES})
 
 # Compile the shared library 
-$libmtsynth.so: ${SOURCES} 
+libmtsynth.so: ${SOURCES} 
 	if [ ! -d ${BINDIR} ];then mkdir ${BINDIR};fi
 	${CXX} -o ${BINDIR}$@ $^ ${PKG-CONFIG} ${FLAGS}
 
