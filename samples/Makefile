@@ -1,33 +1,32 @@
 # File paths 
-IDIR=../inc/
-LIBDIR=../src
+IDIR=../include/
+LIBDIR=../inc/
+SRCDIR=../src/
+BINDIR=../bin/
 
 # Compiler, flags, and packages
 CXX=g++
-CXXFLAGS=-std=c++11 `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
-CPPFLAGS=-I/usr/include/python2.7
+FLAGS=-I. -I$(IDIR) -I$(LIBDIR) -shared -fPIC -std=c++11 -Wall
+SFLAGS=-I. -I$(IDIR) -L${BINDIR} -lmtsynth -std=c++11 -Wall
 
 # Link libraries
-LIBS :=`pkg-config --cflags --libs mtsynth` -lpthread -lboost_python -lpython2.7
+LIBS := opencv_ml opencv_calib3d opencv_features2d opencv_highgui \
+		opencv_imgproc opencv_flann opencv_imgcodecs opencv_core png tiff jpeg
 LDLIBS := -L$(LIBDIR) $(addprefix -l, $(LIBS)) 
-LOADLIBES := `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
+PKG-CONFIG := `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
 
 # Source files
-SOURCES := $(wildcard *.cpp)
-# Target files
-TARGETS := $(basename ${SOURCES})
+SOURCES := $(wildcard ${SRCDIR}*.cpp)
 
-# Compile all targets into executables
-all: ${TARGETS}
+# Compile the shared library 
+libmtsynth.so: ${SOURCES} 
+	if [ ! -d ${BINDIR} ];then mkdir ${BINDIR};fi
+	${CXX} -o ${BINDIR}$@ $^ ${PKG-CONFIG} ${FLAGS}
 
-library : text_synthesizer_py.cpp
-	$(CXX) -shared text_synthesizer_py.cpp $(CPPFLAGS) \
-	$(LIBS) -fPIC -o mtsynth.so
+# Compile a cpp example
+sample: text_synthesizer.cpp
+	${CXX} $^ ${SFLAGS} ${LDLIBS}
 
 clean:
-	rm -f ${TARGETS}
-
-
-
-
+	rm -f a.out *.o *~
 
