@@ -44,18 +44,16 @@ MTS_BackgroundHelper::getParam(std::string key) {
 
 MTS_BackgroundHelper::MTS_BackgroundHelper(std::shared_ptr<MTS_BaseHelper> h)
     :helper(&(*h)),  // initialize fields
-    bias_var_dist(h->getParam(string("bias_std_alpha")),
-                  h->getParam(string("bias_std_beta"))),
+     bias_var_dist(h->getParam(std::string("bias_std_alpha")),
+                   h->getParam(std::string("bias_std_beta"))),
     bias_var_gen(h->rng2_, bias_var_dist),
-    texture_distribution(h->getParam(string("texture_width_alpha")), 
-                         h->getParam(string("texture_width_beta"))),
+     texture_distribution(h->getParam(std::string("texture_width_alpha")), 
+                          h->getParam(std::string("texture_width_beta"))),
     texture_distrib_gen(h->rng2_, texture_distribution)
 {}
 
 
-MTS_BackgroundHelper::~MTS_BackgroundHelper(){
-  //cout << "bg helper destructed" << endl;
-}
+MTS_BackgroundHelper::~MTS_BackgroundHelper(){}
 
 
 void
@@ -272,9 +270,8 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
   // set ratio to keep line scaled for image size
   int ratio_min = (int)(getParam("line_width_scale_min") * 10000);
   int ratio_max = 1 + (int)(getParam("line_width_scale_max") * 10000) - ratio_min;
-  //cout << ratio_min << " " << ratio_max << endl;
+
   magic_line_ratio = (ratio_min + helper->rng() % ratio_max) / 10000.0; 
-  //cout << "line width ratio " << magic_line_ratio << endl;
   line_width = std::min(width, height) * magic_line_ratio;
   cairo_set_line_width(cr, line_width);
 
@@ -615,8 +612,8 @@ MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
   for (int i = 0; i < num_points_horizontal; i++){
     color_stop_val = color + (int)round(bias_gen());
     // bound the number between 0 and 255
-    color_stop_val = min(color_stop_val, 255);
-    color_stop_val = max(color_stop_val, 0);
+    color_stop_val = std::min(color_stop_val, 255);
+    color_stop_val = std::max(color_stop_val, 0);
     dcolor = color_stop_val / 255.0;
 
     cairo_pattern_add_color_stop_rgb(pattern_horizontal, i*offset_horizontal, dcolor,dcolor,dcolor);
@@ -626,7 +623,6 @@ MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
   cairo_paint_with_alpha(cr,0.3);
   cairo_set_source(cr, pattern_vertical);
   cairo_paint_with_alpha(cr,0.3);
-  //cout << "finished bias" << endl;
 }
 
 
@@ -918,7 +914,6 @@ MTS_BackgroundHelper::generateBgFeatures(std::vector<BGFeature> &bg_features){
       }
     }
   }
-  //cout << "got all features" << endl;
 }
 
 
@@ -927,7 +922,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
 
   double c_min, c_max, d_min, d_max, curve_prob;
   int num_lines;
-  //cout << "generating bg sample" << endl;
+  
   // initialize the cairo image variables for background
   cairo_surface_t *surface;
   cairo_t *cr;

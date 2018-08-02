@@ -38,8 +38,9 @@ using boost::random::mt19937;
 
 MTS_BaseHelper::MTS_BaseHelper(std::unordered_map<std::string, double> params){
   this->params = params;
-  //cout << "param number " << this->params->size() << endl;
 }
+
+MTS_BaseHelper::~MTS_BaseHelper(){}
 
 double MTS_BaseHelper::getParam(std::string key) {
   return this->params.find(key)->second;
@@ -565,8 +566,6 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
   }
 
   double coeff[4] = {a,b,c,d};
-
-  //cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
 
   double x1 = (2.0/3)*x + (1.0/3)*u;
   double x2 = (1.0/3)*x + (2.0/3)*u;

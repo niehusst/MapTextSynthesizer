@@ -31,6 +31,8 @@ using boost::random::beta_distribution;
 using boost::random::variate_generator;
 
 
+// SEE mts_texthelper.hpp FOR ALL DOCUMENTATION
+
 double MTS_TextHelper::getParam(std::string key) {
     double val = helper->getParam(key);
     return val;
@@ -46,30 +48,23 @@ MTS_TextHelper::MTS_TextHelper(std::shared_ptr<MTS_BaseHelper> h)
     digit_len_gen(h->rng2_, digit_len_dist)
 {}
 
-MTS_TextHelper::~MTS_TextHelper(){
-  //std::cout << "text helper destructed" << endl;
-}
-
-// SEE mts_texthelper.hpp FOR ALL DOCUMENTATION
+MTS_TextHelper::~MTS_TextHelper(){}
 
 void 
 MTS_TextHelper::generateFont(char *font, int fontsize){
 
-    //cout << "in generate font" << endl;
     // get font probabilities from user configured parameters
     int font_prob = helper->rng() % 10000;
     double blockyProb=getParam("font_blocky");
     double normalProb=getParam("font_normal");
     double probs[3]={blockyProb, normalProb + blockyProb, 1};
-    //cout << "got probs" << endl;
 
     const char *font_name;
     // randomly select a font style 
     for (int i = 0; i < 3; i++) {
         if(font_prob < 10000 * probs[i]){
-            //cout << "in if " << endl;
             int listsize = fonts_[i]->size();
-            //cout << "got size " << endl;
+
             CV_Assert(listsize);
             font_name = fonts_[i]->at(helper->rng()%listsize).c_str();
             strcpy(font,font_name);
@@ -88,7 +83,6 @@ MTS_TextHelper::generateFont(char *font, int fontsize){
     std::ostringstream stm;
     stm << fontsize;
     strcat(font,stm.str().c_str());
-    //cout << font << endl;
 }
 
 void
@@ -102,7 +96,7 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
         int min_deg = getParam("rotate_degree_min");
         int max_deg = getParam("rotate_degree_max");
         int degree = helper->rng() % (max_deg-min_deg+1) + min_deg;
-        //cout << "degree " << degree << endl;
+        
         rotated_angle=((double)degree / 180) * M_PI;
     } else {
         rotated_angle= 0;
@@ -116,10 +110,7 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
     }
 
     spacing_deg = round((20*spacing_gen()-1)*100)/100;
-    //cout << "spacing deg " << spacing_deg << endl;
-
     stretch_deg = round((3*stretch_gen()+0.5)*100)/100;
-    //cout << "stretch deg " << stretch_deg << endl;
 
     double fontsize = (double)height;
     spacing = fontsize / 20 * spacing_deg;
@@ -130,18 +121,13 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
     int minpad=(int)(height*pad_min);
     x_pad = helper->rng() % (maxpad-minpad+1) + minpad;
     y_pad = helper->rng() % (maxpad-minpad+1) + minpad;
-    //cout << "pad " << x_pad << " " << y_pad << endl;
 
     int scale_max = (int)(100*getParam("scale_max"));
     int scale_min = (int)(100*getParam("scale_min"));
     scale = (helper->rng()%(scale_max-scale_min+1)+scale_min)/100.0;
-    //cout << "scale " << scale << endl;
 
-    //cout << "generate font" << endl;
     char font[50];
     generateFont(font,(int)fontsize);
-    //cout << font << endl;
-    //cout << caption << endl;
 
     //set font destcription
     desc = pango_font_description_from_string(font);
@@ -217,7 +203,6 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     stm << spacing_1024;
     // set the markup string and put into pango layout
     std::string mark = "<span letter_spacing='"+stm.str()+"'>"+caption+"</span>";
-    //cout << "mark " << mark << endl;
 
     pango_layout_set_markup(layout, mark.c_str(), -1);
 
@@ -228,7 +213,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     getTextExtents(layout, desc, text_x, text_y, text_w, text_h, size);
 
     size = (int)((double)size/text_h*height);
-    //cout << "size " << size << endl;
+
     pango_font_description_set_size(desc, size);
     pango_layout_set_font_description (layout, desc);
 
@@ -239,7 +224,6 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     int patch_width = (int)text_w;
 
     if (rotated_angle!=0) {
-        //cout << "rotated angle" << rotated_angle << endl;
         cairo_rotate(cr, rotated_angle);
 
         double sine = abs(sin(rotated_angle));
@@ -255,7 +239,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         // adjust text attributes according to rotate angle
         size = pango_font_description_get_size(desc);
         size = (int)((double)size/text_h*text_height);
-        //cout << "rotate size " << size << endl;
+ 
         pango_font_description_set_size(desc, size);
         pango_layout_set_font_description (layout, desc);
 
@@ -264,7 +248,6 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         std::ostringstream stm;
         stm << spacing_1024;
         std::string mark = "<span letter_spacing='"+stm.str()+"'>"+caption+"</span>";
-        //cout << "mark " << mark << endl;
 
         pango_layout_set_markup(layout, mark.c_str(), -1);
 
@@ -395,7 +378,6 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     cairo_destroy (cr_n);
 
-    //cout << "add spots" << endl;
     if(helper->rndProbUnder(getParam("missing_prob"))){
         int num_min=(int)getParam("missing_num_min");
         int num_max=(int)getParam("missing_num_max");
@@ -431,7 +413,6 @@ MTS_TextHelper::generateTextSample (std::string &caption, cairo_surface_t *&text
             caption = "MapTextSynthesizer";
         }
     }
-    //cout << "generating text patch" << endl;
     generateTextPatch(text_surface,caption,height,width,text_color,distract);
 }
 

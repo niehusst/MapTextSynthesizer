@@ -60,9 +60,9 @@ double MTSImplementation::getParam(std::string key) {
     return val;
 }
 
-unordered_map<std::string, double> MTSImplementation::parseConfig(std::string filename) {
+std::unordered_map<std::string, double> MTSImplementation::parseConfig(std::string filename) {
 
-    unordered_map<std::string, double> params = unordered_map<std::string, double>();
+    std::unordered_map<std::string, double> params = std::unordered_map<std::string, double>();
 
     std::string delimiter = "=";
 
@@ -93,11 +93,11 @@ unordered_map<std::string, double> MTSImplementation::parseConfig(std::string fi
         // check if strtod produced error in casting
         if (value.c_str() == err_flag && val == 0) { 
             // tell user there was an error at this point and exit failure
-            cout << "An unparseable value was encountered for variable "
+          std::cout << "An unparseable value was encountered for variable "
                 << key <<".\nPlease enter a valid number.\n";
             exit(1);
         }
-        params.insert(pair<std::string, double>(key, val));
+        params.insert(std::pair<std::string, double>(key, val));
 
     }   
     // close file
@@ -193,22 +193,20 @@ MTSImplementation::MTSImplementation(std::string config_file)
     th.setSampleCaptions(&(sampleCaptions_));
 }
 
-MTSImplementation::~MTSImplementation() {
-    //cout << "impl destructed" << endl;
-}
+MTSImplementation::~MTSImplementation() {}
 
 void MTSImplementation::setBlockyFonts(std::vector<std::string>& font_list){
-    std::vector<std::string> availableList=this->availableFonts_;
+  std::vector<std::string> availableList=this->availableFonts_;
 
-    // loop through fonts in availableFonts_ to check if the system 
-    // contains every font in the font_list
-    for(size_t k = 0; k < font_list.size(); k++){
-        if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
-            std::cout << "The font name list must only contain fonts in your system.\nThe font " << fntList[k] << " is not in your system.\n";
+  // loop through fonts in availableFonts_ to check if the system 
+  // contains every font in the font_list
+  for(size_t k = 0; k < font_list.size(); k++){
+    if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
+      std::cout << "The font name list must only contain fonts in your system.\nThe font " << font_list[k] << " is not in your system.\n";
       exit(1);
-        }
     }
-    this->blockyFonts_.assign(font_list.begin(),font_list.end());
+  }
+  this->blockyFonts_.assign(font_list.begin(),font_list.end());
 }
 
 void MTSImplementation::setBlockyFonts(std::string font_file){
@@ -223,8 +221,8 @@ void MTSImplementation::setRegularFonts(std::vector<std::string>& font_list){
     // contains every font in the font_list
     for(size_t k = 0; k < font_list.size(); k++){
         if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
-            std::cout << "The font name list must only contain fonts in your system.\nThe font " << fntList[k] << " is not in your system.\n";
-      exit(1);
+          std::cout << "The font name list must only contain fonts in your system.\nThe font " << font_list[k] << " is not in your system.\n";
+          exit(1);
         }
     }
     this->regularFonts_.assign(font_list.begin(),font_list.end());
@@ -242,8 +240,8 @@ void MTSImplementation::setCursiveFonts(std::vector<std::string>& font_list){
     // contains every font in the font_list
     for(size_t k = 0; k < font_list.size(); k++){
         if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
-            std::cout << "The font name list must only contain fonts in your system.\nThe font " << fntList[k] << " is not in your system.\n";
-      exit(1);
+            std::cout << "The font name list must only contain fonts in your system.\nThe font " << font_list[k] << " is not in your system.\n";
+            exit(1);
         }
     }
     this->cursiveFonts_.assign(font_list.begin(),font_list.end());
@@ -265,10 +263,8 @@ void MTSImplementation::setSampleCaptions(std::string caption_file){
 
 void MTSImplementation::generateSample(CV_OUT std::string &caption, CV_OUT cv::Mat &sample, CV_OUT int &actual_height){
 
-    //cout << "start generate sample" << endl;
     std::vector<BGFeature> bg_features;
     bh.generateBgFeatures(bg_features);
-    //cout << "after bg feature" << endl;
 
     // set bg and text color (brightness) based on user configured parameters
     int bgcolor_min = (int)getParam("bg_color_min");
@@ -289,11 +285,11 @@ void MTSImplementation::generateSample(CV_OUT std::string &caption, CV_OUT cv::M
     // set image height from user configured parameters
     int height_min = (int)getParam("height_min");
     int height_max = (int)getParam("height_max");
-    height = (helper->rng()%(height_max-height_min+1))+height_min;
+    height = (helper->rng()%(height_max - height_min+1))+height_min;
     actual_height = height;
 
     std::string text;
-    //cout << "generating text sample" << endl;
+
     // use TextHelper instance to generate synthetic text
     if (std::find(bg_features.begin(), bg_features.end(), Distracttext)!= bg_features.end()) {
         // do generate distractor text
@@ -303,9 +299,6 @@ void MTSImplementation::generateSample(CV_OUT std::string &caption, CV_OUT cv::M
         th.generateTextSample(text,text_surface,height,width,text_color,false);
     }
     caption = std::string(text);
-
-    //cout << "generating bg sample" << endl;
-    //cout << "bg feature num " << bg_features.size() << endl; 
 
     // use BackgroundHelper to generate the background image
     cairo_surface_t *bg_surface;
@@ -322,12 +315,12 @@ void MTSImplementation::generateSample(CV_OUT std::string &caption, CV_OUT cv::M
     // blend with alpha or not based on user set probability
     if(helper->rndProbUnder(getParam("blend_prob"))){
         cairo_paint_with_alpha(cr, blend_alpha);
-    } else {
-        cairo_paint(cr); // dont blend
+    } else { // dont blend
+        cairo_paint(cr);
     }
 
-    cv::Mat sample_uchar = cv::Mat(height,width,CV_8UC1,Scalar_<uchar>(0,0,0));
-    cv::Mat sample_float = cv::Mat(height,width,CV_32FC1,Scalar_<float>(0,0,0));
+    cv::Mat sample_uchar = cv::Mat(height,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
+    cv::Mat sample_float = cv::Mat(height,width,CV_32FC1,cv::Scalar_<float>(0,0,0));
 
     // convert cairo image to openCV Mat object
     cairoToMat(bg_surface, sample_uchar);
@@ -347,14 +340,14 @@ void MTSImplementation::generateSample(CV_OUT std::string &caption, CV_OUT cv::M
     if (getParam("zero_padding")==0) zero_padding = false;
 
     if (!zero_padding) {
-        sample = cv::Mat(height,width,CV_8UC1,Scalar_<uchar>(0,0,0));
+      sample = cv::Mat(height,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
     } else {
         int height_max = int(getParam("height_max"));
-        sample = cv::Mat(height_max,width,CV_8UC1,Scalar_<uchar>(0,0,0));
+        sample = cv::Mat(height_max,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
     }
 
     sample_float.convertTo(sample_uchar, CV_8UC1, 255.0);
 
-    cv::Mat sample_roi = sample(Rect(0, 0, width, height));
+    cv::Mat sample_roi = sample(cv::Rect(0, 0, width, height));
     sample_uchar.copyTo(sample_roi);
 }

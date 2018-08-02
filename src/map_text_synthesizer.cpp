@@ -31,17 +31,17 @@ MapTextSynthesizer::MapTextSynthesizer(){}
 
 std::vector<std::string> MapTextSynthesizer::readLines(std::string filename) {
   std::vector<std::string> lines;
+  std::string line;
   std::ifstream infile(filename);
 
-  string line;
   while (std::getline(infile, line)) {   
-    lines.push_back(std::string(line));
+    lines.push_back(line);
   }
   return lines;
 }
 
-std::Ptr<MapTextSynthesizer> MapTextSynthesizer::create(std::string config_file){
-  std::Ptr<MapTextSynthesizer> mts(new MTSImplementation(config_file));
+cv::Ptr<MapTextSynthesizer> MapTextSynthesizer::create(std::string config_file){
+  cv::Ptr<MapTextSynthesizer> mts(new MTSImplementation(config_file));
   return mts;
 }
 

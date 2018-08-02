@@ -2,6 +2,7 @@
 #define MAP_TEXT_SYNTHESIZER_HPP
 
 #include <string>
+#include <memory>
 #include <opencv2/core/mat.hpp> //cv::Mat
 
 /*
@@ -115,7 +116,7 @@ class CV_EXPORTS_W MapTextSynthesizer{
    * A wrapper for the protected MapTextSynthesizer constructor.
    * Use this method to create a MTS object.
    */
-  CV_WRAP static std::Ptr<MapTextSynthesizer> 
+  CV_WRAP static cv::Ptr<MapTextSynthesizer> 
     create(std::string config_file);
 
   /*
