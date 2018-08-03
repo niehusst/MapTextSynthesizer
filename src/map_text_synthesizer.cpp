@@ -22,7 +22,7 @@
 #include <vector>
 #include <memory>
 
-#include "mtsynth/map_text_synthesizer.hpp"
+#include "map_text_synthesizer.hpp"
 #include "mts_implementation.hpp"
 
 //SEE map_text_synthesizer.hpp FOR ALL DOCUMENTATION

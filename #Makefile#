@@ -1,5 +1,5 @@
-# Compile the shared library
-all:
+# Compile the shared object library
+shared_object:
 	$(MAKE) -C src 
 
 # Compile a sample C++ synthesizer program 

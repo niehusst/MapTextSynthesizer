@@ -3,10 +3,12 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <mtsynth/map_text_synthesizer.hpp>
+#include "map_text_synthesizer.hpp"
 #include <stdio.h>
 #include <X11/Xlib.h>
+#include <opencv2/core/mat.hpp>
 
+using namespace cv;
 
 #define BUFFER_SIZE 50
 #define NUM_PRODUCERS 1
@@ -59,30 +61,30 @@ char* get_caption(void* ptr) {
 boost::lockfree::queue<sample_t*> g_data_pool(BUFFER_SIZE);
 std::vector<std::thread> g_producer_threads;
 
-void read_words(string path, vector<String> &caps){
-  ifstream infile(path);
-  string line;
+void read_words(std::string path, std::vector<cv::String> &caps){
+  std::ifstream infile(path);
+  std::string line;
   while (std::getline(infile, line))
     {   
-      caps.push_back(String(line));
+      caps.push_back(cv::String(line));
     }   
 }
 
 void prepare_synthesis(cv::Ptr<MapTextSynthesizer> s) {
-  vector<String> caps;
+  std::vector<cv::String> caps;
 
   read_words("../IA/Civil.txt",caps);
 
-  vector<String> blocky;
+  std::vector<cv::String> blocky;
   blocky.push_back("MathJax_Fraktur");
   blocky.push_back("eufm10");
 
-  vector<String> regular;
+  std::vector<cv::String> regular;
   regular.push_back("cmmi10");
   regular.push_back("Sans");
   regular.push_back("Serif");
 
-  vector<String> cursive;
+  std::vector<cv::String> cursive;
   cursive.push_back("URW Chancery L");
 
   s->setSampleCaptions(caps);
@@ -93,8 +95,8 @@ void prepare_synthesis(cv::Ptr<MapTextSynthesizer> s) {
 
 /* data synthesis thread. puts data into g_data_pool */
 void synthesize_data(cv::Ptr<MapTextSynthesizer> synthesizer) {
-  String label;
-  Mat image;
+  cv::String label;
+  cv::Mat image;
 
   while(g_keep_producing) {
     // Fill in label, image

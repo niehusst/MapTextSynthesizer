@@ -8,10 +8,10 @@
 #include <pango/pangocairo.h>
 
 // opencv includes
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/mat.hpp> //cv::Mat
 
 // local files
-#include "mtsynth/map_text_synthesizer.hpp"
+#include "map_text_synthesizer.hpp"
 #include "mts_basehelper.hpp"
 #include "mts_texthelper.hpp"
 #include "mts_bghelper.hpp"
