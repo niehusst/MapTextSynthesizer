@@ -20,6 +20,16 @@ e.g. Edited Where is the source code: [path-to]/MapTextSynthesizer
 
 `` $ ./install.sh ``
 
+Resulting files will be in build folder.
+
+### Install with Makefile on Linux
+
+`` $ make ``
+
+Use `` $ make libmtsynth.a `` to make a static library instead of a shared library.
+
+Resulting files will be in bin folder.
+
 ### Examples
 
 #### Python
@@ -30,13 +40,21 @@ see samples/text_synthesizer.py
 
 see samples/text_synthesizer.cpp
 
-##### Sample compiling steps:
+###### Sample compiling and running steps using CMake:
 
 (if using virtual env,) `` export PKG_CONFIG_PATH=[install_prefix]/share/pkgconfig ``
 
 (if using virtual env,) `` export LD_LIBRARY_PATH="[install_prefix]/lib" ``
 
-``g++ text_syntheziser.cpp `pkg-config --cflags --libs mtsynth` ``
+``g++ text_syntheziser.cpp `pkg-config --cflags --libs mtsynth`; ./a.out``
+
+###### Sample compiling and running steps using Makefile:
+
+``make cpp_sample; cd samples; export LD_LIBRARY_PATH=[path-to]/bin; ./a.out``
+
+or
+
+``make cpp_sample_static ; cd samples; ./a.out`` to use the .a static library.
 
 ## Authors
 

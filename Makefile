@@ -2,8 +2,16 @@
 libmtsynth.so:
 	$(MAKE) -C samples 
 
+# Compile the static library
+libmtsynth.a:
+	$(MAKE) $@ -C samples 
+
 # Compile a sample C++ synthesizer program 
-sample:
+cpp_sample:
+	$(MAKE) $@ -C samples
+
+# Compile a sample C++ synthesizer program with static library 
+cpp_sample_static:
 	$(MAKE) $@ -C samples
 
 # Prevent errors from occuring if a file were named 'clean'

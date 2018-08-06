@@ -6,8 +6,11 @@ BINDIR=../bin/
 
 # Compiler, flags, and packages
 CXX=g++
-FLAGS=-I. -I$(IDIR) -I$(LIBDIR) -shared -fPIC -std=c++11 -Wall
-SFLAGS=-I. -I$(IDIR) -L${BINDIR} -lmtsynth -std=c++11 -Wall
+FLAGS=-std=c++11 -Wall
+SOFLAGS=-I. -I$(IDIR) -I$(LIBDIR) -shared -fPIC ${FLAGS}
+OFLAGS=-c -I. -I$(IDIR) -I$(LIBDIR) ${FLAGS}
+SAMPLE_FLAGS=-I. -I$(IDIR) -L${BINDIR} -lmtsynth ${FLAGS}
+STATIC_SAMPLE_FLAGS=-I. -I$(IDIR) ${FLAGS}
 
 # Link libraries
 LIBS := opencv_ml opencv_calib3d opencv_features2d opencv_highgui \
@@ -21,11 +24,22 @@ SOURCES := $(wildcard ${SRCDIR}*.cpp)
 # Compile the shared library 
 libmtsynth.so: ${SOURCES} 
 	if [ ! -d ${BINDIR} ];then mkdir ${BINDIR};fi
-	${CXX} -o ${BINDIR}$@ $^ ${PKG-CONFIG} ${FLAGS}
+	${CXX} -o ${BINDIR}$@ $^ ${PKG-CONFIG} ${SOFLAGS}
+
+# Compile the static library 
+libmtsynth.a: ${SOURCES} 
+	if [ ! -d ${BINDIR} ];then mkdir ${BINDIR};fi
+	${CXX} $^ ${PKG-CONFIG} ${OFLAGS}
+	ar rsc ${BINDIR}$@ ./*.o 
+	rm ./*.o
 
 # Compile a cpp example
-sample: text_synthesizer.cpp
-	${CXX} $^ ${SFLAGS} ${LDLIBS}
+cpp_sample: text_synthesizer.cpp
+	${CXX} $^ ${PKG-CONFIG} ${SAMPLE_FLAGS}
+
+# Compile a cpp example with static library
+cpp_sample_static: text_synthesizer.cpp ${BINDIR}libmtsynth.a
+	${CXX} $^ ${PKG-CONFIG} ${STATIC_SAMPLE_FLAGS}
 
 clean:
 	rm -f a.out *.o *~

@@ -266,7 +266,11 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
     // set image height from user configured parameters
     int height_min = (int)getParam("height_min");
     int height_max = (int)getParam("height_max");
-    height = (helper->rng()%(height_max-height_min+1))+height_min;
+    if (height_min == height_max) {
+        height = height_min;
+    } else {
+        height = (helper->rng()%(height_max-height_min+1))+height_min;
+    }
     actual_height = height;
 
     string text;
