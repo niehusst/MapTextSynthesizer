@@ -813,7 +813,11 @@ MTS_BaseHelper::create_curved_path (cairo_t *cr, cairo_path_t *path,
         int num_points, double c_min, double c_max, double d_min, 
         double d_max) {
 
-    CV_Assert(num_points >= 3); //verify preconditions
+    if (num_points < 3) {
+        cerr << "number of points is less than 3 in create_curved_path() !" << endl;
+        exit(1);
+    }
+    //CV_Assert(num_points >= 3); //verify preconditions
 
     //set the points for the path
     std::vector<coords> points= make_points_wave(width, height, num_points);

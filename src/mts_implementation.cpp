@@ -42,7 +42,11 @@ unordered_map<string, double> MTSImplementation::parseConfig(string filename) {
 
     // open file
     ifstream infile(filename);
-    CV_Assert(infile.is_open());
+    if (! infile.is_open()) {
+        cerr << "input file cannot be openned!" << endl;
+        exit(1);
+    }
+    //CV_Assert(infile.is_open());
 
     string line, key, value;
     double val;
@@ -58,7 +62,11 @@ unordered_map<string, double> MTSImplementation::parseConfig(string filename) {
             continue;
         }
         size_t pos = line.find(delimiter);
-        CV_Assert(pos != line.npos);
+        if (pos == line.npos) {
+            cerr << "A line does not contain delimiter in config file!" << endl;
+            exit(1);
+        }
+        //CV_Assert(pos != line.npos);
 
         key = line.substr(0, pos);
         value = line.substr(pos+1, line.npos-pos);
@@ -184,7 +192,9 @@ void MTSImplementation::setBlockyFonts(std::vector<string>& font_list){
     // contains every font in the font_list
     for(size_t k = 0; k < font_list.size(); k++){
         if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
-            CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
+            //CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
+            cerr << "The blocky font name list must only contain fonts in your system" << endl;
+            exit(1);
         }
     }
     this->blockyFonts_.assign(font_list.begin(),font_list.end());
@@ -202,7 +212,9 @@ void MTSImplementation::setRegularFonts(std::vector<string>& font_list){
     // contains every font in the font_list
     for(size_t k = 0; k < font_list.size(); k++){
         if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
-            CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
+            //CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
+            cerr << "The regular font name list must only contain fonts in your system" << endl;
+            exit(1);
         }
     }
     this->regularFonts_.assign(font_list.begin(),font_list.end());
@@ -220,7 +232,9 @@ void MTSImplementation::setCursiveFonts(std::vector<string>& font_list){
     // contains every font in the font_list
     for(size_t k = 0; k < font_list.size(); k++){
         if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
-            CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
+            //CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
+            cerr << "The cursive font name list must only contain fonts in your system" << endl;
+            exit(1);
         }
     }
     this->cursiveFonts_.assign(font_list.begin(),font_list.end());
@@ -251,9 +265,13 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
     int bgcolor_min = (int)getParam("bg_color_min");
     int textcolor_max = (int)getParam("text_color_max");
     // assert colors are valid values
-    CV_Assert(bgcolor_min<=255);
-    CV_Assert(textcolor_max>=0);
-    CV_Assert(bgcolor_min>textcolor_max);
+    if (bgcolor_min > 255 || textcolor_max < 0 || bgcolor_min<=textcolor_max) {
+        cerr << "Invalid color input!" << endl;
+        exit(1);
+    }
+    //CV_Assert(bgcolor_min<=255);
+    //CV_Assert(textcolor_max>=0);
+    //CV_Assert(bgcolor_min>textcolor_max);
 
     int bg_brightness = helper->rng()%(255-bgcolor_min+1)+bgcolor_min;
     int text_color = helper->rng()%(textcolor_max+1);

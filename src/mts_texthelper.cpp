@@ -53,7 +53,11 @@ MTS_TextHelper::generateFont(char *font, int fontsize){
             cout << "in if " << endl;
             int listsize = fonts_[i]->size();
             cout << "got size " << endl;
-            CV_Assert(listsize);
+            if (listsize <= 0) {
+                cerr << "font list size should be positive integer!" << endl;
+                exit(0);
+            }
+            //CV_Assert(listsize);
             font_name = fonts_[i]->at(helper->rng()%listsize).c_str();
             strcpy(font,font_name);
             break;
