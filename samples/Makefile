@@ -20,14 +20,16 @@ LIBS := $(addprefix -l, $(LINKS))
 LDLIBS := -L$(BINDIR) $(LIBS)
 PKG-CONFIG := `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
 
+# Source files
+SOURCES := $(wildcard ${SRCDIR}*.cpp)
 
 # Compile the shared library 
-libmtsynth.so: ${SOURCES} 
+shared: ${SOURCES} 
 	if [ ! -d ${BINDIR} ];then mkdir ${BINDIR};fi
 	${CXX} -o ${BINDIR}$@ $^ ${PKG-CONFIG} ${SOFLAGS}
 
 # Compile the static library 
-libmtsynth.a: ${SOURCES} 
+static: ${SOURCES} 
 	if [ ! -d ${BINDIR} ];then mkdir ${BINDIR};fi
 	${CXX} $^ ${PKG-CONFIG} ${OFLAGS}
 	ar rsc ${BINDIR}$@ ./*.o 
@@ -43,5 +45,5 @@ cpp_sample_static: text_synthesizer.cpp ${BINDIR}libmtsynth.a
 
 
 clean:
-	rm -f a.out *.o *~ *.so
+	rm -f a.out *.o *~ *.so \#*#
 

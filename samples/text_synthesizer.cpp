@@ -3,23 +3,15 @@
 #include <fstream>
 #include <memory>
 #include <string>
+
+// header to include for using the synthesizer
 #include "map_text_synthesizer.hpp"
 
 using namespace std;
 using namespace cv;
 
-// reads a file line by line, pushing each line into the vector
-void read_words(string path, vector<string> &caps){
-    ifstream infile(path);
-    string line;
-    
-    while (std::getline(infile, line))
-    {
-        caps.push_back(line);
-    }
-}
 
-// set up the synthesizer and generate 10000 images (without showing them)
+// set up the synthesizer and generate 10000 images (without displaying them)
 int main() {
     /* create a new MapTextSynthesizer object using parameters 
        found in input filename */
@@ -27,6 +19,7 @@ int main() {
 
     // add font types (these fonts should be available on most machines)
     vector<string> blocky;
+    //blocky.push_back("Chromaletter");
     blocky.push_back("Serif");
 
     vector<string> regular;

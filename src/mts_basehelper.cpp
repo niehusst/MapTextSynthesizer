@@ -828,7 +828,8 @@ MTS_BaseHelper::create_curved_path (cairo_t *cr, cairo_path_t *path,
                                     double d_max) {
 
   if (num_points < 3) {
-    std::cerr << "number of points is less than 3 in create_curved_path() !" << endl;
+    std::cerr << "number of points is less than 3 in create_curved_path() !"
+              << std::endl;
     exit(1);
   }
 

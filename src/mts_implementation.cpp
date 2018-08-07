@@ -69,7 +69,7 @@ std::unordered_map<std::string, double> MTSImplementation::parseConfig(std::stri
     // open file
     std::ifstream infile(filename);
     if (! infile.is_open()) {
-      std::cerr << "input file cannot be openned!" << endl;
+        std::cerr << "input file cannot be openned!" << std::endl;
         exit(1);
     }
 
@@ -88,7 +88,8 @@ std::unordered_map<std::string, double> MTSImplementation::parseConfig(std::stri
         }
         size_t pos = line.find(delimiter);
         if (pos == line.npos) {
-            cerr << "A line does not contain delimiter in config file!" << endl;
+            std::cerr << "A line does not contain delimiter in config file!"
+                      << std::endl;
             exit(1);
         }
         //CV_Assert(pos != line.npos);
@@ -286,7 +287,7 @@ void MTSImplementation::generateSample(CV_OUT std::string &caption, CV_OUT cv::M
     // assert colors are valid values
 
     if (bgcolor_min > 255 || textcolor_max < 0 || bgcolor_min<=textcolor_max) {
-        std::cerr << "Invalid color input!" << endl;
+        std::cerr << "Invalid color input!" << std::endl;
         exit(1);
     }
 

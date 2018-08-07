@@ -65,10 +65,9 @@ MTS_TextHelper::generateFont(char *font, int fontsize){
         if(font_prob < 10000 * probs[i]){
             int listsize = fonts_[i]->size();
 
-            cout << "got size " << endl;
             if (listsize <= 0) {
                 std::cerr << "Font list size must be a positive integer!"
-                          << endl;
+                          << std::endl;
                 exit(0);
             }
 
