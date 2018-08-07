@@ -162,19 +162,49 @@ MTS_TextHelper::getTextExtents(PangoLayout *layout, PangoFontDescription *desc, 
     free(ink_rect);
 }
 
-void get_normal_vector(cairo_path_t *path, int pos, double &x, double &y, double &rad) {
+void get_normal_vector(cairo_path_t *path, double x_exp, double &x, double &y, double &rad) {
 
     cairo_path_data_t *data;
     bool pre = false;
     cairo_path_data_t *data2;
 
-    int i = 2 * pos;
-    if (i == path->num_data - 2) {
+    int i;
+    x = 0;
+    bool stop = false;
+
+    for (i = 0; i < path->num_data; i += path->data[i].header.length) {
         data = &path->data[i];
+        switch (data->header.type) {
+            case CAIRO_PATH_MOVE_TO:
+                x = data[1].point.x;
+                if (x >= x_exp) {
+                    stop = true;
+                }
+                break;
+            case CAIRO_PATH_LINE_TO:
+                x = data[1].point.x;
+                if (x >= x_exp) {
+                    stop = true;
+                }
+                break;
+            case CAIRO_PATH_CURVE_TO:
+                cerr << "unexpected curve to" << endl;
+                exit(1);
+                break;
+            case CAIRO_PATH_CLOSE_PATH:
+                cerr << "unexpected close path" << endl;
+                exit(1);
+                break;
+        }
+        if (stop) {
+            break;
+        }
+    }
+
+    if (i == path->num_data - 2) {
         pre = true;
         data2 = &path->data[i-2];
     } else {
-        data = &path->data[i];
         data2 = &path->data[i+2];
     }
 
@@ -266,7 +296,7 @@ MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,
 
     int path_point_num = (path->num_data)/2;
     cout << "num of point flat: " << path_point_num << endl;
-    int point_num_each = path_point_num / (caption_len - 1);
+    //int point_num_each = path_point_num / (caption_len - 1);
     double spacing = width / (caption_len-1);
 
     // Loop through the text
@@ -281,14 +311,14 @@ MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,
         pango_layout_set_text(layout, tmp, -1);
         pango_cairo_layout_path(cr, layout);
         double rad, x, y;
-        get_normal_vector(path, point_num_each * i, x, y, rad);
+        get_normal_vector(path, i*spacing, x, y, rad);
         double x1,y1,x2,y2;
         cairo_path_extents(cr, &x1, &y1, &x2, &y2);
         cairo_path_t *tmp_path = cairo_copy_path(cr);
         cairo_new_path(cr);
 
         //cairo_translate(cr, i * spacing, y);
-        cairo_translate(cr, i * spacing, y - height/2);
+        cairo_translate(cr, x, y - height/2);
         cairo_rotate(cr, rad);
         cairo_scale(cr, stretch_deg, 1);
         //cairo_translate(cr, - i * spacing, -y);
@@ -493,12 +523,12 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     // apply arbitrary padding and scaling
     /*
-    cairo_translate (cr_n, x_pad, y_pad);
+       cairo_translate (cr_n, x_pad, y_pad);
 
-    cairo_translate (cr_n, patch_width/2, height/2);
-    cairo_scale(cr_n, scale, scale);
-    cairo_translate (cr_n, -patch_width/2, -height/2);
-    */
+       cairo_translate (cr_n, patch_width/2, height/2);
+       cairo_scale(cr_n, scale, scale);
+       cairo_translate (cr_n, -patch_width/2, -height/2);
+     */
 
     // copy text onto new surface
     cairo_set_source_surface(cr_n, surface, 0, 0);
