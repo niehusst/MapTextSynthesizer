@@ -29,7 +29,9 @@ TODO
 
 #### C++
 
-To compile a C++ sample from a shared library, do ```make``` follwoed by ```make cpp_sample```. Or to compile with a static library, ```make libmtsynth.a``` followed by ```make cpp_sample_static```. To run the resulting program, navigate to the bin directory and  
+To compile a C++ sample from a shared library, do ```make``` follwoed by ```make cpp_sample```. To run the resulting program (a.out) found in the samples directory, set an environment variable that allows your executable to find the shared library to your specific path to the shared library file: ```LD_LIBRARY_PATH=/directory/path/to/bin/libmtsynth.so``` and then run the executable with ```./a.out```.
+
+Or to compile using a static library, ```make libmtsynth.a``` followed by ```make cpp_sample_static```. To run the resulting executable (a.out) located in the samples directory, call ```./a.out``` in the terminal.
 
 ##### Sample compiling steps for having made a shared object with CMake:
 
