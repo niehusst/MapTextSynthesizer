@@ -6,16 +6,11 @@ BINDIR=../bin/
 
 # Compiler, flags, and packages
 CXX=g++
-FLAGS=-I. -I$(IDIR) -I$(LIBDIR) -shared -fPIC -std=c++11
-SFLAGS=-I. -I$(IDIR) -I$(LIBDIR) -std=c++11
-
-# Source files to compile with example file
-S=map_text_synthesizer.cpp mts_basehelper.cpp mts_implementation.cpp \
-	mts_bghelper.cpp mts_texthelper.cpp
-H=map_text_synthesizer.hpp mts_basehelper.hpp mts_implementation.hpp \
-	mts_bghelper.hpp mts_texthelper.hpp
-HEADER=$(addprefix $(LIBDIR), $(H))
-SRC=$(addprefix $(SRCDIR), $(S))
+FLAGS=-std=c++11 -Wall
+SOFLAGS=-I. -I$(IDIR) -I$(LIBDIR) -shared -fPIC ${FLAGS}
+OFLAGS=-c -I. -I$(IDIR) -I$(LIBDIR) ${FLAGS}
+SAMPLE_FLAGS=-I. -I$(IDIR) -L${BINDIR} -lmtsynth ${FLAGS}
+STATIC_SAMPLE_FLAGS=-I. -I$(IDIR) ${FLAGS}
 
 # Link libraries
 LINKS := opencv_ml opencv_calib3d opencv_features2d opencv_highgui mtsynth \
@@ -26,13 +21,25 @@ LDLIBS := -L$(BINDIR) $(LIBS)
 PKG-CONFIG := `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
 
 
-# Compile cpp examples
-text_synthcc: text_synthesizer.cpp
-	${CXX} ${SFLAGS} $^ ${SRC} ${PKG-CONFIG}
+# Compile the shared library 
+libmtsynth.so: ${SOURCES} 
+	if [ ! -d ${BINDIR} ];then mkdir ${BINDIR};fi
+	${CXX} -o ${BINDIR}$@ $^ ${PKG-CONFIG} ${SOFLAGS}
 
+# Compile the static library 
+libmtsynth.a: ${SOURCES} 
+	if [ ! -d ${BINDIR} ];then mkdir ${BINDIR};fi
+	${CXX} $^ ${PKG-CONFIG} ${OFLAGS}
+	ar rsc ${BINDIR}$@ ./*.o 
+	rm ./*.o
 
-# Compile python example (REQUIRES A SHARED OBJECT LIBRARY & EXPORTED ENV VAR)
-#      export LD_LIBRARY_PATH=/path/to/.so/obj
+# Compile a cpp example
+cpp_sample: text_synthesizer.cpp
+	${CXX} $^ ${PKG-CONFIG} ${SAMPLE_FLAGS}
+
+# Compile a cpp example with static library
+cpp_sample_static: text_synthesizer.cpp ${BINDIR}libmtsynth.a
+	${CXX} $^ ${PKG-CONFIG} ${STATIC_SAMPLE_FLAGS}
 
 
 clean:
