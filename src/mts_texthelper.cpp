@@ -162,13 +162,13 @@ MTS_TextHelper::getTextExtents(PangoLayout *layout, PangoFontDescription *desc, 
     free(ink_rect);
 }
 
-void get_normal_vector(cairo_path_t *path, int x, double &y, double &rad) {
+void get_normal_vector(cairo_path_t *path, int pos, double &x, double &y, double &rad) {
 
     cairo_path_data_t *data;
     bool pre = false;
     cairo_path_data_t *data2;
 
-    int i = 2 * x;
+    int i = 2 * pos;
     if (i == path->num_data - 2) {
         data = &path->data[i];
         pre = true;
@@ -185,17 +185,18 @@ void get_normal_vector(cairo_path_t *path, int x, double &y, double &rad) {
                     cerr << "unexpected move to" << endl;
                     exit(1);
                 }
+                x = data[1].point.x;
                 y = data[1].point.y;
                 double x_dis = data2[1].point.x - data[1].point.x;
                 double y_dis = data2[1].point.y - data[1].point.y;
                 if (x_dis == 0) {
                     if (y_dis > 0) {
-                        rad = - M_PI / 2;
-                    } else {
                         rad = M_PI / 2;
+                    } else {
+                        rad = - M_PI / 2;
                     }
                 } else {
-                    rad = - atan(y_dis/x_dis);
+                    rad = atan(y_dis/x_dis);
                 }
             }
             break;
@@ -203,22 +204,24 @@ void get_normal_vector(cairo_path_t *path, int x, double &y, double &rad) {
             {
                 double x_dis,y_dis;
                 if (pre) {
+                    x = data2[1].point.x;
                     y = data2[1].point.y;
                     x_dis = data[1].point.x - data2[1].point.x;
                     y_dis = data[1].point.y - data2[1].point.y;
                 } else {
+                    x = data[1].point.x;
                     y = data[1].point.y;
                     x_dis = data2[1].point.x - data[1].point.x;
                     y_dis = data2[1].point.y - data[1].point.y;
                 }
                 if (x_dis == 0) {
                     if (y_dis > 0) {
-                        rad = - M_PI / 2;
-                    } else {
                         rad = M_PI / 2;
+                    } else {
+                        rad = - M_PI / 2;
                     }
                 } else {
-                    rad = - atan(y_dis/x_dis);
+                    rad = atan(y_dis/x_dis);
                 }
             }
             break;
@@ -270,14 +273,15 @@ MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,
     int i = 0;
     char cur = caption[i];
 
+    cairo_path_t *path_so_far = NULL;
+
     while (cur != '\0') {
-        cout << "loop " << i << " " << cur << endl;
         cairo_save(cr);
         char tmp[2] = {cur, '\0'};
         pango_layout_set_text(layout, tmp, -1);
         pango_cairo_layout_path(cr, layout);
-        double rad, y;
-        get_normal_vector(path, point_num_each * i, y, rad);
+        double rad, x, y;
+        get_normal_vector(path, point_num_each * i, x, y, rad);
         double x1,y1,x2,y2;
         cairo_path_extents(cr, &x1, &y1, &x2, &y2);
         cairo_path_t *tmp_path = cairo_copy_path(cr);
@@ -290,10 +294,17 @@ MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,
         //cairo_translate(cr, - i * spacing, -y);
         cairo_translate(cr, -(x1+(x2-x1)/2), -(y1+(y2-y1)/2));
         cairo_append_path(cr, tmp_path);
-        cairo_fill(cr);
+        //cairo_fill_preserve(cr);
         cairo_restore(cr);
+        if (path_so_far != NULL) {
+            cairo_append_path(cr, path_so_far);
+        }
+        path_so_far = cairo_copy_path(cr);
+        cairo_new_path(cr);
         cur = caption[++i];
     }
+    cairo_append_path(cr, path_so_far);
+    //cairo_fill(cr);
 
     //clean up
     cairo_path_destroy(path);
@@ -425,7 +436,6 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         create_curved_text(cr,layout,(double)patch_width,
                 (double) height,num_points,c_min,c_max,d_min,d_max,stretch_deg);
 
-        /*
         // get extents and adjust the position
         double x1,x2,y1,y2;
         cairo_path_extents(cr,&x1,&y1,&x2,&y2);
@@ -454,13 +464,13 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         // copy the ink back and adjust the size
         double height_ratio = height/(y2-y1);
         cairo_scale(cr,height_ratio,height_ratio);
-        patch_width=(int)(ceil((x2-x1)*height_ratio)*stretch_deg);
+        //patch_width=(int)(ceil((x2-x1)*height_ratio)*stretch_deg);
+        patch_width=(int)(ceil((x2-x1)*height_ratio));
         cairo_set_source_surface(cr, surface_c, 0, 0);
         cairo_rectangle(cr, 0, 0, x2-x1, y2-y1);
         cairo_fill(cr);
         cairo_destroy (cr_c);
         cairo_surface_destroy (surface_c);
-         */
     } else {
         cairo_scale(cr, stretch_deg, 1);
         cairo_translate (cr, -ink_x, -ink_y);
@@ -482,11 +492,13 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     cr_n = cairo_create (surface_n);
 
     // apply arbitrary padding and scaling
+    /*
     cairo_translate (cr_n, x_pad, y_pad);
 
     cairo_translate (cr_n, patch_width/2, height/2);
     cairo_scale(cr_n, scale, scale);
     cairo_translate (cr_n, -patch_width/2, -height/2);
+    */
 
     // copy text onto new surface
     cairo_set_source_surface(cr_n, surface, 0, 0);
