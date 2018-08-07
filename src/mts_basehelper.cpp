@@ -825,11 +825,11 @@ MTS_BaseHelper::create_curved_path (cairo_t *cr, cairo_path_t *path,
     points_to_path(cr, points, c_min,c_max,d_min,d_max); //draw path shape
 
     // Decrease tolerance, since the text going to be magnified 
-    cairo_set_tolerance (cr, 0.01);
+    cairo_set_tolerance(cr, 0.01);
 
-    path = cairo_copy_path_flat (cr);
-    cairo_new_path (cr);
-    line = pango_layout_get_line_readonly (layout, 0);
+    path = cairo_copy_path_flat(cr);
+    cairo_new_path(cr);
+    line = pango_layout_get_line_readonly(layout, 0);
 
     cairo_move_to (cr, x,y);//establish how far from/along path the text is
     pango_cairo_layout_line_path (cr, line);

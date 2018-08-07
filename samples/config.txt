@@ -13,7 +13,7 @@ spacing_scale=20
 spacing_shift=-1
 
 //Baseline Curve
-curve_prob=0.3
+curve_prob=1
 curve_min_spacing=10          //min spacing required for the text to be curved
 curve_min_wid_hei_ratio=10    //min width-height ratio for the text to be curved
 curve_num_points_min=3
@@ -43,7 +43,7 @@ missing_size_max=0.125        //with respect to height
 missing_diminish_rate=100     //the larger this value, the slower the edge diminishes
 
 //Rotate
-rotate_prob=0.3
+rotate_prob=0
 rotate_degree_min=-10
 rotate_degree_max=10
 
@@ -192,7 +192,7 @@ line_width_scale_max=0.025    //with respect to min(width,height)
 
 // GENERAL PARAMS
 
-digit_prob=0.3
+digit_prob=0.0
 digit_len_alpha=3
 digit_len_beta=0.2                 //inverse gamma
 digit_len_max=20

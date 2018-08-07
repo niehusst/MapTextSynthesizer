@@ -162,6 +162,144 @@ MTS_TextHelper::getTextExtents(PangoLayout *layout, PangoFontDescription *desc, 
     free(ink_rect);
 }
 
+void get_normal_vector(cairo_path_t *path, int x, double &y, double &rad) {
+
+    cairo_path_data_t *data;
+    bool pre = false;
+    cairo_path_data_t *data2;
+
+    int i = 2 * x;
+    if (i == path->num_data - 2) {
+        data = &path->data[i];
+        pre = true;
+        data2 = &path->data[i-2];
+    } else {
+        data = &path->data[i];
+        data2 = &path->data[i+2];
+    }
+
+    switch (data->header.type) {
+        case CAIRO_PATH_MOVE_TO:
+            {
+                if (pre) {
+                    cerr << "unexpected move to" << endl;
+                    exit(1);
+                }
+                y = data[1].point.y;
+                double x_dis = data2[1].point.x - data[1].point.x;
+                double y_dis = data2[1].point.y - data[1].point.y;
+                if (x_dis == 0) {
+                    if (y_dis > 0) {
+                        rad = - M_PI / 2;
+                    } else {
+                        rad = M_PI / 2;
+                    }
+                } else {
+                    rad = - atan(y_dis/x_dis);
+                }
+            }
+            break;
+        case CAIRO_PATH_LINE_TO:
+            {
+                double x_dis,y_dis;
+                if (pre) {
+                    y = data2[1].point.y;
+                    x_dis = data[1].point.x - data2[1].point.x;
+                    y_dis = data[1].point.y - data2[1].point.y;
+                } else {
+                    y = data[1].point.y;
+                    x_dis = data2[1].point.x - data[1].point.x;
+                    y_dis = data2[1].point.y - data[1].point.y;
+                }
+                if (x_dis == 0) {
+                    if (y_dis > 0) {
+                        rad = - M_PI / 2;
+                    } else {
+                        rad = M_PI / 2;
+                    }
+                } else {
+                    rad = - atan(y_dis/x_dis);
+                }
+            }
+            break;
+        case CAIRO_PATH_CURVE_TO:
+            cerr << "unexpected curve to" << endl;
+            exit(1);
+            break;
+        case CAIRO_PATH_CLOSE_PATH:
+            cerr << "unexpected close path" << endl;
+            exit(1);
+            break;
+    }
+}
+
+void
+MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,
+        double width, double height, int num_points, double c_min, 
+        double c_max, double d_min, double d_max, double stretch_deg) {
+
+    if (num_points < 3) {
+        cerr << "number of points is less than 3 in create_curved_text() !" << endl;
+        exit(1);
+    }   
+
+    //set the points for the path
+    std::vector<coords> points= helper->make_points_wave(width, height, num_points);
+
+    helper->points_to_path(cr, points, c_min,c_max,d_min,d_max); //draw path shape
+
+    cout << "finished getting curve path!" << endl;
+
+    // Decrease tolerance, since the text going to be magnified 
+    cairo_set_tolerance(cr, 0.01);
+
+    cairo_path_t *path = cairo_copy_path_flat(cr);
+    cairo_new_path(cr);
+
+    // Get text
+    char caption[100];
+    strcpy(caption, pango_layout_get_text(layout));
+    int caption_len = strlen(caption);
+
+    int path_point_num = (path->num_data)/2;
+    cout << "num of point flat: " << path_point_num << endl;
+    int point_num_each = path_point_num / (caption_len - 1);
+    double spacing = width / (caption_len-1);
+
+    // Loop through the text
+    int i = 0;
+    char cur = caption[i];
+
+    while (cur != '\0') {
+        cout << "loop " << i << " " << cur << endl;
+        cairo_save(cr);
+        char tmp[2] = {cur, '\0'};
+        pango_layout_set_text(layout, tmp, -1);
+        pango_cairo_layout_path(cr, layout);
+        double rad, y;
+        get_normal_vector(path, point_num_each * i, y, rad);
+        double x1,y1,x2,y2;
+        cairo_path_extents(cr, &x1, &y1, &x2, &y2);
+        cairo_path_t *tmp_path = cairo_copy_path(cr);
+        cairo_new_path(cr);
+
+        //cairo_translate(cr, i * spacing, y);
+        cairo_translate(cr, i * spacing, y - height/2);
+        cairo_rotate(cr, rad);
+        cairo_scale(cr, stretch_deg, 1);
+        //cairo_translate(cr, - i * spacing, -y);
+        cairo_translate(cr, -(x1+(x2-x1)/2), -(y1+(y2-y1)/2));
+        cairo_append_path(cr, tmp_path);
+        cairo_fill(cr);
+        cairo_restore(cr);
+        cur = caption[++i];
+    }
+
+    //clean up
+    cairo_path_destroy(path);
+}
+
+
 void 
 MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface, 
         string caption,int height,int &width, int text_color, bool distract){
@@ -270,13 +408,10 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
         pango_cairo_show_layout (cr, layout);
 
-    } else if (curved && 
-            patch_width > getParam("curve_min_wid_hei_ratio")*height && 
-            spacing_deg >= getParam("curve_min_spacing")) {
-        cairo_scale(cr, stretch_deg, 1);
-
-        cairo_path_t *path;
-        PangoLayoutLine *line;
+    } else if (curved 
+            //&& patch_width > getParam("curve_min_wid_hei_ratio")*height && 
+            //spacing_deg >= getParam("curve_min_spacing")
+            ) {
 
         int num_min = (int)(getParam("curve_num_points_min"));
         int num_max = (int)(getParam("curve_num_points_max"));
@@ -287,9 +422,10 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         double d_min = getParam("curve_d_min");
         double d_max = getParam("curve_d_max");
 
-        helper->create_curved_path(cr,path,line,layout,(double)patch_width,
-                (double) height,0,0,num_points,c_min,c_max,d_min,d_max);
+        create_curved_text(cr,layout,(double)patch_width,
+                (double) height,num_points,c_min,c_max,d_min,d_max,stretch_deg);
 
+        /*
         // get extents and adjust the position
         double x1,x2,y1,y2;
         cairo_path_extents(cr,&x1,&y1,&x2,&y2);
@@ -309,8 +445,8 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         cairo_surface_t *surface_c;
         cairo_t *cr_c;
 
-        surface_c = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, (int)ceil(x2-x1), (int)ceil(y2-y1));
-        cr_c = cairo_create (surface_c);
+        surface_c = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, (int)ceil(x2-x1), (int)ceil(y2-y1));
+        cr_c = cairo_create(surface_c);
         cairo_new_path(cr_c);
         cairo_append_path(cr_c,path_n);
         cairo_fill(cr_c);
@@ -324,6 +460,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         cairo_fill(cr);
         cairo_destroy (cr_c);
         cairo_surface_destroy (surface_c);
+         */
     } else {
         cairo_scale(cr, stretch_deg, 1);
         cairo_translate (cr, -ink_x, -ink_y);
