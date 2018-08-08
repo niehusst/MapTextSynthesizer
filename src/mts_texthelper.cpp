@@ -543,13 +543,11 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     cr_n = cairo_create (surface_n);
 
     // apply arbitrary padding and scaling
-    /*
-       cairo_translate (cr_n, x_pad, y_pad);
+    cairo_translate (cr_n, x_pad, y_pad);
 
-       cairo_translate (cr_n, patch_width/2, height/2);
-       cairo_scale(cr_n, scale, scale);
-       cairo_translate (cr_n, -patch_width/2, -height/2);
-     */
+    cairo_translate (cr_n, patch_width/2, height/2);
+    cairo_scale(cr_n, scale, scale);
+    cairo_translate (cr_n, -patch_width/2, -height/2);
 
     // copy text onto new surface
     cairo_set_source_surface(cr_n, surface, 0, 0);
@@ -585,7 +583,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         double size_min=getParam("missing_size_min");
         double size_max=getParam("missing_size_max");
         double dim_rate=getParam("missing_diminish_rate");
-        helper->addSpots(surface_n,num_min,num_max,size_min,size_max,dim_rate,true,0);
+        helper->addSpots(surface_n,num_min,num_max,size_min,size_max,dim_rate,true);
     }
 
     //pass back values
@@ -597,6 +595,7 @@ void
 MTS_TextHelper::generateTextSample (string &caption, cairo_surface_t *&text_surface, int height, 
         int &width, int text_color, bool distract){
 
+    cout << "text color " << text_color << endl;
     if (helper->rndProbUnder(getParam("digit_prob"))) {
         caption = "";
         int digit_len = int(ceil(1/digit_len_gen()));

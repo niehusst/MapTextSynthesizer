@@ -15,7 +15,7 @@ using namespace cv;
 using boost::random::mt19937;
 
 // All possible features that can be incorporated into a background
-enum BGFeature {Colordiff=0, Distracttext, Boundry, Colorblob, 
+enum BGFeature {Colordiff=0, Distracttext, Boundary, Colorblob, 
     Straight, Grid, Citypoint, Parallel, 
     Vparallel, Texture, Railroad, Riverline};
 
@@ -346,9 +346,10 @@ class MTS_BaseHelper {
          * size_max - maxinum size of hole wrt height
          * diminish_rate - diminish_rate of the edge of the hole
          * transparent - whether the holes will be transparent or not
-         * color - if not trans, then the color of the holes
+         * color_min - if not trans, then the min color of the holes
+         * color_max - if not trans, then the max color of the holes
          */
-        void addSpots(cairo_surface_t *surface, int num_min, int num_max, double size_min, double size_max, double diminish_rate, bool transparent, int color);
+        void addSpots(cairo_surface_t *surface, int num_min, int num_max, double size_min, double size_max, double diminish_rate, bool transparent, int color_min=0, int color_max=0);
 
 };
 

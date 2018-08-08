@@ -51,7 +51,7 @@ MTS_BaseHelper::rng(){
 
 void 
 MTS_BaseHelper::addSpots (cairo_surface_t *surface, int num_min, int num_max, double size_min,
-        double size_max, double diminish_rate, bool transparent, int color){
+        double size_max, double diminish_rate, bool transparent, int color_min, int color_max){
 
     // get the width and height of the image
     int height = cairo_image_surface_get_height(surface);
@@ -95,13 +95,20 @@ MTS_BaseHelper::addSpots (cairo_surface_t *surface, int num_min, int num_max, do
         int y = y_coords[i];
         double rad = radii[i];
 
+        int color = rng() % (color_max-color_min+1) + color_min;
+        unsigned char trans = 255 - color;
+
         // iterate through mask and set pixels within range to 255
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < stride; column++) {
                 double dis = pow(pow((double)(row-y),2)+pow((double)(column-x),2),0.5);
                 prob = 100 - (100 / (1 + diminish_rate * exp(-(dis - rad))));
                 if (rng() % 100 < prob) {
-                    data[row * stride + column] = 255;
+                    if (transparent) {
+                        data[row * stride + column] = 255;
+                    } else {
+                        data[row * stride + column] = trans;
+                    }
                 }
             }
         }
@@ -136,7 +143,7 @@ MTS_BaseHelper::addSpots (cairo_surface_t *surface, int num_min, int num_max, do
         cr = cairo_create (surface);
 
         // set mask brightness
-        cairo_set_source_rgb(cr,color/255.0,color/255.0,color/255.0);
+        cairo_set_source_rgb(cr,0,0,0);
 
         // apply mask to surface
         cairo_mask_surface(cr, mask, 0, 0);
