@@ -17,7 +17,7 @@ In contrast with the static dataset, our dynamic text image generator occupies o
 |
 |-include/mtsynth/map_text_synthesizer.hpp (public header)
 |
-|-inc/                                                                   (private headers)
+|-inc/                                     (private headers)
 |       |-mts_implementation.hpp
 |       |-mts_basehelper.hpp
 |       |-mts_texthelper.hpp
