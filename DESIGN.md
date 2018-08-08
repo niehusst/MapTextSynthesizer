@@ -81,15 +81,13 @@ Available fonts can also be altered. If the google fonts repository we use isn�
 Or, you can dynamically set available fonts by using the ```MapTextSynthesizer``` methods ```setBlockyFonts()```,```setCursiveFonts()``` and ```setRegularFonts()```. Set your desired font names with these methods by passing in either the filename of a plain text file containing a list of font names, or a vector of font names. 
 
 When adding font names, be sure that you have the fonts installed on your machine; if the synthesizer encounters a font that isn’t on your machine while processing the available fonts, it will exit the process with an terminal message.
-Fonts must be downloaded into a .fonts folder in home directory to be visible??????
+Fonts must be downloaded into a .fonts folder in home directory to be visible.
 
 #### Words 
 The population of words that are displayed in the synthesized images is also configurable. We have included a directory containing files of Iowa place-names for generating realistic map samples, but this does not have to be the source. To set your own list of captions, do
 
 If no captions are found/supplied, the synthesizer will generate its own captions of random characters and length. 
 
-#### How to integrate the synthesizer with Tensorflow
-Put Ben’s notes here
 
 ## Notes for Developers/ Contributors
 
@@ -109,6 +107,8 @@ The ```generateBgFeatures()``` method in ```MTS_BackgroundHelper``` is used to s
 
 The ```generateBgSample()``` method in ```MTS_BackgroundHelper``` is the main method for generating the background cairo surface given a vector of ```BGFeatures``` to generate.
 
+### How to integrate the synthesizer with Tensorflow
+Put Ben’s notes here
 
 #### Notes on Threadability
 

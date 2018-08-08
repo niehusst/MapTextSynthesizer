@@ -35,13 +35,14 @@ libmtsynth.a: ${SOURCES}
 	ar rsc ${BINDIR}$@ ./*.o 
 	rm ./*.o
 
-# Compile a cpp example
+# Compile a cpp example from shared library
+# NOTE: Must set environment variable LD_LIBRARY_PATH=/path/to/libmtsynth.so
 cpp_sample: text_synthesizer.cpp
-	${CXX} $^ ${PKG-CONFIG} ${SAMPLE_FLAGS}
+	${CXX} -o shared_sample $^ ${PKG-CONFIG} ${SAMPLE_FLAGS}
 
 # Compile a cpp example with static library
 cpp_sample_static: text_synthesizer.cpp ${BINDIR}libmtsynth.a
-	${CXX} $^ ${PKG-CONFIG} ${STATIC_SAMPLE_FLAGS}
+	${CXX} -o static_sample $^ ${PKG-CONFIG} ${STATIC_SAMPLE_FLAGS}
 
 
 clean:
