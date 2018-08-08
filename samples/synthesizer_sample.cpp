@@ -1,8 +1,27 @@
+/** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * A sample C++ program that uses the MapTextSynthesizer class.               *
+ * Copyright (C) 2018, Liam Niehus-Staab and Ziwen Chen                       *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ * (at your option) any later version.                                        * 
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful,            *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+ * GNU General Public License for more details.                               *
+ *                                                                            *
+ * You should have received a copy of the GNU General Public License          *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
+
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <memory>
 #include <string>
+#include <opencv2/opencv.hpp>
 
 // header to include for using the synthesizer
 #include "map_text_synthesizer.hpp"
@@ -28,12 +47,15 @@ int main(int argc, char **argv) {
     auto mts = MapTextSynthesizer::create("config.txt");
 
     // add font types (these fonts should be available on most machines)
+    // if you are getting an error about unavailable fonts, run 
+    // list_available_fonts.cpp to see what fonts are available on your machine
     vector<string> blocky;
-    blocky.push_back("Serif");
+    blocky.push_back("URW Gothic L");
 
     vector<string> regular;
     regular.push_back("Sans");
-
+    blocky.push_back("Serif");
+    
     vector<string> cursive;
     cursive.push_back("URW Chancery L");
 
@@ -48,10 +70,11 @@ int main(int argc, char **argv) {
     string label;
     Mat image;
     int height;
-    int start = time(NULL);
 
-    if( (argc > 1) && (argv[1] == "benchmark") ) {
+    if( (argc > 1) && (string(argv[1]) == "benchmark") ) {
       cout << "Running benchmark" << flush;
+      int start = time(NULL);
+      
       // generate 10000 images from the synthesizer
       while (k<10000) {
         if(k % 500 == 0) {
@@ -69,17 +92,19 @@ int main(int argc, char **argv) {
       
     } else { // show the user images
       string input;
+      cout << "While window is selected, press any button to advance the image."
+           << endl << "To quit, use ^C with the terminal selected." << endl;
       do {
         // make the sample
         mts->generateSample(label, image, height);
-        // show the image 
+        // show the image (using opencv) and print caption to terminal
+        cout << label << endl;
         imshow("Sample image", image);
         waitKey(0);
-        cout << label << endl;
 
-        // repeat until user inputs 'q'
-        cin >> input;
-      } while(input != 'q');
+        // repeat until user force quits with ^C
+        // *** change this quit method; should be better ***
+      } while(true);
     }
     
     return 0;

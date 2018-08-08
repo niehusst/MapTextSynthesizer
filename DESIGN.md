@@ -114,3 +114,6 @@ Put Ben’s notes here
 
 At the time of writing this (2018) Pangocairo is not thread-safe; following from that, MapTextSynthesizer is not strictly thread-safe. To resolve this, locks were added to avoid race conditions. However, this significantly slows threaded running of the synthesizer; diminishing the prospective production rate. 
 
+#### Previous work on this project
+
+If you are interested in seeing the development history of the majority of the features in this project, it can be found at [niehusst/opencv_contrib](https://github.com/niehusst/opencv_contrib/tree/dev). 
