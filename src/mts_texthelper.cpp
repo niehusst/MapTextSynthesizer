@@ -156,19 +156,16 @@ void
 MTS_TextHelper::getTextExtents(PangoLayout *layout, PangoFontDescription *desc,
                                int &x, int &y, int &w, int &h, int &size) {
   
-    PangoRectangle *text_rect = new PangoRectangle;
-    PangoRectangle *logical_rect = new PangoRectangle;
-    pango_layout_get_extents(layout, text_rect, logical_rect);
+    PangoRectangle text_rect;
+    PangoRectangle logical_rect;
+    pango_layout_get_extents(layout, &text_rect, &logical_rect);
 
-    x=text_rect->x/1024;
-    y=text_rect->y/1024;
-    w=text_rect->width/1024;
-    h=text_rect->height/1024;
+    x=text_rect.x/1024;
+    y=text_rect.y/1024;
+    w=text_rect.width/1024;
+    h=text_rect.height/1024;
 
     size = pango_font_description_get_size(desc);
-
-    free(logical_rect);
-    free(text_rect);
 }
 
 void 
@@ -461,13 +458,13 @@ MTS_TextHelper::distractText (cairo_t *cr, int width, int height, char *font) {
     pango_layout_set_text(layout, text, -1);
 
     // find text bounding rectangle
-    PangoRectangle *text_rect = new PangoRectangle;
-    PangoRectangle *logical_rect = new PangoRectangle;
-    pango_layout_get_extents(layout, text_rect, logical_rect);
+    PangoRectangle text_rect;
+    PangoRectangle logical_rect;
+    pango_layout_get_extents(layout, &text_rect, &logical_rect);
 
     // get the text dimensions from its bounding rectangle
-    int text_width = text_rect->width/1024;
-    int text_height = text_rect->height/1024;
+    int text_width = text_rect.width/1024;
+    int text_height = text_rect.height/1024;
 
     // translate to arbitrary point on the canvas
     int x = helper->rng()%width;
@@ -489,8 +486,6 @@ MTS_TextHelper::distractText (cairo_t *cr, int width, int height, char *font) {
     cairo_identity_matrix(cr);
     g_object_unref(layout);
     pango_font_description_free (desc);
-    free(logical_rect);
-    free(text_rect);
 }
 
 
