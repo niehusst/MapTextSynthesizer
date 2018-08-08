@@ -10,10 +10,10 @@ Earlier work on this project (including most of the source code development) occ
 
 * **Pango**, a text formatting library. It comes preinstalled on many Linux machines. Otherwise, follow download from their [website](https://www.pango.org/).
 * **Cairo**, a vector graphics library. It comes preinstalled on many Linux machines. Otherwise, follow download from their [website](https://cairographics.org/).
-* **OpenCV**, a computer vision repository. It can be found and downloaded from their [github](https://github.com/opencv).
+* **OpenCV**, a computer vision repository. It can be found on github at [opencv](https://github.com/opencv) and downloaded on linux using the instructions [here](https://www.learnopencv.com/install-opencv3-on-ubuntu/).
 * **glib-2.0**, a low-level Gnome library. glib is a dependency of pango and cairo; by downloading the other libraries, you will get glib-2.0. Their website can be found [here](https://lazka.github.io/pgi-docs/GLib-2.0/index.html).
 
-### Install with CMake on Linux
+### Compile with CMake on Linux
 
 open install.sh using a text editor and type in corresponding paths
 
@@ -23,7 +23,7 @@ e.g. Edited Where is the source code: [path-to]/MapTextSynthesizer
 
 Resulting files will be in build folder.
 
-### Install with Makefile on Linux
+### Compile with Makefile on Linux
 
 `` $ make ``
 
