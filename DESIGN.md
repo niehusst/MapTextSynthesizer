@@ -59,16 +59,17 @@ The header and source files of the ```MTS_TextHelper``` class. They contain the 
 ## How (on Debian/Ubuntu)
 ### How to install files and dependencies
 You will need OpenCV2 and pangocairo to run the synthesizer.
-If you are running Linux, you should already have pangocairo installed in your Linux system. To check whether it is installed, run `pkg-config --cflags --libs pangocairo` in your terminal.
+If you are running Linux, you should already have pangocairo installed in your system. To check whether it is installed, run `pkg-config --cflags --libs pangocairo` in your terminal. If you have it, your terminal should spit back a series of compiler flags that make up the pkg-config.
+To install pangocairo on MacOS using homebrew, run ```brew install pango``` in the terminal. Since pango is the parent of pangocairo, pangocairo will be downloaded implicitly. 
 
 OpenCV is used for adding Gaussian blur and noise to the final image to make it more realistic.
 To install OpenCV on Linux, follow the steps [here](https://www.learnopencv.com/install-opencv3-on-ubuntu/). To install with homebrew on MacOS, run ```brew install opencv``` in the terminal.
 
+If you plan on doing more than running a few samples with Makefile, you may want to use CMake to make the synthesizer more portable. If so, after you have downloaded the MapTextSynthesizer repository from Github and all the dependencies, you can use `install.sh` in the root folder to install the synthesizer in your system using CMake. First, open `install.sh` in a text editor and modify the three paths according to your own settings. If you are not using virtual environment, `PATH_TO_VENV` should just be `/usr`.
+If you don’t want to install the software but only want to make the .so packages, comment out `make install` and uncomment `make`. Then run `./install.sh` in your terminal. 
 
-After you have downloaded the MapTextSynthesizer repository from Github, use install.sh in the root folder to install the synthesizer in your system. First, open install.sh in a text editor and modify the three paths according to your own settings. If you are not using virtual environment, `PATH_TO_VENV` should just be `/usr`, If you don’t want to install the software but only want to make the .so packages, comment out `make install` and uncomment `make`. Then run `./install.sh` in your terminal. 
 
-
-### How to configure MapTextSynthesizer
+### How to Configure MapTextSynthesizer
 
 Using the same tried-and-true parameters for the synthesizer as we have is guaranteed to get relatively realistic results. However, should you want to experiment, the tools are available. 
 #### Parameters
