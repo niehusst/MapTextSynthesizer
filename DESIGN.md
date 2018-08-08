@@ -1,8 +1,8 @@
-#Design document
+# Design document
 
 MapTextSynthesizer is a program to dynamically generate synthetic images containing text, which appear to be from historical maps. The produced images serve as training data for a Convolutional Neural Network that recognizes text in scanned images of historical maps. (Data not intended for training a text spotting model)
 
-##General Problem & Approach
+## General Problem & Approach
 
 When trained on a static training dataset of scene text ([MJSynth](http://www.robots.ox.ac.uk/~vgg/data/text/)), a Convolutional Neural Network built by Professor [Jerod Weinman](https://github.com/weinman/cnn_lstm_ctc_ocr) that recognizes text in historical maps has a performance of ________. This is suboptimal, and we believe that ______ can be improved by using training data that better fits the purpose of the CNN.
 
@@ -11,7 +11,7 @@ The current, static dataset, MJSynth is gigantic in size (10Gb), which makes dis
 To resolve these issues, we have created a program to dynamically generate synthetic, map-like images containing text  and use those images as training data for Professor Weinman’s map-text recognizing CNN. 
 In contrast with the static dataset, our dynamic text image generator occupies only 6.3M disk memory while capable of producing a theoretically infinite amount of training data, all of which is specifically engineered to look similar to text found in historical maps.
 
-##Files Developed
+## Files Developed
 
 ```
 |
@@ -31,32 +31,32 @@ In contrast with the static dataset, our dynamic text image generator occupies o
 |       |-mts_bghelper.cpp
 ```
 
-###Why this architecture?
+### Why this architecture?
 
 Our classes divide the components of the map text synthesizer as sensibly as possible. Text attributes and background features are the synthesizer’s main functionality, so their support methods are divided into the ```MTS_TextHelper``` class and ```MTS_BackgroundHelper``` classes respectively. Methods shared between text attributes and background features are placed in the ```MTS_BaseHelper``` class for ease of access; every other class includes a pointer to ```MTS_BaseHelper``` as a class member.
 
-###What do these files do
+### What do these files do
 
-map_text_synthesizer.hpp:
+##### map_text_synthesizer.hpp:
 The public header of this software. Also the header file of ```MapTextSynthesizer``` class. Exposes public methods for users to create a synthesizer, set the candidate fonts, set the candidate captions, and get the generated label and image.
 
-map_text_synthesizer.cpp:
+##### map_text_synthesizer.cpp:
 The source file of ```MapTextSynthesizer``` class. The create() method returns a pointer to an instance of ```MTSImplementation``` class.
 
-mts_implementation.hpp/mts_implementation.cpp:
+##### mts_implementation.hpp/mts_implementation.cpp:
 The header and source files of ```MTSImplementation``` class. This class is a subclass of ```MapTextSynthesizer``` class, and is used to hide implementation details of the synthesizer. This class calls upon ```MTS_*Helper``` classes to generate a cairo surface which contains a map text image. Then the cairo surface will be converted to an OpenCV mat object, go through some additional processing such as Gaussian noise and Gaussian blur, and finally be returned to the user. This class is also responsible for parsing the config file into a hashmap, constructing a ```MTS_BaseHelper``` instance with that hashmap, and pass pointer to the ```MTS_BaseHelper``` instance to ```MTS_TextHelper``` and ```MTS_BackgroundHelper``` class.
 
-mts_basehelper.hpp/mts_basehelper.cpp:
+##### mts_basehelper.hpp/mts_basehelper.cpp:
 The header and source files of the ```MTS_BaseHelper``` class. Being a shared location, it houses the hashmap of user configured parameter values, two random number generators and the shared methods among all the other classes.
 
-mts_bghelper.hpp/mts_bghelper.cpp:
+##### mts_bghelper.hpp/mts_bghelper.cpp:
 The header and source files of the ```MTS_BackgroundHelper``` class. They contain the definitions and implementation for all unshared background generating methods that do not need to be exposed to the user. Handles drawing of lines, textures, and the background bias field in cairo.
 
-mts_texthelper.hpp/mts_texthelper.cpp:
+##### mts_texthelper.hpp/mts_texthelper.cpp:
 The header and source files of the ```MTS_TextHelper``` class. They contain the definitions and implementation for all unshared text generating methods that do not need to be exposed to the user. Handles creation of the main text attributes and distracting text in pango and cairo. 
 
 
-##How (on Debian/Ubuntu)
+## How (on Debian/Ubuntu)
 ### How to install files and dependencies
 You will need OpenCV2 and pangocairo to run the synthesizer.
 If you are running Linux, you should already have pangocairo installed in your Linux system. To check whether it is installed, run `pkg-config --cflags --libs pangocairo` in your terminal.
@@ -90,9 +90,9 @@ If no captions are found/supplied, the synthesizer will generate its own caption
 #### How to integrate the synthesizer with Tensorflow
 Put Ben’s notes here
 
-##Notes for Developers/ Contributors
+## Notes for Developers/ Contributors
 
-####How to add a custom text attribute
+### How to add a custom text attribute
 
 Since our text shape is rendered using pangocairo, you will have to familiarize yourself with the pango and cairo libraries first in order to integrate your own text attributes.
 
@@ -100,7 +100,7 @@ The ```generateTextPatch()``` method in ```MTS_TextHelper``` is the main method 
 
 If your text attribute is controllable by ```PangoLayout```, then you can directly add it to the layout object in ```generateTextPatch()```. If your text attribute is about transforming the text shape through matrix transformation, you can apply cairo’s matrix transformation methods such as ```cairo_rotate()``` and ```cairo_scale()``` to the cairo surface.
 
-####How to add a custom background feature
+### How to add a custom background feature
 
 The enumerated type ```BGFeature``` in the ```MTS_BaseHelper``` class is used to hold all types of background features that could be added to an image.
 
