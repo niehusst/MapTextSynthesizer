@@ -1,6 +1,40 @@
-libmtsi : textsynthinterface.cpp
-	g++   -I../../inc -I../../include ../../src/* textsynthinterface.cpp -I/usr/include/opencv -I/usr/include/pango-1.0 -I/usr/include/harfbuzz -I/usr/include/pango-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -lopencv_shape -lopencv_stitching -lopencv_superres -lopencv_videostab -lopencv_aruco -lopencv_bgsegm -lopencv_bioinspired -lopencv_ccalib -lopencv_datasets -lopencv_dpm -lopencv_face -lopencv_freetype -lopencv_fuzzy -lopencv_hdf -lopencv_line_descriptor -lopencv_optflow -lopencv_video -lopencv_plot -lopencv_reg -lopencv_saliency -lopencv_stereo -lopencv_structured_light -lopencv_phase_unwrapping -lopencv_rgbd -lopencv_viz -lopencv_surface_matching -lopencv_text -lopencv_ximgproc -lopencv_calib3d -lopencv_features2d -lopencv_flann -lopencv_xobjdetect -lopencv_objdetect -lopencv_ml -lopencv_xphoto -lopencv_highgui -lopencv_videoio -lopencv_imgcodecs -lopencv_photo -lopencv_imgproc -lopencv_core -lpangocairo-1.0 -lpango-1.0 -lgobject-2.0 -lcairo -lglib-2.0   -shared -fPIC -Wno-write-strings -lpthread -o libmtsi.so -lboost_thread
+# File paths 
+IDIR=../../include/
+LIBDIR=../../inc/
+SRCDIR=../../src/
+BINDIR=../../bin/
+
+# Compiler, flags, and packages
+CXX=g++
+FLAGS=-std=c++11 -Wall
+SOFLAGS=-I. -I$(IDIR) -I$(LIBDIR) -shared -fPIC ${FLAGS}
+OFLAGS=-c -I. -I$(IDIR) -I$(LIBDIR) ${FLAGS}  \
+        `pkg-config --cflags pangocairo glib-2.0 opencv`
+SOURCES=${SRCDIR}*.cpp
+OBJECTS=$(SOURCES:.cpp=.o)
+
+# Link libraries
+LIBS := opencv_ml opencv_calib3d opencv_features2d opencv_highgui \
+		opencv_imgproc opencv_flann opencv_imgcodecs  \
+		opencv_core png tiff jpeg cairo
+
+LDLIBS := -L$(LIBDIR) $(addprefix -l, $(LIBS)) 
+PKG-CONFIG := `pkg-config --libs pangocairo glib-2.0 opencv`
+
+# Source files
+SOURCES := $(wildcard ${SRCDIR}*.cpp)
+
+# Compile the object file
+objects : ${SOURCES}
+	${CXX} ${OFLAGS} $^ -fPIC -shared
+
+# Compile the shared library
+libmtsi.so : textsynthinterface.cpp
+	${CXX} ./*.o textsynthinterface.cpp ${SOFLAGS} ${PKG-CONFIG} -o libmtsi.so
+
+lib: objects libmtsi.so
 
 clean :
 	rm -f ./*.pyc
 	rm -f ./*~
+	rm -f ./*.o
