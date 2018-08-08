@@ -6,7 +6,7 @@ BINDIR=../bin/
 
 # Compiler, flags, and packages
 CXX=g++
-FLAGS=-std=c++11 -Wall
+FLAGS=-std=c++11
 SOFLAGS=-I. -I$(IDIR) -I$(LIBDIR) -shared -fPIC ${FLAGS}
 OFLAGS=-c -I. -I$(IDIR) -I$(LIBDIR) ${FLAGS}
 SAMPLE_FLAGS=-I. -I$(IDIR) -L${BINDIR} -lmtsynth ${FLAGS}
@@ -36,12 +36,12 @@ libmtsynth.a: ${SOURCES}
 	rm ./*.o
 
 # Compile a cpp example from shared library
-# NOTE: Must set environment variable LD_LIBRARY_PATH=/path/to/libmtsynth.so
-cpp_sample: text_synthesizer.cpp
+# NOTE: Must set environment variable LD_LIBRARY_PATH=/path/to/bin/
+cpp_sample: synthesizer_sample.cpp
 	${CXX} -o shared_sample $^ ${PKG-CONFIG} ${SAMPLE_FLAGS}
 
 # Compile a cpp example with static library
-cpp_sample_static: text_synthesizer.cpp ${BINDIR}libmtsynth.a
+cpp_sample_static: synthesizer_sample.cpp ${BINDIR}libmtsynth.a
 	${CXX} -o static_sample $^ ${PKG-CONFIG} ${STATIC_SAMPLE_FLAGS}
 
 

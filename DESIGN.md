@@ -41,7 +41,7 @@ Our classes divide the components of the map text synthesizer as sensibly as pos
 The public header of this software. Also the header file of ```MapTextSynthesizer``` class. Exposes public methods for users to create a synthesizer, set the candidate fonts, set the candidate captions, and get the generated label and image.
 
 ##### map_text_synthesizer.cpp:
-The source file of ```MapTextSynthesizer``` class. The create() method returns a pointer to an instance of ```MTSImplementation``` class.
+The source file of ```MapTextSynthesizer``` class. The static create() method returns a pointer to an instance of ```MTSImplementation``` class.
 
 ##### mts_implementation.hpp/mts_implementation.cpp:
 The header and source files of ```MTSImplementation``` class. This class is a subclass of ```MapTextSynthesizer``` class, and is used to hide implementation details of the synthesizer. This class calls upon ```MTS_*Helper``` classes to generate a cairo surface which contains a map text image. Then the cairo surface will be converted to an OpenCV mat object, go through some additional processing such as Gaussian noise and Gaussian blur, and finally be returned to the user. This class is also responsible for parsing the config file into a hashmap, constructing a ```MTS_BaseHelper``` instance with that hashmap, and pass pointer to the ```MTS_BaseHelper``` instance to ```MTS_TextHelper``` and ```MTS_BackgroundHelper``` class.

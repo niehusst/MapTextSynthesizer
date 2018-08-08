@@ -8,10 +8,11 @@ Earlier work on this project (including most of the source code development) occ
 
 ### Prerequisites/Dependencies
 
-* **Pango**, a text formatting library. It comes preinstalled on many Linux machines. Otherwise, follow download from their [website](https://www.pango.org/).
-* **Cairo**, a vector graphics library. It comes preinstalled on many Linux machines. Otherwise, follow download from their [website](https://cairographics.org/).
-* **OpenCV**, a computer vision repository. It can be found and downloaded from their [github](https://github.com/opencv).
+* **Pango**, a text formatting library. It comes preinstalled on many Linux machines. See their [website](https://www.pango.org/) for more information.
+* **Cairo**, a vector graphics library. It comes preinstalled on many Linux machines. See their [website](https://cairographics.org/) for more information.
+* **OpenCV**, a computer vision repository. It can be found on [github](https://github.com/opencv).
 * **glib-2.0**, a low-level Gnome library. glib is a dependency of pango and cairo; by downloading the other libraries, you will get glib-2.0. Their website can be found [here](https://lazka.github.io/pgi-docs/GLib-2.0/index.html).
+* **Google Fonts**, a collection of open-source fonts. This isn't necessary for the synthesizer to function, but it is highly recommended for training robust models. Find it on [github](https://github.com/google/fonts/).
 
 ##### Installing dependencies on MacOS and Linux
 
@@ -34,27 +35,21 @@ e.g. Edited Where is the source code: [path-to]/MapTextSynthesizer
 
 Resulting files will be in build folder.
 
-### Compile with Makefile on Linux
-
-`` $ make ``
-
-Use `` $ make libmtsynth.a `` to make a static library instead of a shared library.
-
-Resulting files will be in bin folder.
-
-### Examples
+### Compile samples with Makefile on UNIX  
 
 #### Python
 
-TODO
+TODO (requires Ben's ctype code and a shared object library)
 
 #### C++
 
-To compile a C++ sample from a shared library, do ```make``` follwoed by ```make cpp_sample```. To run the resulting program (a.out) found in the samples directory, set an environment variable that allows your executable to find the shared library to your specific path to the shared library file: ```LD_LIBRARY_PATH=/directory/path/to/bin/libmtsynth.so``` and then run the executable with ```./a.out```.
+To compile a C++ sample from a shared library, do ```make shared```, this creates the shared library file in a bin subdirectory of MapTextSynthesizer, followed by ```make cpp_sample``` to make the executable. To run the resulting program (shared_sample) found in the samples directory, set an environment variable that allows your executable to find the shared library to your specific path to the shared library file: ```LD_LIBRARY_PATH=/directory/path/to/bin/``` and then run the executable from the samples directory with ```./shared_sample```.
 
-Or to compile using a static library, ```make libmtsynth.a``` followed by ```make cpp_sample_static```. To run the resulting executable (a.out) located in the samples directory, call ```./a.out``` in the terminal.
+To compile using a static library, ```make static``` followed by ```make cpp_sample_static```. To run the resulting executable (static_sample) located in the samples directory, call ```./static_sample``` in the samples directory.
 
-##### Sample compiling steps for having made a shared object with CMake:
+##### Compiling samples with CMake:
+
+Once you have followed the CMake installation instructions that download the MapTextSynthesizer into your machine, you can easily compile using pkg-config.
 
 (if using virtual env,) `` export PKG_CONFIG_PATH=[install_prefix]/share/pkgconfig ``
 
@@ -62,13 +57,6 @@ Or to compile using a static library, ```make libmtsynth.a``` followed by ```mak
 
 ``g++ text_syntheziser.cpp `pkg-config --cflags --libs mtsynth`; ./a.out``
 
-###### Sample compiling and running steps using Makefile:
-
-``make cpp_sample; cd samples; export LD_LIBRARY_PATH=[path-to]/bin; ./a.out``
-
-or
-
-``make cpp_sample_static ; cd samples; ./a.out`` to use the .a static library.
 
 ### For More in-depth Information
 
@@ -78,6 +66,7 @@ If you want still more information about the nitty-gritty of how this program wo
 
 * **Ziwen Chen** - [arthurhero](https://github.com/arthurhero)
 * **Liam Niehus-Staab** - [niehusst](https://github.com/niehusst)
+* **Benjamin Gafford** - [gaffordb](https://github.com/gaffordb)
 
 ## Acknowledgments
 
