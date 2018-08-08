@@ -25,15 +25,11 @@ After installing the dependencies, you should be able to jump into compiling sam
 
 ### Compile with CMake on Linux
 
-<<<<<<< HEAD
-### Compile with Makefile on Linux
-=======
-open install.sh using a text editor and type in corresponding paths
->>>>>>> merge_tensorflow
+Open install.sh using a text editor and type in corresponding paths
 
 e.g. Edited Where is the source code: [path-to]/MapTextSynthesizer
 
-`` $ ./install.sh ``
+Then run `` $ ./install.sh ``.
 
 Resulting files will be in build folder.
 
