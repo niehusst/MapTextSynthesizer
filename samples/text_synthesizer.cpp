@@ -42,15 +42,20 @@ int main() {
     Mat image;
     int height;
     int start = time(NULL);
-    
+
+    cout << "Running" << flush;
     // generate 10000 images from the synthesizer
     while (k<10000) {
+        if(k % 500 == 0) {
+          cout << "." << flush;
+        }
         mts->generateSample(label, image, height);
         k++;
     }
     int end = time(NULL);
 
-    // print the time it took to generate 10000 images
-    cout << "time " << end-start << endl;
+    // print the time it took to generate 10000 images and the production rate
+    cout << endl << "Total runtime: " << end-start << " seconds" << endl;
+    cout << "Production rate: " << 10000/(end-start) << " Hz" << endl;
     return 0;
 }

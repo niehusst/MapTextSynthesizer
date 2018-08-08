@@ -24,12 +24,12 @@ PKG-CONFIG := `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
 SOURCES := $(wildcard ${SRCDIR}*.cpp)
 
 # Compile the shared library 
-shared: ${SOURCES} 
+libmtsynth.so: ${SOURCES} 
 	if [ ! -d ${BINDIR} ];then mkdir ${BINDIR};fi
 	${CXX} -o ${BINDIR}$@ $^ ${PKG-CONFIG} ${SOFLAGS}
 
 # Compile the static library 
-static: ${SOURCES} 
+libmtsynth.a: ${SOURCES} 
 	if [ ! -d ${BINDIR} ];then mkdir ${BINDIR};fi
 	${CXX} $^ ${PKG-CONFIG} ${OFLAGS}
 	ar rsc ${BINDIR}$@ ./*.o 
