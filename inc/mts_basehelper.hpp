@@ -165,7 +165,7 @@ class MTS_BaseHelper {
          * points - a vector of x,y coordinate pairs 
          *          (precondition: must contain at least 2 elements)
          */
-        void points_to_path(cairo_t *cr, std::vector<coords> points, double c_min=-2, double c_max=2, double d_min=-2, double d_max=2);
+        void points_to_path(cairo_t *cr, std::vector<coords> points, double c_min=-2, double c_max=2, double d_min=-2, double d_max=2, double cd_sum_max=10);
 
 
         /*
@@ -191,8 +191,10 @@ class MTS_BaseHelper {
          * height - surface height in pixels
          * num_points - the number of points to push onto the vector 
          *              (minimum 3) (range 3-5 for least text distortion)
+         * y_var_min_ratio - the minimum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
+         * y_var_max_ratio - the maximum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
          */
-        std::vector<coords> make_points_wave(double width, double height, int num_points);
+        std::vector<coords> make_points_wave(double width, double height, int num_points, double y_var_min_ratio, double y_var_max_ratio);
 
         /*
          * Iterativly translates each cairo movement stored in path and 
@@ -258,12 +260,15 @@ class MTS_BaseHelper {
          * d_min - the min range value for cubed variable in the first cubic 
          *        curving equation
          * d_max - the max range value for cubed variable in the first cubic 
+         * y_var_min_ratio - the minimum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
+         * y_var_max_ratio - the maximum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
          *        curving equation
 
          */
         void create_curved_path (cairo_t *cr, cairo_path_t *path, PangoLayoutLine *line, 
                 PangoLayout *layout, double width, double height, 
-                double x, double y, int num_points, double c_min, double c_max, double d_min, double d_max);
+                double x, double y, int num_points, double c_min, double c_max, double d_min, 
+                double d_max, double y_var_min_ratio, double y_var_max_ratio);
 
         /*
          * An overload for create_curved_path that allows for the points vector

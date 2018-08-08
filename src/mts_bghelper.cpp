@@ -221,14 +221,18 @@ MTS_BackgroundHelper::generate_curve(cairo_t *cr, bool horizontal, int width,
     PangoLayout *layout;
     cairo_path_t *path;
     PangoLayoutLine *line;
-    int num_points = 3 + (helper->rng() % 12); // make from 3 to 15 points 
+    int num_min = getParam("bg_curve_num_points_min");
+    int num_max = getParam("bg_curve_num_points_max");
+    int num_points = num_min + (helper->rng() % (num_max-num_min+1)); // make from 3 to 15 points 
+
+    double y_var_min = getParam("bg_curve_y_variance_min");
+    double y_var_max = getParam("bg_curve_y_variance_max");
 
     //get correct point vector based on line orientation
     if(horizontal) {
-        points = helper->make_points_wave(width, height, num_points);
-
+        points = helper->make_points_wave(width, height, num_points, y_var_min, y_var_max);
     } else {
-        points = helper->make_points_wave(height, height, num_points);
+        points = helper->make_points_wave(height, height, num_points, y_var_min, y_var_max);
     } 
 
     //curve the path and give extra optional parameter to stroke the path
@@ -618,16 +622,17 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
         lines_max = getParam(string("vpara_num_max"))+1 - lines_min;
     }
     int num = helper->rng()%lines_max + lines_min;
+    cout << "line nums " << num << endl;
 
     //length of lines
-    int length = std::max(width, height)*1.414;
+    double length = std::max(width, height)*pow(2,0.5);
 
     //average spacing
-    int spacing = length / num;
+    double spacing = length / num;
 
     //randomly choose then apply rotation degree
     int deg = helper->rng()%360;
-    double rad = (deg/180.0)*3.14;
+    double rad = (deg/180.0)*M_PI;
     // translate to center of image to rotate there instead of from origin
     cairo_translate(cr, width/2.0, height/2.0);
     cairo_rotate(cr, rad);
@@ -636,11 +641,12 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
     //initialize the vector of lines stored as xy coordinates
     std::vector<std::vector<coords> > lines;
 
-    int top_y = -(length - height) / 2;
-    int bottom_y = height + (length - height) / 2;
+    double left_x = -(length - width) / 2;
+    double right_x = width + (length - width) / 2;
 
-    std::vector<int> x_coords;
-    std::vector<int> y_coords;
+    /*
+    std::vector<double> x_coords;
+    std::vector<double> y_coords;
     int rand_num;
     // create points to be used in curving lines
     if(curved) {
@@ -671,63 +677,94 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
             }
         }
     }
+    */
 
     //get a random initial spacing
-    int init_spacing = helper->rng()%spacing;
+    double init_spacing = (helper->rng()%(int)(spacing*100))/100.0;
     if(even) init_spacing=spacing;
-    int cur_x = -(length-width)/2+init_spacing;
-    int increase = (spacing-init_spacing)*2/num;
+    double cur_y = -(length-height)/2.0+init_spacing;
+    double increase = (spacing-init_spacing)*2/num;
 
+    // to store the curve pattern
+    std::vector<coords> curve_points;
+    double y_var_min = getParam("bg_curve_y_variance_min");
+    double y_var_max = getParam("bg_curve_y_variance_max");
+
+    // to store the real points of every line
     std::vector<coords> points;
+    if (curved) {
+        int num_min = getParam("bg_curve_num_points_min");
+        int num_max = getParam("bg_curve_num_points_max");
+        int num_points = num_min + (helper->rng() % (num_max-num_min+1));
+        curve_points = helper->make_points_wave(length,length,num_points,y_var_min,y_var_max);
+    }
+
 
     for (int i = 0; i < num; i++) {
-        points.push_back(std::make_pair(cur_x,top_y));
         if (curved) {
-            for (int k = 0; k < rand_num; k++) {
-                points.push_back(std::make_pair(cur_x + x_coords[k], top_y + y_coords[k]));
+            for (int k = 0; k < curve_points.size(); k++) {
+                points.push_back(std::make_pair(left_x+curve_points[k].first, height*(y_var_max+y_var_min)/2+curve_points[k].second-(length-cur_y)));
             }
+        } else {
+            points.push_back(std::make_pair(left_x,cur_y));
+            points.push_back(std::make_pair(right_x,cur_y));
         }
-        points.push_back(std::make_pair(cur_x,bottom_y));
         lines.push_back(points);
-        cur_x += cur_x + increase;
+        points.clear();
+        cur_y += init_spacing + increase;
+        init_spacing += increase;
     }
 
     double c_min, c_max, d_min, d_max;
 
-    if (even) {
-        c_min = getParam(string("para_curve_c_min"));
-        c_max = getParam(string("para_curve_c_max"));
-        d_min = getParam(string("para_curve_d_min"));
-        d_max = getParam(string("para_curve_d_max"));
-    } else {
-        c_min = getParam(string("vpara_curve_c_min"));
-        c_max = getParam(string("vpara_curve_c_max"));
-        d_min = getParam(string("vpara_curve_d_min"));
-        d_max = getParam(string("vpara_curve_d_max"));
+    if (curved) {
+        if (even) {
+            c_min = getParam(string("para_curve_c_min"));
+            c_max = getParam(string("para_curve_c_max"));
+            d_min = getParam(string("para_curve_d_min"));
+            d_max = getParam(string("para_curve_d_max"));
+        } else {
+            c_min = getParam(string("vpara_curve_c_min"));
+            c_max = getParam(string("vpara_curve_c_max"));
+            d_min = getParam(string("vpara_curve_d_min"));
+            d_max = getParam(string("vpara_curve_d_max"));
+        }
     }
 
     // get line i and make the points into a cairo_path
     for (int i = 0; i < num; i++){
         points = lines[i];
-        helper->points_to_path(cr, points, c_min, c_max, d_min, d_max); //draw path shape
+        if (curved) {
+            helper->points_to_path(cr, points, c_min, c_max, d_min, d_max); //draw path shape
+        } else {
+            //cout << points[0].first << " " << points[0].second << endl;
+            //cout << points[points.size()-1].first << " " << points[points.size()-1].second << endl;
+            cairo_move_to(cr,points[0].first,points[0].second);
+            cairo_line_to(cr,points[points.size()-1].first,points[points.size()-1].second);
+        }
         cairo_stroke(cr);
     }
 
     // draw grid
     if (grid) {
         cairo_translate(cr, width/2.0, height/2.0);
-        cairo_rotate(cr, 3.14/2);
+        cairo_rotate(cr, M_PI/2);
         cairo_translate(cr, -width/2.0, -height/2.0);
 
         // get line i and make the points into a cairo_path
-        for (int i = 0; i < num; i++){
+        for (int i = 0; i < num; i++) {
             points = lines[i];
-            helper->points_to_path(cr, points, c_min, c_max, d_min, d_max); //draw path shape
+            if (curved) {
+                helper->points_to_path(cr, points, c_min, c_max, d_min, d_max); //draw path shape
+            } else {
+                cairo_move_to(cr,points[0].first,points[0].second);
+                cairo_line_to(cr,points[points.size()-1].first,points[points.size()-1].second);
+            }
             cairo_stroke(cr);
         }
     }
 
-    cairo_rotate(cr, 0);
+    cairo_identity_matrix(cr);
 }
 
 
@@ -938,7 +975,10 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
         c_max = getParam("texture_curve_c_max");
         d_min = getParam("texture_curve_d_min");
         d_max = getParam("texture_curve_d_max");
-        num_lines = helper->rng()%2 + 1; // ensure there arent too many swaths
+
+        int num_lines_min = getParam("texture_num_lines_min");
+        int num_lines_max = getParam("texture_num_lines_max");
+        num_lines = helper->rng()%(num_lines_max-num_lines_min+1) + num_lines_min; 
 
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
@@ -961,6 +1001,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
 
     // add grid lines by probability
     if (find(features.begin(), features.end(), Grid)!= features.end()) {
+        cout << "grid!!!" << endl;
         curve_prob = getParam(string("grid_curve_prob"));
         addBgPattern(cr, width, height, true, true, helper->rndProbUnder(curve_prob));
     }

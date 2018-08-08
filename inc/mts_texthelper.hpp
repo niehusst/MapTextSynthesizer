@@ -102,7 +102,8 @@ class MTS_TextHelper {
         void
             create_curved_text(cairo_t *cr, PangoLayout *layout,
                     double width, double height, int num_points, double c_min,
-                    double c_max, double d_min, double d_max, double stretch_deg);
+                    double c_max, double d_min, double d_max, double cd_sum_max, double stretch_deg,
+                    double y_var_min_ratio, double y_var_max_ratio);
 
         /*
          * Get the extents of a text ink

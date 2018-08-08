@@ -1,5 +1,6 @@
 #include <vector>
 #include <math.h>
+#include <cmath>
 #include <algorithm>
 #include <stdlib.h>
 #include <iostream> 
@@ -500,7 +501,7 @@ MTS_BaseHelper::four_point_to_cp(coords start,
 
 
 void 
-MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double cmin, double cmax, double dmin, double dmax) {
+MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double cmin, double cmax, double dmin, double dmax, double cd_sum_max) {
 
     unsigned int count = points.size();
 
@@ -528,16 +529,34 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
      */
 
     double x = start.first / 100, y = start.second, u = end.first / 100, w = end.second;
+    
+    //cout << "x, y " << x*100 << " " << y  << endl;
 
     // set coefficients of cubic equation to describe curve
-    double a, b, c, d;
+    double a=0, b=0, c=0, d=0;
     int c_variance, d_variance;
-    c_variance = ((cmax*100)+1 - (cmin*100)) / 100;
-    c = cmin + (rng() % c_variance);
-    d_variance = ((dmax*100)+1 - (dmin*100)) / 100;
-    d = dmin + (rng() % d_variance);
+    c_variance = (int)((cmax*100) - (cmin*100) + 1);
+    d_variance = (int)((dmax*100) - (dmin*100) + 1);
 
-    if (x == u) return;
+    // prevent both c and d become 0
+    while (c==0 && d==0) {
+        c = (rng() % c_variance) / 100.0 + cmin;
+
+        if (count == 0) {
+            d = 0;
+        } else {
+            d = (rng() % d_variance) / 100.0 + dmin;
+
+            if (abs(c+d) > cd_sum_max) {
+                d = cd_sum_max - c;
+            }
+        }
+    }
+
+    if (x == u) {
+        cerr << "Cannot draw vertical curve in points_to_path()!" << endl;
+        exit(1);
+    }
     else if (x == 0) {
         a = y;
         b = (w - y - d*pow(u,3) - c*pow(u,2)) / u;
@@ -551,12 +570,13 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
 
     double coeff[4] = {a,b,c,d};
 
-    cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
+    //cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
 
+    // get two points in the middle to calculate control points
     double x1 = (2.0/3)*x + (1.0/3)*u;
     double x2 = (1.0/3)*x + (2.0/3)*u;
     double y1 = coeff[0] + coeff[1]*x1 + coeff[2]*pow(x1,2) + coeff[3]*pow(x1,3);
-    double y2 = coeff[-1] + coeff[1]*x2 + coeff[2]*pow(x2,2) + coeff[3]*pow(x2,3);
+    double y2 = coeff[0] + coeff[1]*x2 + coeff[2]*pow(x2,2) + coeff[3]*pow(x2,3);
 
     coords f1 = std::make_pair(x1*100,y1); 
     coords f2 = std::make_pair(x2*100,y2);
@@ -580,7 +600,10 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
         points.pop_back();
 
         x = start.first / 100, y = start.second, u = end.first / 100, w = end.second;
-        if (x == u) return;
+        if (x == u) {
+            cerr << "Cannot draw vertical curve in points_to_path()!" << endl;
+            exit(1);
+        }
         else {
 
             /*
@@ -605,8 +628,12 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
                a = y-d*pow(x,3)-c*pow(x,2)-b*x;
              */
 
-            double m = (y+w)/2;
+            // (n,m) is the arbitrary new middle point
             double n = (x+u)/2;
+            double m = (y+w)/2;
+
+            //cout << "x, y, n, m " << x*100 << " " << y << " " << n*100 << " " << m << endl;
+
             double k = (x-u)/(x-n);
             double x_2 = pow(x,2), u_2 = pow(u,2), n_2 = pow(n,2);
             double x_3 = pow(x,3), u_3 = pow(u,3), n_3 = pow(n,3);
@@ -616,10 +643,12 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
             c = (y-w-(y-m)*k-d*(x_3-u_3-(x_3-n_3)*k))/(x_2-u_2-(x_2-n_2)*k);
             b = (y-w-d*(x_3-u_3)-c*(x_2-u_2))/(x-u);
             a = (y-d*x_3-c*x_2-b*x);
+            //cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
         }
 
         coeff[0] = a, coeff[1] = b, coeff[2] = c, coeff[3] = d;
 
+        // get two points in the middle to calculate control points
         x1 = (2.0/3)*x + (1.0/3)*u;
         x2 = (1.0/3)*x + (2.0/3)*u;
         y1 = coeff[0] + coeff[1]*x1 + coeff[2]*pow(x1,2) + coeff[3]*pow(x1,3);
@@ -720,19 +749,22 @@ MTS_BaseHelper::make_points_arc(double width, double height, double radius,
 
 
 std::vector<coords>
-MTS_BaseHelper::make_points_wave(double width, double height, int num_points) {
+MTS_BaseHelper::make_points_wave(double width, double height, 
+        int num_points, double y_var_min_ratio, double y_var_max_ratio) {
 
     std::vector<coords> points;
 
-    if (num_points < 3) num_points = 3; //verify preconditions
+    if (num_points < 2) num_points = 2; //verify preconditions
 
-    int x_variance, y_variance;
+    int y_variance;
     double x, y;    
 
     //created num_points x,y coords
     for(int i = num_points - 1; i >= 0; i--) {
-        //y variance of + 0 to 1/8 height
-        y_variance = (rng() % (int) ((1.0/8.0) * height));
+        int y_var_min = (int)(height * y_var_min_ratio);
+        int y_var_max = (int)(height * y_var_max_ratio);
+
+        y_variance = (rng() % (y_var_max - y_var_min + 1)) + y_var_min;
 
         x = ((width / (num_points - 1)) * i);
         y = height - y_variance; //ensure points stay above the bottom of the canvas
@@ -811,16 +843,16 @@ MTS_BaseHelper::create_curved_path (cairo_t *cr, cairo_path_t *path,
         PangoLayoutLine *line, PangoLayout *layout, 
         double width, double height, double x, double y,
         int num_points, double c_min, double c_max, double d_min, 
-        double d_max) {
+        double d_max, double y_var_min_ratio, double y_var_max_ratio) {
 
-    if (num_points < 3) {
-        cerr << "number of points is less than 3 in create_curved_path() !" << endl;
+    if (num_points < 2) {
+        cerr << "number of points is less than 2 in create_curved_path() !" << endl;
         exit(1);
     }
-    //CV_Assert(num_points >= 3); //verify preconditions
+    //CV_Assert(num_points >= 2); //verify preconditions
 
     //set the points for the path
-    std::vector<coords> points= make_points_wave(width, height, num_points);
+    std::vector<coords> points= make_points_wave(width, height, num_points, y_var_min_ratio, y_var_max_ratio);
 
     points_to_path(cr, points, c_min,c_max,d_min,d_max); //draw path shape
 

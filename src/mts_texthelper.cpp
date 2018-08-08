@@ -269,17 +269,19 @@ void get_normal_vector(cairo_path_t *path, double x_exp, double &x, double &y, d
 void
 MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,
         double width, double height, int num_points, double c_min, 
-        double c_max, double d_min, double d_max, double stretch_deg) {
+        double c_max, double d_min, double d_max, double cd_sum_max, double stretch_deg,
+        double y_var_min_ratio, double y_var_max_ratio) {
 
-    if (num_points < 3) {
-        cerr << "number of points is less than 3 in create_curved_text() !" << endl;
+    if (num_points < 2) {
+        cerr << "number of points is less than 2 in create_curved_text() !" << endl;
         exit(1);
     }   
+    cout << "curved text width " << width << endl;
 
     //set the points for the path
-    std::vector<coords> points= helper->make_points_wave(width, height, num_points);
+    std::vector<coords> points= helper->make_points_wave(width, height, num_points, y_var_min_ratio, y_var_max_ratio);
 
-    helper->points_to_path(cr, points, c_min,c_max,d_min,d_max); //draw path shape
+    helper->points_to_path(cr, points, c_min,c_max,d_min,d_max, cd_sum_max); //draw path shape
 
     cout << "finished getting curve path!" << endl;
 
@@ -296,7 +298,6 @@ MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,
 
     int path_point_num = (path->num_data)/2;
     cout << "num of point flat: " << path_point_num << endl;
-    //int point_num_each = path_point_num / (caption_len - 1);
     double spacing = width / (caption_len-1);
 
     // Loop through the text
@@ -345,7 +346,7 @@ void
 MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface, 
         string caption,int height,int &width, int text_color, bool distract){
 
-    size_t len = caption.length();
+    int len = caption.length();
 
     // cairo stuff
     cairo_surface_t *surface;
@@ -368,6 +369,11 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     double scale;
 
     generateFeatures(rotated_angle, curved, spacing_deg, spacing, stretch_deg, x_pad, y_pad, scale, desc, height);
+
+    int point_num_max = len / (int)(getParam("curve_min_char_num_per_point"));
+    if (point_num_max < 2) {
+        curved = false;
+    }
 
     // applying the attributes
     pango_layout_set_font_description (layout, desc);
@@ -451,20 +457,34 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     } else if (curved 
             //&& patch_width > getParam("curve_min_wid_hei_ratio")*height && 
-            //spacing_deg >= getParam("curve_min_spacing")
+            && spacing_deg >= getParam("curve_min_spacing")
             ) {
 
         int num_min = (int)(getParam("curve_num_points_min"));
         int num_max = (int)(getParam("curve_num_points_max"));
         int num_points = helper->rng()%(num_max-num_min+1)+num_min;
+        num_points = min(num_points, point_num_max);
+
+        cout << "num curve points " << num_points << endl;
 
         double c_min = getParam("curve_c_min");
         double c_max = getParam("curve_c_max");
         double d_min = getParam("curve_d_min");
         double d_max = getParam("curve_d_max");
 
+        double cd_sum_max = getParam("curve_cd_sum_max");
+        double cd_increase_rate = getParam("curve_cd_increase_rate");
+
+        c_min -= cd_increase_rate*(num_points - 2);
+        c_max += cd_increase_rate*(num_points - 2);
+        d_min -= cd_increase_rate*(num_points - 2);
+        d_max += cd_increase_rate*(num_points - 2);
+        
+        double y_var_min = getParam("curve_y_variance_min");
+        double y_var_max = getParam("curve_y_variance_max");
+
         create_curved_text(cr,layout,(double)patch_width,
-                (double) height,num_points,c_min,c_max,d_min,d_max,stretch_deg);
+                (double) height,num_points,c_min,c_max,d_min,d_max,cd_sum_max,stretch_deg, y_var_min, y_var_max);
 
         // get extents and adjust the position
         double x1,x2,y1,y2;
@@ -501,6 +521,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         cairo_fill(cr);
         cairo_destroy (cr_c);
         cairo_surface_destroy (surface_c);
+        cout << "real curved text width " << patch_width << endl;
     } else {
         cairo_scale(cr, stretch_deg, 1);
         cairo_translate (cr, -ink_x, -ink_y);
@@ -546,10 +567,11 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         int shrink_min=(int)(100*getParam("distract_size_min"));
         int shrink_max=(int)(100*getParam("distract_size_max"));
         double shrink = (helper->rng()%(shrink_max-shrink_min+1)+shrink_min)/100.0;
+        cout << "shrink " << shrink << endl;
 
         for (int i=0;i<dis_num;i++) {
             char distract_font[50];
-            generateFont(distract_font,shrink*size/1024);
+            generateFont(distract_font,(int)(shrink*height));
             distractText(cr_n, patch_width, height, distract_font);
         }
     }
