@@ -73,7 +73,7 @@ MTS_BackgroundHelper::draw_boundary(cairo_t *cr, double linewidth,
                                     double og_col, bool horizontal) {
   // get original dash code
   int dash_len = cairo_get_dash_count(cr);
-  double dash[dash_len], *offset;
+  double dash[dash_len], offset[dash_len];
   cairo_get_dash(cr, dash, offset);
 
   // calculate a distance between lines
