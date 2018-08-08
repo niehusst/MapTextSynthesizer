@@ -2,8 +2,6 @@
 
 MapTextSynthesizer is a program to dynamically generate synthetic images containing text, which appear to be from historical maps. The produced images serve as training data for a Convolutional Neural Network that recognizes text in scanned images of historical maps. (Data not intended for training a text detection model)
 
-Earlier work on this project (including most of the source code development) occurred in a separate repository. That work can be found on branch 'dev' at [niehusst/opencv_contrib](https://github.com/niehusst/opencv_contrib/tree/dev).
-
 ## Getting Started
 
 ### Prerequisites/Dependencies
