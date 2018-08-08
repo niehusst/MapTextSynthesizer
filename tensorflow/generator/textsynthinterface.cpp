@@ -84,7 +84,7 @@ char* get_caption(void* ptr) {
 void prepare_synthesis(cv::Ptr<MapTextSynthesizer> s,
 		       const char* lexicon_path) {
   vector<String> caps;
-  
+  // NOTE/TODO: Use system fonts instead
   vector<string> blocky;
   blocky.push_back("Sans");
   blocky.push_back("Serif");
