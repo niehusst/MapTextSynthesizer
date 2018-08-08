@@ -44,6 +44,9 @@ cpp_sample: synthesizer_sample.cpp
 cpp_sample_static: synthesizer_sample.cpp ${BINDIR}libmtsynth.a
 	${CXX} -o static_sample $^ ${PKG-CONFIG} ${STATIC_SAMPLE_FLAGS}
 
+# Compile program to list fonts available on the system
+list_fonts: list_available_fonts.cpp
+	${CXX} -o list $^ ${PKG-CONFIG}
 
 clean:
 	rm -f core* *.o *~ \#*#

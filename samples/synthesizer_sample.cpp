@@ -47,12 +47,15 @@ int main(int argc, char **argv) {
     auto mts = MapTextSynthesizer::create("config.txt");
 
     // add font types (these fonts should be available on most machines)
+    // if you are getting an error about unavailable fonts, run 
+    // list_available_fonts.cpp to see what fonts are available on your machine
     vector<string> blocky;
-    blocky.push_back("Serif");
+    blocky.push_back("URW Gothic L");
 
     vector<string> regular;
     regular.push_back("Sans");
-
+    blocky.push_back("Serif");
+    
     vector<string> cursive;
     cursive.push_back("URW Chancery L");
 

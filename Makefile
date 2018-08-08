@@ -17,7 +17,9 @@ cpp_sample:
 cpp_sample_static:
 	$(MAKE) $@ -C samples cpp_sample_static
 
-# Compile a Python sample
+# Compile program to list fonts available on the system
+list_fonts:
+	$(MAKE) $@ -C samples list_fonts
 
 
 # Prevent errors from occuring if a file were named 'clean'
