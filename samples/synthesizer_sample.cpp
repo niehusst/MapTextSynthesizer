@@ -1,63 +1,86 @@
-
-#include <memory>
-#include <cstdlib>
+#include <vector>
 #include <iostream>
+#include <fstream>
+#include <memory>
+#include <string>
 
+// header to include for using the synthesizer
 #include "map_text_synthesizer.hpp"
+
+using namespace std;
+using namespace cv;
 
 /*
  * A sample program that generates images using the MapTextSynthesizer classes.
- * Use command line arguments to specify how many images to generate, and 
- * whether to save the image to the current directory, or just view them.
+ * Use command line arguments to specify whether to run a benchmark speed test
+ * by generating 10000 images without showing the user, or to display the 
+ * synthesized images so the user may examine them.
  *
- * The first command line argument should be an int, the number of images to 
- * synthesize. The second dictates whether or not to save produced images to the
- * current directory. Not specifying number of image (or 0) results in 
- * displaying an indefinite number of images. Not inputing the exact word "save"
- * as the second command line input opens a window for you to view produced
- * images in real time, specifying "save" will not display the window.
+ * Giving the commandline argument 'benchmark' will run a benchmark test as 
+ * described above. Otherwise, the images will be displayed.
  * (Elements of the features can be changed by altering config.txt)
  * Example usage :
- * ./mts_sample 10 save
+ * ./mts_sample benchmark
  */
 int main(int argc, char **argv) {
+    /* create a new MapTextSynthesizer object using parameters 
+       found in input filename */
+    auto mts = MapTextSynthesizer::create("config.txt");
 
-  std::shared_ptr<MapTextSynthesizer> mts = MapTextSynthesizer::create();
+    // add font types (these fonts should be available on most machines)
+    vector<string> blocky;
+    blocky.push_back("Serif");
 
-  int num_pics = 0;
-  std::string save("don't save");
+    vector<string> regular;
+    regular.push_back("Sans");
 
-  // if there are command line arguments, check to see if save is set
-  if (argc > 1) {
-    // if conversion fails, it remains 0
-    num_pics = std::atoi(argv[1]);
+    vector<string> cursive;
+    cursive.push_back("URW Chancery L");
 
-    // construct string from 2nd command line argument
-    save = std::string(argv[2]);
-    if (std::string("save") == save) {
-      /* save produced images */
+    // use the list of civil entity names in Iowa file for image captions
+    mts->setSampleCaptions("IA/Civil.txt");
+    // set the fonts
+    mts->setBlockyFonts(blocky);
+    mts->setRegularFonts(regular);
+    mts->setCursiveFonts(cursive);
+
+    int k=0;
+    string label;
+    Mat image;
+    int height;
+    int start = time(NULL);
+
+    if( (argc > 1) && (argv[1] == "benchmark") ) {
+      cout << "Running benchmark" << flush;
+      // generate 10000 images from the synthesizer
+      while (k<10000) {
+        if(k % 500 == 0) {
+          cout << "." << flush;
+        }
+        // make the sample
+        mts->generateSample(label, image, height);
+        k++;
+      }
+      int end = time(NULL);
+
+      // print the time it took to generate 10000 images and the production rate
+      cout << endl << "Total runtime: " << end-start << " seconds" << endl;
+      cout << "Production rate: " << 10000/(end-start) << " Hz" << endl;
+      
+    } else { // show the user images
+      string input;
+      do {
+        // make the sample
+        mts->generateSample(label, image, height);
+        // show the image 
+        imshow("Sample image", image);
+        waitKey(0);
+        cout << label << endl;
+
+        // repeat until user inputs 'q'
+        cin >> input;
+      } while(input != 'q');
     }
-  } 
-
-  cv::String img_text;
-  cv::Mat img;
-
-  // ensure nonzero values for num_pics are displayed correct number of times
-  if (num_pics != 0) num_pics++;
-
-  // generate num_pics number of sample images
-  while(num_pics != 1) {
     
-    // set image into img and caption into img_text
-    mts->generateSample(img_text, img);
-
-    std::cout << img_text << std::endl;
-    
-    //show img in window or save it ----------------------------------
-
-    // decrement
-    num_pics--;
-  }
-
-
+    return 0;
 }

@@ -69,7 +69,7 @@ std::unordered_map<std::string, double> MTSImplementation::parseConfig(std::stri
     // open file
     std::ifstream infile(filename);
     if (! infile.is_open()) {
-        std::cerr << "input file cannot be openned!" << std::endl;
+        std::cerr << "Input file couldn't be opened!" << std::endl;
         exit(1);
     }
 
