@@ -188,9 +188,6 @@ MTSImplementation::MTSImplementation(std::string config_file)
                 getParam("noise_sigma_beta")),
         noise_gen(helper->rng2_, noise_dist)
 {
-  cv::namedWindow("__w");
-  cv::waitKey(1);
-  cv::destroyWindow("__w");
     this->updateFontNameList(this->availableFonts_);
 
     //initialize rng in BaseHelper

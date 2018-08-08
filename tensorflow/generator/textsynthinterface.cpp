@@ -83,18 +83,18 @@ char* get_caption(void* ptr) {
 /* Prepare synthesizer object for synthesis w/ params */
 void prepare_synthesis(cv::Ptr<MapTextSynthesizer> s,
 		       const char* lexicon_path) {
-  vector<String> caps;
+  
   // NOTE/TODO: Use system fonts instead
-  vector<string> blocky;
+  std::vector<std::string> blocky;
   blocky.push_back("Sans");
   blocky.push_back("Serif");
 
-  vector<string> regular;
+  std::vector<std::string> regular;
   //regular.push_back("cmmi10");
   regular.push_back("Sans");
   regular.push_back("Serif");
 
-  vector<string> cursive;
+  std::vector<std::string> cursive;
   cursive.push_back("Sans");
 
   s->setSampleCaptions(lexicon_path);
@@ -109,8 +109,8 @@ void* get_sample(void* mts_buff_arg) {
   auto mts_buff = (MTS_Buffer*)mts_buff_arg;
   auto mts = mts_buff->mts;
   
-  string label;
-  Mat image;
+  std::string label;
+  cv::Mat image;
   int height;
 
   // Fill in label, image

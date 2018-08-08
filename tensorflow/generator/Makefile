@@ -1,14 +1,15 @@
 # File paths 
-IDIR=../../include/
-LIBDIR=../../inc/
+IDIR=../../include/mtsynth
+IDIR_COMPATIBILITY=../../include
+LIBDIR=../../inc
 SRCDIR=../../src/
 BINDIR=../../bin/
 
 # Compiler, flags, and packages
 CXX=g++
-FLAGS=-std=c++11 -Wall
-SOFLAGS=-I. -I$(IDIR) -I$(LIBDIR) -shared -fPIC ${FLAGS}
-OFLAGS=-c -I. -I$(IDIR) -I$(LIBDIR) ${FLAGS}  \
+FLAGS=-std=c++11
+SOFLAGS=-I. -I$(IDIR) -I$(IDIR_COMPATIBILITY) -I$(LIBDIR) -shared -fPIC ${FLAGS}
+OFLAGS=-c -I. -I$(IDIR) -I$(IDIR_COMPATIBILITY) -I$(LIBDIR) ${FLAGS}  \
         `pkg-config --cflags pangocairo glib-2.0 opencv`
 SOURCES=${SRCDIR}*.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
