@@ -26,6 +26,6 @@ cpp_sample_static:
 # Clean rule for getting rid of stray files
 clean:
 	$(MAKE) -C samples clean
-	rm -f *~ core*
+	rm -f *~ core* \#*#
 	rm -rf bin
 

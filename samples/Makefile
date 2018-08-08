@@ -46,5 +46,6 @@ cpp_sample_static: synthesizer_sample.cpp ${BINDIR}libmtsynth.a
 
 
 clean:
-	rm -f a.out *.o *~ *.so \#*#
+	rm -f core* *.o *~ \#*#
+	find . -maxdepth 1 -type f -executable -exec rm {} +
 
