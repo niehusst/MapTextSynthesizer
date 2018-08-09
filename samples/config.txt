@@ -13,7 +13,7 @@ spacing_scale=20
 spacing_shift=-1
 
 //Baseline Curve
-curve_prob=0.3
+curve_prob=0
 curve_min_spacing=10          //min spacing required for the text to be curved
 curve_min_wid_hei_ratio=10    //min width-height ratio for the text to be curved
 curve_num_points_min=3
@@ -65,13 +65,13 @@ blend_alpha_max=1
 //BG PARAMS
 
 //Colordiff
-diff_prob=0.3
+diff_prob=0
 diff_color_distance=50        //min distance bw the text color and this feature color
 diff_num_colors_min=1         //min must be less than max
 diff_num_colors_max=2            
 
 //distractor text
-distract_prob=0.3
+distract_prob=0
 distract_num_min=1
 distract_num_max=3
 distract_len_min=1
@@ -80,7 +80,7 @@ distract_size_min=0.5
 distract_size_max=0.2         //with respect to main text size
 
 //boundary
-boundary_prob=0.2
+boundary_prob=0
 boundary_dashed_prob=.5
 boundary_num_lines_min=1
 boundary_num_lines_max=2
@@ -97,7 +97,7 @@ boundary_curve_d_max=2
 
 
 //color blob
-blob_prob=0.2
+blob_prob=0
 blob_num_min=1
 blob_num_max=1
 blob_size_min=0.125
@@ -105,23 +105,23 @@ blob_size_max=0.25            //with respect to height
 blob_diminish_rate=100        //the larger this value, the slower the edge diminishes
 
 //straight line
-straight_prob=0.2
+straight_prob=0
 straight_num_lines_min=1
 straight_num_lines_max=5
 
 //grid
-grid_prob=0.2
+grid_prob=0
 grid_curve_prob=0.5
 grid_num_min=2
 grid_num_max=10
 
 //city point
-point_prob=0.1
+point_prob=0
 point_radius_min=5
 point_radius_max=20           //if greater than height/2, it's reset to height/2
 
 //parallel lines
-para_prob=0.2
+para_prob=0
 para_curve_prob=0.5
 para_num_min=2
 para_num_max=10
@@ -131,7 +131,7 @@ para_curve_d_min=-2
 para_curve_d_max=2
 
 //varying parallel lines
-vpara_prob=0.2
+vpara_prob=0
 vpara_curve_prob=0.5     
 vpara_num_min=2
 vpara_num_max=10
@@ -141,7 +141,7 @@ vpara_curve_d_min=-2
 vpara_curve_d_max=2
 
 //texture
-texture_prob=0.2
+texture_prob=0
 texture_num_lines_min=1
 texture_num_lines_max=2
 texture_width_alpha=2         
@@ -152,7 +152,7 @@ texture_curve_d_min=-2
 texture_curve_d_max=2
 
 //railroad
-railroad_prob=0.2
+railroad_prob=0
 railroad_num_lines_min=1
 railroad_num_lines_max=2
 railroad_cross_width_min=2    //in multiples of thickness of main line
@@ -165,14 +165,18 @@ railroad_curve_d_min=-2
 railroad_curve_d_max=2
 
 //river line
-river_prob=0.3
+river_prob=1
 river_num_lines_min=1
-river_num_lines_max=5
-river_double_line_prob=.5
-river_curve_c_min=-2          //a+bx+cx^2+dx^3
-river_curve_c_max=2
-river_curve_d_min=-2
-river_curve_d_max=2
+river_num_lines_max=2
+river_double_line_prob=0
+
+// ************* LOOK HERE ******************
+river_curve_c_min=0          //a+bx+cx^2+dx^3
+river_curve_c_max=1
+river_curve_d_min=0
+river_curve_d_max=1
+// *****************************************
+
 
 //bias
 bias_vert_num_min=3
@@ -197,17 +201,17 @@ digit_len_alpha=3
 digit_len_beta=0.2                 //inverse gamma
 digit_len_max=20
 
-zero_padding=1                   //0 for false, and other value for true
+zero_padding=0                   //0 for false, and other value for true
 
-height_min=32
-height_max=70
+height_min=100
+height_max=150
 
 //Max number of features in bg
-max_num_features=6
+max_num_features=1
 
 //Color
-bg_color_min=156              //darkest it can be
-text_color_max=49             //brightest it can be
+bg_color_min=140              //darkest it can be
+text_color_max= 40            //brightest it can be
 
 //Seed
 seed=0                        //seed 0 sets to time(NULL)
