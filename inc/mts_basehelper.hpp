@@ -121,23 +121,6 @@ class MTS_BaseHelper {
                     coords *cp1,
                     coords *cp2);
 
-        /*
-         * Make an arc that follows the path of points vector
-         *
-         * cr - cairo context
-         * points - a vector of x,y coordinate pairs (precondition: size == 2)
-         * radius - the radius of the curvature
-         * width - width of the surface
-         * height - height of the surface
-         * direction - a flag that tells whether the returned points will be along the 
-         *             top or bottom of the circle. true : top, false : bottom 
-         */
-        /*
-        void 
-            points_to_arc_path(cairo_t *cr, std::vector<coords> points, double radius, 
-                    double width, double height, bool direction);
-                    */
-
         RNG rng_;
 
         //All parameters
@@ -169,20 +152,6 @@ class MTS_BaseHelper {
          */
         void points_to_path(cairo_t *cr, std::vector<coords> points, double c_min=-2, double c_max=2, double d_min=-2, double d_max=2, double cd_sum_max=10);
 
-
-        /*
-         * Makes a vector of 2 x,y coordinates that follow the arc of the input 
-         * radius. For noticable results with minimal distortion, radius 
-         * should be greater than (1/2 * width) but less than (5 * width)
-         *
-         * width - surface width in pixels
-         * height - surface height in pixels
-         * radius - the curve radius of the arc (precondition: radius >= 1/2 * width)
-         * direction - a flag that tells whether the returned points will be along the 
-         *             top or bottom of the circle. true : top, false : bottom 
-         */
-        //std::vector<coords> make_points_arc(double width, double height, double radius, bool direction);
-
         /*
          * Makes and returns a vector of x,y coordinate points for
          * a wave path to be drawn along. Coordinate point variation
@@ -197,108 +166,6 @@ class MTS_BaseHelper {
          * y_var_max_ratio - the maximum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
          */
         std::vector<coords> make_points_wave(double length, double height, int num_points, double y_var_min_ratio, double y_var_max_ratio);
-
-        /*
-         * Iterativly translates each cairo movement stored in path and 
-         * data by xtrans, ytrans. 
-         *
-         * cr - cairo context
-         * path - the cairo path to be translated
-         * data - the data corresponding to path (initialized in method)
-         * xtrans - the translation distance in pixels in the x direction
-         * ytrans - the translation distance in pixels in the y direction
-         */
-        //void manual_translate(cairo_t *cr, cairo_path_t *path, cairo_path_data_t *data, 
-        //        double xtrans, double ytrans);
-
-        /*
-         * Creates an arc path that allows for text to be drawn along
-         * it. For minimal distortion and visible results, radius should 
-         * be greater than (1/2 * width) but less than (5 * width)
-         *
-         * cr - cairo context 
-         * path - a non-local cairo_path_t variable for this function to use 
-         *        (is assigned in function)
-         * line - a non-local PangoLayoutLine variable for this function to use 
-         *        (is assigned in function)
-         * layout - the PangoLayout used for the desired text
-         * x - the horizontal distance in pixels the text is positioned along the path
-         * y - the vertical distance in pixels the letters are removed from the path 
-         *     (y > 20 can become distorted)
-         * radius - the radius of the curvature to be created 
-         *          (precondition: radius >= .5*width)
-         * width - the width of the surface
-         * height - the height of the surface
-         * direction - a flag that tells whether the returned points will be along the 
-         *             top or bottom of the circle. true : top, false : bottom 
-         */
-        //void create_arc_path (cairo_t *cr, cairo_path_t *path, PangoLayoutLine *line, 
-        //        PangoLayout *layout, double x, double y, double radius, 
-        //        double width, double height, bool direction);
-
-
-        /*
-         * Creates a curved path from points using cubic interpolation, and allows 
-         * for text to be drawn along it
-         *
-         * cr - cairo context 
-         * path - a non-local cairo_path_t variable for this function 
-         *        to use (is assigned in function)
-         * line - a non-local PangoLayoutLine variable for this function 
-         *        to use (is assigned in function)
-         * layout - the PangoLayout used for the desired text
-         * width - the width of the surface
-         * height - the height of the surface
-         * x - the horizontal distance in pixels the text is positioned along the path
-         * y - the vertical distance in pixels the letters are removed from the path 
-         *     (y > 20 can cause distortion)
-         * num_points - the number of points that form the path. 
-         *              This number determines how many curves are generated.
-         *              (minimum 3) (range 3-5 for least distortion)
-         * c_min - the min range value for squared variable in the first cubic 
-         *        curving equation
-         * c_max - the max range value for squared variable in the first cubic 
-         *        curving equation
-         * d_min - the min range value for cubed variable in the first cubic 
-         *        curving equation
-         * d_max - the max range value for cubed variable in the first cubic 
-         * y_var_min_ratio - the minimum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
-         * y_var_max_ratio - the maximum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
-         *        curving equation
-
-         */
-        /*
-        void create_curved_path (cairo_t *cr, cairo_path_t *path, PangoLayoutLine *line, 
-                PangoLayout *layout, double width, double height, 
-                double x, double y, int num_points, double c_min, double c_max, double d_min, 
-                double d_max, double y_var_min_ratio, double y_var_max_ratio);
-                */
-
-        /*
-         * An overload for create_curved_path that allows for the points vector
-         * to be set outside the function.   
-         *
-         * points - vector of x,y coordinate pairs that are used to make the
-         *          shape of the path
-         * stroke - a flag to tell function whether or not to stroke the line or
-         *          simply leave it as a path. (optional parameter, default false)
-         * c_min - the min range value for squared variable in the first cubic 
-         *        curving equation
-         * c_max - the max range value for squared variable in the first cubic 
-         *        curving equation
-         * d_min - the min range value for cubed variable in the first cubic 
-         *        curving equation
-         * d_max - the max range value for cubed variable in the first cubic 
-         *        curving equation
-
-         */
-        /*
-        void create_curved_path (cairo_t *cr, cairo_path_t *path, PangoLayoutLine *line,
-                PangoLayout *layout, double width, double height,
-                double x, double y, std::vector<coords> points,
-                double c_min, double c_max, double d_min, double d_max,
-                bool stroke=false);
-        */
 
 
         //Another RNG for beta, gamma, normal distributions

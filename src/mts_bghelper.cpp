@@ -24,7 +24,6 @@ MTS_BackgroundHelper::getParam(string key) {
 }
 
 MTS_BackgroundHelper::MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h)
-    //:helper(make_shared<MTS_BaseHelper>(*h)),  // initialize fields
     :helper(&(*h)),  // initialize fields
     bias_var_dist(h->getParam("bias_std_alpha"),
             h->getParam("bias_std_beta")),
@@ -37,19 +36,6 @@ MTS_BackgroundHelper::MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h)
 MTS_BackgroundHelper::~MTS_BackgroundHelper(){
     cout << "bg helper destructed" << endl;
 }
-
-/*
-void
-MTS_BackgroundHelper::make_dash_pattern(double * pattern, int len) {
-    double dash;
-
-    //set pattern randomly
-    for(int i = 0; i < len; i++) {
-        dash = (helper->rng() % 10000) / 1000.0;
-        pattern[i] = dash;
-    }
-}
-*/
 
 void
 MTS_BackgroundHelper::draw_boundary(cairo_t *cr, double linewidth, 
@@ -85,7 +71,6 @@ MTS_BackgroundHelper::draw_boundary(cairo_t *cr, double linewidth,
     cairo_stroke_preserve(cr);
 
     // translate distance so that main line is drawn off center of boundary
-    //draw_parallel(cr, horizontal, distance, false); //doesn't stroke new path
     cairo_path_t *path_tmp = cairo_copy_path(cr);
     cairo_new_path(cr);
     cairo_translate(cr, x_dis, y_dis);
@@ -123,11 +108,6 @@ MTS_BackgroundHelper::draw_hatched(cairo_t *cr, double linewidth) {
     int dis_max = getParam("railroad_distance_between_crosses_max") * linewidth * 100;
     double hatch_dis = (dis_min + (helper->rng() % (dis_max-dis_min+1))) / 100.0; 
 
-    // set apparent width of hatches
-    //double on_len = 3 * linewidth / (1 + (helper->rng() % 5)); 
-    // set apparent distance between hatches
-    //double off_len = dist_min + (helper->rng() % (int) ceil(dist_max * on_len)); 
-
     //set dash pattern to be used
     const double pattern[] = {hatch_wide, hatch_dis};
     cairo_set_dash(cr, pattern, 2, 0);
@@ -135,40 +115,8 @@ MTS_BackgroundHelper::draw_hatched(cairo_t *cr, double linewidth) {
 
     // return to original settings
     cairo_set_line_width(cr, linewidth);
-    //cairo_set_dash(cr, pattern, 0, 0); 
     cairo_set_dash(cr, dash, dash_len, 0);
 }
-
-
-/*
-void
-MTS_BackgroundHelper::draw_parallel(cairo_t *cr, bool horizontal, 
-        double distance, bool stroke) {
-
-    cairo_path_t *path;
-    cairo_path_data_t *data;
-    double xtrans = 0, ytrans = 0;
-
-    //copy current path
-    path = cairo_copy_path(cr);
-    cairo_new_path(cr);
-
-    if(horizontal) { // line horizontal, translate new path in y direction
-        ytrans = distance;
-        helper->manual_translate(cr, path, data, xtrans, ytrans); 
-
-    } else { // line vertical, translate new path in x direction
-        xtrans = distance; 
-        helper->manual_translate(cr, path, data, xtrans, ytrans); 
-    }
-
-    //stroke new parallel line if stroke flag is true
-    if(stroke) cairo_stroke(cr);
-
-    //destroy used up path
-    cairo_path_destroy(path);
-}
-*/
 
 void
 MTS_BackgroundHelper::set_dash_pattern(cairo_t *cr) {
@@ -195,7 +143,6 @@ MTS_BackgroundHelper::set_dash_pattern(cairo_t *cr) {
 void
 MTS_BackgroundHelper::orient_path(cairo_t *cr, bool curved, 
         int length, int width, int height) {
-    //double x=0,y=0,angle;
     int translation_x, translation_y;
     double angle = (helper->rng() % 360)/180.0*M_PI; //get angle 0 - 2PI
     translation_x = helper->rng() % (width+1); // 0 - width
@@ -204,58 +151,6 @@ MTS_BackgroundHelper::orient_path(cairo_t *cr, bool curved,
     cairo_translate(cr, translation_x, translation_y);
     cairo_rotate(cr, angle); 
     cairo_translate(cr, -length/2.0, -height);
-
-
-    /*
-    // randomly set translation and rotation based on orientation 
-    if(horizontal) { //horizontal line orientation
-        //make a starting point for straight lines
-        x = 0;
-        y = helper->rng() % (height + 1); // y variation of 0-height along left side
-
-        //make a starting translation and angle
-        angle = ((helper->rng() % 91)-45)/180.0*M_PI; //get angle +- PI/4
-        translation_x = helper->rng() % (width+1); // 0 - width
-        translation_y = helper->rng() % (height+1); // 0 - width
-        //if(curved) { translation_y = -fabs(y); } // translate points up from bottom
-        //else { translation_y = 0; }
-
-        cairo_translate(cr, translation_x, translation_y);
-        cairo_rotate(cr, angle); 
-        cairo_translate(cr, -width/2.0, -height);
-
-    } else { //vertical line orientation
-        //make a starting point for straight lines
-        y = 0;
-        x = width - (helper->rng() % width); // x variation of 0-width along top side
-
-        //make a starting translation and angle
-        angle = -((3 * 7854) - 2 * (helper->rng() % 7854))/10000.0; // from PI/4 to 3PI/4
-
-        //translate to approximate curved line center point, rotate around it, 
-        //  translate back 
-        if(curved) {
-            // try to keep xy translations in bounds of surface. finiky
-            translation_y = -height/2.0 + (helper->rng() % (int) ceil(height/2.0)) 
-                - (helper->rng() % (int) ceil(height/2.0));
-            translation_x = (helper->rng() % (int) ceil(width/2.0)); 
-
-            cairo_translate(cr, width/2.0, height);
-            cairo_rotate(cr, angle); 
-            cairo_translate(cr, translation_x, translation_y);
-
-        } else { //if line is straight, just translate 
-            translation_x = 0;
-            translation_y = (helper->rng() % (int) ceil(height)) 
-                - (helper->rng() % (int) ceil(height)); // +- height
-
-            cairo_translate(cr, translation_x, translation_y);
-        }
-    }
-    */
-    //set and return starting coordinats
-    //coords start(x,y);
-    //return start;
 }
 
 void
@@ -263,9 +158,6 @@ MTS_BackgroundHelper::generate_curve(cairo_t *cr, int width,
         int height,  double c_min, double c_max, double d_min, double d_max, bool river) {
 
     std::vector<coords> points;
-    //PangoLayout *layout;
-    //cairo_path_t *path;
-    //PangoLayoutLine *line;
     int num_min = getParam("bg_curve_num_points_min");
     int num_max = getParam("bg_curve_num_points_max");
 
@@ -287,17 +179,6 @@ MTS_BackgroundHelper::generate_curve(cairo_t *cr, int width,
     //get correct point vector based on line orientation
     points = helper->make_points_wave(width, height, num_points, y_var_min, y_var_max);
     helper->points_to_path(cr, points, c_min, c_max, d_min, d_max);
-    /*
-    if(horizontal) {
-        points = helper->make_points_wave(width, height, num_points, y_var_min, y_var_max);
-    } else {
-        points = helper->make_points_wave(height, height, num_points, y_var_min, y_var_max);
-    }
-    */
-
-    //curve the path and give extra optional parameter to stroke the path
-    //helper->create_curved_path(cr,path,line,layout,width,
-    //        height,0,0,points,c_min,c_max,d_min,d_max,true);
 }
 
 
@@ -308,10 +189,7 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
         double c_min, double c_max, double d_min, double d_max, double color){
 
     double magic_line_ratio, line_width;
-    //coords start_point;
 
-    //set line color and width
-    //cairo_set_source_rgb(cr, color, color, color); // gray-scale
     // set ratio to keep line scaled for image size
     int ratio_min = (int)(getParam("line_width_scale_min") * 10000);
     int ratio_max = 1 + (int)(getParam("line_width_scale_max") * 10000) - ratio_min;
@@ -319,13 +197,9 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
     line_width = std::min(width, height) * magic_line_ratio;
     cairo_set_line_width(cr, line_width);
 
-    //move to origin of surface
-    //cairo_move_to(cr, 0, 0);
-
     int length = (int)(pow(pow(width,2)+pow(height,2),0.5));
 
     //orient the path for the line correctly
-    //start_point = orient_path(cr, horizontal, curved, length, width, height);
     orient_path(cr, curved, length, width, height);
 
     // set path shape 
@@ -333,19 +207,8 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
         // draw a wiggly line
         generate_curve(cr, length, height, c_min, c_max, d_min, d_max, river);
     } else { // draw a straight line
-        // move to starting point
-        //cairo_move_to(cr, start_point.first, start_point.second); 
         cairo_move_to(cr, 0, 0);
         cairo_line_to(cr, length, 0); 
-        /*
-        if(horizontal) {
-            // make a line to width and a random height
-            cairo_line_to(cr, width, helper->rng() % height); 
-        } else { //vertical 
-            // make a line to height and a random width
-            cairo_line_to(cr, helper->rng() % width, height); 
-        }
-        */
     } 
 
     // set line style to dashed or not (default solid)
@@ -592,7 +455,6 @@ MTS_BackgroundHelper::addTexture(cairo_t *cr, bool curved, double brightness, in
 
     int length = (int)(pow(pow(width,2)+pow(height,2),0.5));
     //orient the path for the line correctly
-    //start_point = orient_path(cr, curved, length, width, height);
     orient_path(cr, curved, length, width, height);
 
     // set path shape 
@@ -601,19 +463,8 @@ MTS_BackgroundHelper::addTexture(cairo_t *cr, bool curved, double brightness, in
         generate_curve(cr, length, height, c_min,c_max,d_min,d_max);
 
     } else { // draw a straight line
-        // move to starting point
-        //cairo_move_to(cr, start_point.first, start_point.second); 
         cairo_move_to(cr,0,0);
         cairo_line_to(cr, length, 0);
-        /*
-        if(horizontal) {
-            // make a line to width and a random height
-            cairo_line_to(cr, width, helper->rng() % height); 
-        } else { //vertical 
-            // make a line to height and a random width
-            cairo_line_to(cr, helper->rng() % width, height); 
-        }
-        */
     } 
 
     // stroke lines to surface
@@ -796,8 +647,6 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
         if (curved) {
             helper->points_to_path(cr, points, c_min, c_max, d_min, d_max); //draw path shape
         } else {
-            //cout << points[0].first << " " << points[0].second << endl;
-            //cout << points[points.size()-1].first << " " << points[points.size()-1].second << endl;
             cairo_move_to(cr,points[0].first,points[0].second);
             cairo_line_to(cr,points[points.size()-1].first,points[points.size()-1].second);
         }
@@ -1033,8 +882,6 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
         double size_min = getParam("blob_size_min");
         double size_max = getParam("blob_size_max");
         double dim_rate = getParam("blob_diminish_rate");
-        //helper->addSpots(surface,num_min,num_max,size_min,size_max,dim_rate,
-        //        false,bg_color-contrast, bg_color);
         helper->addSpots(surface,num_min,num_max,size_min,size_max,dim_rate,
                 false,bg_color-contrast, bg_color);
     }

@@ -39,18 +39,6 @@ class MTS_BackgroundHelper {
             getParam(string key);
 
         /*
-         * Sets len number of elements in array, pattern.
-         * For arbitrarily setting the dash pattern of a line
-         *
-         * pattern - an array 
-         * len - the length of pattern
-         */
-        /*
-        void
-            make_dash_pattern(double *pattern, int len);
-        */
-
-        /*
          * Makes a thicker line behind the original that is a different gray-scale hue
          *
          * cr - cairo context
@@ -70,22 +58,6 @@ class MTS_BackgroundHelper {
          */
         void
             draw_hatched(cairo_t *cr, double linewidth);
-
-        /*
-         * Copies the current path and then moves it distance in direction
-         * specified by horizontal, finally strokes new parallel line to surface
-         *
-         * cr - cairo context
-         * horizontal - the orientation of the line (false = vertical)
-         * distance - the distance between the original line and the new parallel line
-         * stroke - flag that dictates whether or not to stroke the parallel line.
-         *          (optional parameter, defaults to true)
-         */
-        /*
-        void
-            draw_parallel(cairo_t *cr, bool horizontal, double distance,
-                    bool stroke=true);
-                    */
 
         /*
          * Sets an arbitrary dash pattern to the path stored by cr
