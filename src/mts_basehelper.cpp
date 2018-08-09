@@ -677,6 +677,7 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
 }
 
 
+/*
 void 
 MTS_BaseHelper::points_to_arc_path(cairo_t *cr, std::vector<coords> points, 
         double radius, double width, double height, 
@@ -710,7 +711,6 @@ MTS_BaseHelper::points_to_arc_path(cairo_t *cr, std::vector<coords> points,
     }
 }
 
-
 std::vector<coords>
 MTS_BaseHelper::make_points_arc(double width, double height, double radius, 
         bool direction) {
@@ -720,8 +720,8 @@ MTS_BaseHelper::make_points_arc(double width, double height, double radius,
     double next_angle;
     std::vector<coords> points;
     double x, y;
-    /*find the angle between the center point of the canvas and the point where 
-      the circle intersects the edge of the canvas */
+    //find the angle between the center point of the canvas and the point where 
+    //  the circle intersects the edge of the canvas 
     double theta = asin(width / (2 * radius)); 
 
     if (direction) { //top of circle
@@ -740,7 +740,7 @@ MTS_BaseHelper::make_points_arc(double width, double height, double radius,
         y = (height + delta_y) + (radius * sin(next_angle));
         points.push_back(std::make_pair(x,y));
 
-    } else /* direction == false */ { //bottom of circle   
+    } else { //bottom of circle   
         // first edge of arc, in top right
         x = width;
         y = 0;
@@ -753,6 +753,7 @@ MTS_BaseHelper::make_points_arc(double width, double height, double radius,
     }
     return points;
 }
+*/
 
 
 std::vector<coords>
@@ -784,6 +785,7 @@ MTS_BaseHelper::make_points_wave(double length, double height,
 }
 
 
+/*
 void
 MTS_BaseHelper::manual_translate(cairo_t *cr, cairo_path_t *path, cairo_path_data_t *data, 
         double xtrans, double ytrans) {
@@ -811,7 +813,6 @@ MTS_BaseHelper::manual_translate(cairo_t *cr, cairo_path_t *path, cairo_path_dat
         }
     }
 }
-
 
 void 
 MTS_BaseHelper::create_arc_path (cairo_t *cr, cairo_path_t *path, 
@@ -843,7 +844,6 @@ MTS_BaseHelper::create_arc_path (cairo_t *cr, cairo_path_t *path,
     cairo_path_destroy (path);
 
 }
-
 
 void
 MTS_BaseHelper::create_curved_path (cairo_t *cr, cairo_path_t *path, 
@@ -878,8 +878,10 @@ MTS_BaseHelper::create_curved_path (cairo_t *cr, cairo_path_t *path,
     //clean up
     cairo_path_destroy (path);
 }
+*/
 
 
+/*
 void
 MTS_BaseHelper::create_curved_path (cairo_t *cr, cairo_path_t *path,
         PangoLayoutLine *line, PangoLayout *layout,
@@ -907,3 +909,4 @@ MTS_BaseHelper::create_curved_path (cairo_t *cr, cairo_path_t *path,
         cairo_path_destroy (path);
     }
 }
+*/

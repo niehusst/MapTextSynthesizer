@@ -100,11 +100,6 @@ class MTS_BaseHelper {
         static void
             point_on_path (parametrized_path_t *param, double *x, double *y);
 
-
-        /* Projects the current path of cr onto the provided path. */
-        void
-            map_path_onto (cairo_t *cr, cairo_path_t *path);
-
         ///////////https://github.com/phuang/pango/blob/master/examples/cairotwisted.c
 
 
@@ -137,17 +132,24 @@ class MTS_BaseHelper {
          * direction - a flag that tells whether the returned points will be along the 
          *             top or bottom of the circle. true : top, false : bottom 
          */
+        /*
         void 
             points_to_arc_path(cairo_t *cr, std::vector<coords> points, double radius, 
                     double width, double height, bool direction);
+                    */
 
         RNG rng_;
 
         //All parameters
         unordered_map<string, double> params;
+        unordered_map<string, string> params2;
 
     public://----------------------- PUBLIC METHODS --------------------------
 
+        /* Projects the current path of cr onto the provided path. */
+        /* from https://github.com/phuang/pango/blob/master/examples/cairotwisted.c */
+        void
+            map_path_onto (cairo_t *cr, cairo_path_t *path);
         /* 
          * Draws a path shape from points using (semi-)cubic interpolation.  
          * uses coords from points vec to determine where to draw curves to and from.
@@ -179,7 +181,7 @@ class MTS_BaseHelper {
          * direction - a flag that tells whether the returned points will be along the 
          *             top or bottom of the circle. true : top, false : bottom 
          */
-        std::vector<coords> make_points_arc(double width, double height, double radius, bool direction);
+        //std::vector<coords> make_points_arc(double width, double height, double radius, bool direction);
 
         /*
          * Makes and returns a vector of x,y coordinate points for
@@ -206,8 +208,8 @@ class MTS_BaseHelper {
          * xtrans - the translation distance in pixels in the x direction
          * ytrans - the translation distance in pixels in the y direction
          */
-        void manual_translate(cairo_t *cr, cairo_path_t *path, cairo_path_data_t *data, 
-                double xtrans, double ytrans);
+        //void manual_translate(cairo_t *cr, cairo_path_t *path, cairo_path_data_t *data, 
+        //        double xtrans, double ytrans);
 
         /*
          * Creates an arc path that allows for text to be drawn along
@@ -230,9 +232,9 @@ class MTS_BaseHelper {
          * direction - a flag that tells whether the returned points will be along the 
          *             top or bottom of the circle. true : top, false : bottom 
          */
-        void create_arc_path (cairo_t *cr, cairo_path_t *path, PangoLayoutLine *line, 
-                PangoLayout *layout, double x, double y, double radius, 
-                double width, double height, bool direction);
+        //void create_arc_path (cairo_t *cr, cairo_path_t *path, PangoLayoutLine *line, 
+        //        PangoLayout *layout, double x, double y, double radius, 
+        //        double width, double height, bool direction);
 
 
         /*
@@ -265,10 +267,12 @@ class MTS_BaseHelper {
          *        curving equation
 
          */
+        /*
         void create_curved_path (cairo_t *cr, cairo_path_t *path, PangoLayoutLine *line, 
                 PangoLayout *layout, double width, double height, 
                 double x, double y, int num_points, double c_min, double c_max, double d_min, 
                 double d_max, double y_var_min_ratio, double y_var_max_ratio);
+                */
 
         /*
          * An overload for create_curved_path that allows for the points vector
@@ -288,11 +292,13 @@ class MTS_BaseHelper {
          *        curving equation
 
          */
+        /*
         void create_curved_path (cairo_t *cr, cairo_path_t *path, PangoLayoutLine *line,
                 PangoLayout *layout, double width, double height,
                 double x, double y, std::vector<coords> points,
                 double c_min, double c_max, double d_min, double d_max,
                 bool stroke=false);
+        */
 
 
         //Another RNG for beta, gamma, normal distributions

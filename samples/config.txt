@@ -13,19 +13,20 @@ spacing_scale=20
 spacing_shift=-1
 
 //Baseline Curve
-curve_prob=0.2
+curve_prob=1
 curve_min_spacing=-1          //min spacing required for the text to be curved
-curve_min_char_num_per_point=4    //min number of chars required for each point of curve
+curve_min_char_num_per_point=1    //min number of chars required for each point of curve
 curve_num_points_min=2
 curve_num_points_max=3
-curve_c_min=-1                //c is the quadratic coefficient of the first segment of curve
-curve_c_max=1                 //while d is the cubic
-curve_d_min=-0.5
-curve_d_max=0.5
+curve_c_min=-2                //c is the quadratic coefficient of the first segment of curve
+curve_c_max=2                 //while d is the cubic
+curve_d_min=-2
+curve_d_max=2
 curve_cd_increase_rate=3
 curve_cd_sum_max=3           //prevent huge curvature at the beginning of curve
 curve_y_variance_min=0        //the fluctuation of the fixing points of the curve in y-direction
 curve_y_variance_max=0.8      //w.r.t. the height of image
+curve_is_deformed_prob=0.5           // probility that curving text is deformed
 
 //Italic
 italic_prob=0.05
@@ -47,7 +48,7 @@ missing_size_max=0.25        //with respect to height
 missing_diminish_rate=100     //the larger this value, the slower the edge diminishes
 
 //Rotate
-rotate_prob=0.2
+rotate_prob=0
 rotate_degree_min=-10
 rotate_degree_max=10
 
@@ -84,7 +85,7 @@ distract_size_min=0.2
 distract_size_max=2         //with respect to height
 
 //boundary
-boundary_prob=1
+boundary_prob=0.1
 boundary_dashed_prob=.5
 boundary_num_lines_min=1
 boundary_num_lines_max=3
@@ -120,7 +121,7 @@ grid_num_min=10
 grid_num_max=20
 
 //city point
-point_prob=1
+point_prob=0.1
 point_num_min=1
 point_num_max=3
 point_radius_min=0.1           //w.r.t height
@@ -128,14 +129,8 @@ point_radius_max=0.3           //if greater than 0.5. it's reset to 0.5
 point_hollow_prob=0.5
 
 
-// bg curve params (to be distinguished from text curve params above)
-bg_curve_y_variance_min=-0.4        //the fluctuation of the fixing points of the curve in y-direction
-bg_curve_y_variance_max=0.4      //w.r.t. the height of image
-bg_curve_num_points_min=3
-bg_curve_num_points_max=15
-
 //parallel lines
-para_prob=0
+para_prob=0.1
 para_curve_prob=0.5
 para_num_min=10
 para_num_max=20
@@ -145,7 +140,7 @@ para_curve_d_min=-2
 para_curve_d_max=2
 
 //varying parallel lines
-vpara_prob=0
+vpara_prob=0.1
 vpara_curve_prob=0.5     
 vpara_num_min=10
 vpara_num_max=20
@@ -155,7 +150,7 @@ vpara_curve_d_min=-2
 vpara_curve_d_max=2
 
 //texture
-texture_prob=0
+texture_prob=0.1
 texture_num_lines_min=1
 texture_num_lines_max=2
 texture_width_alpha=2         
@@ -166,13 +161,15 @@ texture_curve_d_min=-2
 texture_curve_d_max=2
 
 //railroad
-railroad_prob=0
+railroad_prob=0.1
 railroad_num_lines_min=1
 railroad_num_lines_max=2
-railroad_cross_width_min=2    //in multiples of thickness of main line
+railroad_cross_width_min=2    //width of hatches. in multiples of thickness of main line
 railroad_cross_width_max=10
-railroad_distance_between_crosses_min=3
-railroad_distance_between_crosses_max=15
+railroad_hatch_width_min=0.5  //width of each hatch. in multiples of thickness of main line
+railroad_hatch_width_max=2
+railroad_distance_between_crosses_min=1  // distance between hatches. in multiples of thickness of main line
+railroad_distance_between_crosses_max=3
 railroad_curve_c_min=-2       //a+bx+cx^2+dx^3
 railroad_curve_c_max=2
 railroad_curve_d_min=-2
@@ -183,7 +180,7 @@ double_distance_min=6
 double_distance_max=9
 
 //river line
-river_prob=0
+river_prob=0.1
 river_num_lines_min=1
 river_num_lines_max=5
 river_double_line_prob=.5
@@ -191,6 +188,8 @@ river_curve_c_min=-2          //a+bx+cx^2+dx^3
 river_curve_c_max=2
 river_curve_d_min=-2
 river_curve_d_max=2
+river_curve_num_points_scale=5   //make the control points on a river line denser
+river_curve_y_var_scale=0.3       //make the fluctuation of a river line less intense
 
 //bias
 bias_vert_num_min=3
@@ -205,7 +204,7 @@ bias_mean=0
 
 //bg line width (applied to all bg features)
 line_width_scale_min=0.0125
-line_width_scale_max=0.025    //with respect to min(width,height)
+line_width_scale_max=0.05    //with respect to min(width,height)
 
 //dash params (applied to all bg features)
 dash_pattern_len_min=2         // number of dashes in one pattern
@@ -217,21 +216,27 @@ dash_len_max=10
 bg_feature_color_dis_min=0
 bg_feature_color_dis_max=20         // if larger than bg_color-text_color, reset to bg_color-text_color
 
+//bg curve params (to be distinguished from text curve params above) (applied to all bg features)
+bg_curve_y_variance_min=-0.4        //the fluctuation of the fixing points of the curve in y-direction
+bg_curve_y_variance_max=0.4      //w.r.t. the height of image
+bg_curve_num_points_min=3
+bg_curve_num_points_max=15
+
 
 // GENERAL PARAMS
 
-digit_prob=0.0
+digit_prob=0.05
 digit_len_alpha=3
 digit_len_beta=0.2                 //inverse gamma
 digit_len_max=20
 
 zero_padding=0                   //0 for false, and other value for true
 
-height_min=150
-height_max=150
+height_min=50
+height_max=50
 
 //Max number of features in bg
-max_num_features=12
+max_num_features=6
 
 //Color
 bg_color_min=156              //darkest it can be

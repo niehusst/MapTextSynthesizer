@@ -45,8 +45,10 @@ class MTS_BackgroundHelper {
          * pattern - an array 
          * len - the length of pattern
          */
+        /*
         void
             make_dash_pattern(double *pattern, int len);
+        */
 
         /*
          * Makes a thicker line behind the original that is a different gray-scale hue
@@ -80,9 +82,11 @@ class MTS_BackgroundHelper {
          * stroke - flag that dictates whether or not to stroke the parallel line.
          *          (optional parameter, defaults to true)
          */
+        /*
         void
             draw_parallel(cairo_t *cr, bool horizontal, double distance,
                     bool stroke=true);
+                    */
 
         /*
          * Sets an arbitrary dash pattern to the path stored by cr
@@ -108,10 +112,10 @@ class MTS_BackgroundHelper {
          *        curving equation
          * d_max - the max range value for cubed variable in the first cubic 
          *        curving equation
-
+         * river - whether the curve is for a river line or not
          */
         void
-            generate_curve(cairo_t *cr, bool horizontal, int width, int height, double c_min, double c_max, double d_min, double d_max);
+            generate_curve(cairo_t *cr, bool horizontal, int width, int height, double c_min, double c_max, double d_min, double d_max, bool river = false);
 
 
         /*
@@ -124,7 +128,7 @@ class MTS_BackgroundHelper {
          * width - surface width
          * height - surface height
          */
-        coords
+        void
             orient_path(cairo_t *cr, bool horizontal, bool curved, int length, int width, int height);
 
 
@@ -309,6 +313,7 @@ class MTS_BackgroundHelper {
          * dashed - if true, make line dashed with arbitrary pattern
          * curved - if true, add curvature with create_curved_path from pc
          * doubleline - if true, add another line parallel next to the original
+         * river - if true, the line is a river
          * horizontal - if true, lines and transformations go left to right, 
          *              else top to bottom
          * width - the width of the layout in pixels
@@ -325,7 +330,7 @@ class MTS_BackgroundHelper {
          */
         void
             addLines(cairo_t *cr, bool boundary, bool hatched, bool dashed, 
-                    bool curved, bool doubleline, bool horizontal, int width, 
+                    bool curved, bool doubleline, bool river, bool horizontal, int width, 
                     int height, double c_min=0, double c_max=0, 
                     double d_min=0, double d_max=0, double color=0);
 
