@@ -14,15 +14,15 @@ MapTextSynthesizer is a program to dynamically generate synthetic images contain
 
 ##### Installing dependencies on MacOS and Linux
 
-You will need OpenCV2, Boost and pangocairo to run the synthesizer.
-Pangocairo is a crucial tool for our synthesizer; it is used for drawing all the backgrounds and text in synthesized images. If you are running Linux, you should already have pangocairo installed in your system. To check whether it is installed, run `pkg-config --cflags --libs pangocairo` in your terminal. If you have it, your terminal should spit back a series of compiler flags that make up the pkg-config. If you don't have pangocairo, follow the download instructions on the Pango [website](https://www.pango.org/Download).
+You will need OpenCV2, Boost and pangocairo to run the synthesizer.  
+Pangocairo is a crucial tool for our synthesizer; it is used for drawing all the backgrounds and text in synthesized images. If you are running Linux, you should already have pangocairo installed in your system. To check whether it is installed, run `pkg-config --cflags --libs pangocairo` in your terminal. If you have it, your terminal should spit back a series of compiler flags that make up the pkg-config. If you don't have pangocairo, follow the download instructions on the Pango [website](https://www.pango.org/Download).  
 To install pangocairo on MacOS using homebrew, run ```brew install pango``` in the terminal. Since pango is the parent of pangocairo, pangocairo will be downloaded implicitly. 
 
 OpenCV is used for adding Gaussian blur and noise to the final image to make it more realistic.
-To install OpenCV on Linux using apt-get, follow these steps from [learnopencv.com](https://www.learnopencv.com/install-opencv3-on-ubuntu/). 
+To install OpenCV on Linux using apt-get, follow these steps from [learnopencv.com](https://www.learnopencv.com/install-opencv3-on-ubuntu/).   
 To install with homebrew on MacOS, run ```brew install opencv``` in the terminal.
 
-Boost is used for the distributions it provides, allowing our random samples to be more specific in shape. Boost-Python is used in the TensorFlow/Python integration of MapTextSynthesizer. To install Boost on Linux using apt-get, run ```sudo apt-get install libboost-all-dev``` and ```sudo apt-get  install libboost-python-dev``` in your terminal. If you don't have sudo privledges, follow the download instructions on their [website](https://www.boost.org/users/download/). 
+Boost is used for the distributions it provides, allowing our random samples to be more specific in shape. Boost-Python is used in the TensorFlow/Python integration of MapTextSynthesizer. To install Boost on Linux using apt-get, run ```sudo apt-get install libboost-all-dev``` and ```sudo apt-get  install libboost-python-dev``` in your terminal. If you don't have sudo privledges, follow the download instructions on their [website](https://www.boost.org/users/download/).   
 To install both Boost libraries on MacOS using homebrew, run ```brew install boost``` and ```brew install boost-python``` in the terminal.
 
 After installing the dependencies, you should be able to jump right into compiling sample programs.
@@ -41,7 +41,7 @@ To compile a C++ sample from a shared library, do ```make shared```, this create
 
 To compile using a static library, ```make static``` followed by ```make cpp_sample_static```. To run the resulting executable (static_sample) located in the samples directory, call ```./static_sample``` in the samples directory.
 
-##### Compiling samples with CMake:
+### Compiling samples with CMake:
 
 To install MapTextSynthesizer in your machine using CMake, open install.sh using a text editor and fill in the necessary environment variables with complete paths to this repository and, if you are using one, to your virtual environment. 
 

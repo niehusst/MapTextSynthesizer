@@ -21,7 +21,7 @@
 #include <fstream>
 #include <memory>
 #include <string>
-#include <opencv2/opencv.hpp>
+#include <opencv2/opencv.hpp> // for imshow and Mat type
 
 // header to include for using the synthesizer
 #include "map_text_synthesizer.hpp"
@@ -50,14 +50,13 @@ int main(int argc, char **argv) {
     // if you are getting an error about unavailable fonts, run 
     // list_available_fonts.cpp to see what fonts are available on your machine
     vector<string> blocky;
-    blocky.push_back("URW Gothic L");
+    blocky.push_back("Monospace");
 
     vector<string> regular;
     regular.push_back("Sans");
-    blocky.push_back("Serif");
     
     vector<string> cursive;
-    cursive.push_back("URW Chancery L");
+    cursive.push_back("Serif");
 
     // use the list of civil entity names in Iowa file for image captions
     mts->setSampleCaptions("IA/Civil.txt");

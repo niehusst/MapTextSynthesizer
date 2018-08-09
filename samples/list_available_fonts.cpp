@@ -17,7 +17,7 @@ list_fonts ()
         const char * family_name;
 
         family_name = pango_font_family_get_name (family);
-        printf ("Family %d: %s\n", i, family_name);
+        printf ("Font %d: %s\n", i, family_name);
     }
     g_free (families);
 }

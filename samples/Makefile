@@ -38,17 +38,16 @@ libmtsynth.a: ${SOURCES}
 # Compile a cpp example from shared library
 # NOTE: Must set environment variable LD_LIBRARY_PATH=/path/to/bin/
 cpp_sample: synthesizer_sample.cpp
-	${CXX} -o shared_sample $^ ${PKG-CONFIG} ${SAMPLE_FLAGS}
+	${CXX} -o shared_sample.exe $^ ${PKG-CONFIG} ${SAMPLE_FLAGS}
 
 # Compile a cpp example with static library
 cpp_sample_static: synthesizer_sample.cpp ${BINDIR}libmtsynth.a
-	${CXX} -o static_sample $^ ${PKG-CONFIG} ${STATIC_SAMPLE_FLAGS}
+	${CXX} -o static_sample.exe $^ ${PKG-CONFIG} ${STATIC_SAMPLE_FLAGS}
 
 # Compile program to list fonts available on the system
 list_fonts: list_available_fonts.cpp
-	${CXX} -o list $^ ${PKG-CONFIG}
+	${CXX} -o list.exe $^ ${PKG-CONFIG}
 
 clean:
-	rm -f core* *.o *~ \#*#
-	find . -maxdepth 1 -type f -executable -exec rm {} +
+	rm -f core* *.o *~ \#*# *.exe
 
