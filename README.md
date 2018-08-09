@@ -59,6 +59,17 @@ Now that MapTextSynthesizer is installed on your machine, you can easily compile
 
 If you want still more information about the nitty-gritty of how this program works or how to modify it, please look at the DESIGN file. It has information about the file architecture, the purpose of the files, configuration instructions, and notes for contributors or devolopers who may wish to integrate this synthesizer into TensorFlow.
 
+### Future Work
+
+Future work for this project that we hypothesize would lead to a more robustly trained model may include:  
+* Generating punctuation in text (in valid positions
+* Generating characters with accent marks
+* A more map-realistic way to simulate mountains than the existing textures
+* Adding glyph/symbol patterns to textures (this could be useful for swamp simulation)
+* Vertical baseline jitter in text; map text doesn't always have a straight baseline
+* Captions that are split, as if across a background feature
+* Abbreviations where the last letter is stacked above the period. This is common in some historical maps.
+
 ## Authors
 
 * **Ziwen Chen** - [arthurhero](https://github.com/arthurhero)
