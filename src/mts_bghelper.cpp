@@ -53,7 +53,7 @@ MTS_BackgroundHelper::make_dash_pattern(double * pattern, int len) {
 
 void
 MTS_BackgroundHelper::draw_boundary(cairo_t *cr, double linewidth, 
-        double og_col, bool horizontal) {
+        double og_col) {
 
     // get original dash code
     int dash_len = cairo_get_dash_count(cr);
@@ -193,7 +193,7 @@ MTS_BackgroundHelper::set_dash_pattern(cairo_t *cr) {
 }
 
 void
-MTS_BackgroundHelper::orient_path(cairo_t *cr, bool horizontal, bool curved, 
+MTS_BackgroundHelper::orient_path(cairo_t *cr, bool curved, 
         int length, int width, int height) {
     //double x=0,y=0,angle;
     int translation_x, translation_y;
@@ -259,7 +259,7 @@ MTS_BackgroundHelper::orient_path(cairo_t *cr, bool horizontal, bool curved,
 }
 
 void
-MTS_BackgroundHelper::generate_curve(cairo_t *cr, bool horizontal, int width, 
+MTS_BackgroundHelper::generate_curve(cairo_t *cr, int width, 
         int height,  double c_min, double c_max, double d_min, double d_max, bool river) {
 
     std::vector<coords> points;
@@ -304,7 +304,7 @@ MTS_BackgroundHelper::generate_curve(cairo_t *cr, bool horizontal, int width,
 void
 MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched, 
         bool dashed, bool curved, bool doubleline, bool river,  
-        bool horizontal, int width, int height, 
+        int width, int height, 
         double c_min, double c_max, double d_min, double d_max, double color){
 
     double magic_line_ratio, line_width;
@@ -326,12 +326,12 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
 
     //orient the path for the line correctly
     //start_point = orient_path(cr, horizontal, curved, length, width, height);
-    orient_path(cr, horizontal, curved, length, width, height);
+    orient_path(cr, curved, length, width, height);
 
     // set path shape 
     if(curved) { 
         // draw a wiggly line
-        generate_curve(cr, horizontal, length, height, c_min, c_max, d_min, d_max, river);
+        generate_curve(cr, length, height, c_min, c_max, d_min, d_max, river);
     } else { // draw a straight line
         // move to starting point
         //cairo_move_to(cr, start_point.first, start_point.second); 
@@ -352,7 +352,7 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
     if(dashed) { set_dash_pattern(cr); } 
 
     // set boundary or not
-    if(boundary) { draw_boundary(cr, line_width, color, horizontal); }
+    if(boundary) { draw_boundary(cr, line_width, color); }
 
     // set hatching or not
     if(hatched) { draw_hatched(cr, line_width); } 
@@ -572,7 +572,7 @@ MTS_BackgroundHelper::set_texture_source(cairo_t *cr, int texture, double bright
 
 
 void
-MTS_BackgroundHelper::addTexture(cairo_t *cr, bool curved, bool horizontal, double brightness, int width, int height, double c_min, double c_max, double d_min, double d_max) {
+MTS_BackgroundHelper::addTexture(cairo_t *cr, bool curved, double brightness, int width, int height, double c_min, double c_max, double d_min, double d_max) {
 
     cairo_save(cr);
 
@@ -592,13 +592,13 @@ MTS_BackgroundHelper::addTexture(cairo_t *cr, bool curved, bool horizontal, doub
 
     int length = (int)(pow(pow(width,2)+pow(height,2),0.5));
     //orient the path for the line correctly
-    //start_point = orient_path(cr, horizontal, curved, length, width, height);
-    orient_path(cr, horizontal, curved, length, width, height);
+    //start_point = orient_path(cr, curved, length, width, height);
+    orient_path(cr, curved, length, width, height);
 
     // set path shape 
     if(curved) { 
         // draw a wiggly line
-        generate_curve(cr, horizontal, length, height, c_min,c_max,d_min,d_max);
+        generate_curve(cr, length, height, c_min,c_max,d_min,d_max);
 
     } else { // draw a straight line
         // move to starting point
@@ -1061,7 +1061,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
 
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
-            addTexture(cr, helper->rng()%2, helper->rng()%2, color, 
+            addTexture(cr, helper->rng()%2, color, 
                     width, height, c_min, c_max, d_min, d_max); 
         }
     }
@@ -1096,7 +1096,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
 
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
-            addLines(cr, false, true, false, true, false, false, helper->rng()%2, width, height, c_min, c_max, d_min, d_max);
+            addLines(cr, false, true, false, true, false, false, width, height, c_min, c_max, d_min, d_max);
         }
     }
 
@@ -1114,8 +1114,8 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
 
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
-            addLines(cr, true, false, helper->rndProbUnder(dash_probability), true, false, false,
-                    helper->rng()%2, width, height, c_min, c_max, d_min, d_max, color);
+            addLines(cr, true, false, helper->rndProbUnder(dash_probability), true, 
+                    false, false, width, height, c_min, c_max, d_min, d_max, color);
         }
     }
 
@@ -1123,12 +1123,13 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
     if (find(features.begin(), features.end(), Straight)!= features.end()) {
         int straight_min = getParam("straight_num_lines_min");
         int straight_max = getParam("straight_num_lines_max")+1 - straight_min;
+        double dash_probability = getParam("straight_dashed_prob");
         num_lines = helper->rng() % straight_max + straight_min;
 
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
-            addLines(cr, false, false, false, false, false, false, helper->rng()%2, 
-                    width, height);
+            addLines(cr, false, false, helper->rndProbUnder(dash_probability),
+                    false, false, false, width, height);
         }
     }
 
@@ -1146,7 +1147,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
             addLines(cr, false, false, false, true, helper->rng()%2, true, 
-                    helper->rng()%2, width, height, c_min, c_max, d_min, d_max);
+                    width, height, c_min, c_max, d_min, d_max);
         }
     }
 

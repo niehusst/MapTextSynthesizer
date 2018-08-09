@@ -111,6 +111,7 @@ blob_diminish_rate=100        //the larger this value, the slower the edge dimin
 
 //straight line
 straight_prob=0.1
+straight_dashed_prob=.5
 straight_num_lines_min=10
 straight_num_lines_max=20
 

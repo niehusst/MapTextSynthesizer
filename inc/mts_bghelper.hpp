@@ -56,10 +56,9 @@ class MTS_BackgroundHelper {
          * cr - cairo context
          * linewidth - the width of the original line (used in scaling for new line)
          * og_col - the color of the original line
-         * horizontal - the orientation of the line (false = vertical)
          */
         void
-            draw_boundary(cairo_t *cr, double linewidth, double og_col, bool horizontal);
+            draw_boundary(cairo_t *cr, double linewidth, double og_col);
 
         /*
          * Draws the main line (thin) and then another line (thick) with a specific
@@ -101,7 +100,6 @@ class MTS_BackgroundHelper {
          * Generates a wiggly line path (but doesn't stroke it to surface)
          *
          * cr - cairo context
-         * horizontal - gives the orientation of the line (false = vertical)
          * width - surface width
          * height - surface height
          * c_min - the min range value for squared variable in the first cubic 
@@ -115,21 +113,20 @@ class MTS_BackgroundHelper {
          * river - whether the curve is for a river line or not
          */
         void
-            generate_curve(cairo_t *cr, bool horizontal, int width, int height, double c_min, double c_max, double d_min, double d_max, bool river = false);
+            generate_curve(cairo_t *cr, int width, int height, double c_min, double c_max, double d_min, double d_max, bool river = false);
 
 
         /*
          * Sets path orientation through rotation and translation
          *
          * cr - cairo context
-         * horizontal - gives the orientation of the line (false = vertical)
          * curved - informs whether the line will be curved (false = straight)
          * length - length of the curve
          * width - surface width
          * height - surface height
          */
         void
-            orient_path(cairo_t *cr, bool horizontal, bool curved, int length, int width, int height);
+            orient_path(cairo_t *cr, bool curved, int length, int width, int height);
 
 
         /*
@@ -284,7 +281,6 @@ class MTS_BackgroundHelper {
          *
          * cr - cairo context
          * curved - describes if line will be curved (false = not curved)
-         * horizontal - describes orientation of line (false = vertical)
          * brightness - the grayscale brightness level of the texture
          * width - surface width
          * height - surface height
@@ -299,7 +295,7 @@ class MTS_BackgroundHelper {
 
          */
         void
-            addTexture(cairo_t *cr, bool curved, bool horizontal, double brightness, 
+            addTexture(cairo_t *cr, bool curved,  double brightness, 
                     int width, int height, double c_min, double c_max, double d_min, double d_max);
 
 
@@ -314,8 +310,6 @@ class MTS_BackgroundHelper {
          * curved - if true, add curvature with create_curved_path from pc
          * doubleline - if true, add another line parallel next to the original
          * river - if true, the line is a river
-         * horizontal - if true, lines and transformations go left to right, 
-         *              else top to bottom
          * width - the width of the layout in pixels
          * height - the height of the layout in pixels
          * c_min - the min range value for squared variable in the first cubic 
@@ -330,7 +324,7 @@ class MTS_BackgroundHelper {
          */
         void
             addLines(cairo_t *cr, bool boundary, bool hatched, bool dashed, 
-                    bool curved, bool doubleline, bool river, bool horizontal, int width, 
+                    bool curved, bool doubleline, bool river, int width, 
                     int height, double c_min=0, double c_max=0, 
                     double d_min=0, double d_max=0, double color=0);
 
