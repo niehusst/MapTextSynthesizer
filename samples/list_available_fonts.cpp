@@ -1,3 +1,11 @@
+/*
+  A program that lists all the available font families in your system.
+
+  !IMPORTANT!
+  This file is the intellectual property of Ben Bullock. Please see source at:
+  https://www.lemoda.net/pango/list-fonts/index.html
+ */
+
 #include <glib.h>
 #include <pango/pangocairo.h>
 

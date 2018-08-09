@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
     cursive.push_back("Serif");
 
     // use the list of civil entity names in Iowa file for image captions
-    mts->setSampleCaptions("IA/Civil.txt");
+    mts->setSampleCaptions("IA_placenames/Civil.txt");
     // set the fonts
     mts->setBlockyFonts(blocky);
     mts->setRegularFonts(regular);

@@ -21,6 +21,9 @@ cpp_sample_static:
 list_fonts:
 	$(MAKE) $@ -C samples list_fonts
 
+# Compile shared library and MTS generator interface for use in TF
+tf_lib:
+	$(MAKE) $@ -C tensorflow/generator lib
 
 # Prevent errors from occuring if a file were named 'clean'
 .PHONY: clean
@@ -28,6 +31,7 @@ list_fonts:
 # Clean rule for getting rid of stray files
 clean:
 	$(MAKE) -C samples clean
+	$(MAKE) -C tensorflow/generator clean
 	rm -f *~ core* \#*#
 	rm -rf bin
 

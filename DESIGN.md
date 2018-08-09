@@ -108,7 +108,16 @@ The ```generateBgFeatures()``` method in ```MTS_BackgroundHelper``` is used to s
 The ```generateBgSample()``` method in ```MTS_BackgroundHelper``` is the main method for generating the background cairo surface given a vector of ```BGFeatures``` to generate.
 
 ### How to integrate the synthesizer with Tensorflow
-Put Ben’s notes here
+
+The files found in the `tensorflow/generator/` directory allow for simple streaming of data from the MapTextSynthesizer into a Tensorflow program using `from_generator`.
+
+`textsynthinterface.cpp` acts as C wrapper for the MapTextSynthesizer C++ code, allowing it to be wrapped with Python using Ctypes. `data_synth.py` uses Ctypes to make the Python interface of MapTextSynthesize, and `maptextsynth.py` uses the Python-wrapped-C-wrapped-C++ code to generate samples that can be sent to a TensorFlow program.
+
+`data_synth.py` includes the `data_generator` function, which can be used directly as a generator function from which to derive a `tf.data.Dataset` object using `tf.data.Dataset.from_generator`.
+
+Example of this use case can be seen in the `get_dataset` function of `maptextsynth.py`.
+
+`maptextsynth.py` is structured specifically for use by `pipeline.py` in the repository [weinman/cnn_lstm_ctc_ocr](https://github.com/weinman/cnn_lstm_ctc_ocr/tree/full_integration).
 
 #### Notes on Threadability
 
