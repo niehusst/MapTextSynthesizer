@@ -101,16 +101,16 @@ boundary_curve_d_max=2
 
 
 //color blob
-blob_prob=1
+blob_prob=0.1
 blob_num_min=1
-blob_num_max=5
+blob_num_max=3
 blob_size_min=0.125
 blob_size_max=0.25            //with respect to height
 blob_diminish_rate=100        //the larger this value, the slower the edge diminishes
 
 //straight line
 straight_prob=0
-straight_num_lines_min=1
+straight_num_lines_min=10
 straight_num_lines_max=20
 
 //grid

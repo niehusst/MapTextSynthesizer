@@ -85,12 +85,12 @@ MTS_BackgroundHelper::draw_boundary(cairo_t *cr, double linewidth,
 
     // translate distance so that main line is drawn off center of boundary
     //draw_parallel(cr, horizontal, distance, false); //doesn't stroke new path
-    cairo_path_t *path = cairo_copy_path(cr);
+    cairo_path_t *path_tmp = cairo_copy_path(cr);
     cairo_new_path(cr);
     cairo_translate(cr, x_dis, y_dis);
-    cairo_append_path(cr, path);
+    cairo_append_path(cr, path_tmp);
+    cairo_path_destroy(path_tmp);
 
-    cout << x_dis << " " << y_dis << endl;
     // reset to color and line width of original line
     cairo_set_line_width(cr, linewidth);
     cairo_set_source_rgb(cr, og_col, og_col, og_col);
@@ -284,18 +284,19 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
     //move to origin of surface
     cairo_move_to(cr, 0, 0);
 
+    int length = (int)(pow(pow(width,2)+pow(height,2),0.5));
+
     //orient the path for the line correctly
-    start_point = orient_path(cr, horizontal, curved, width, height);
+    start_point = orient_path(cr, horizontal, curved, length, height);
 
     // set path shape 
     if(curved) { 
         // draw a wiggly line
-        generate_curve(cr, horizontal, width, height, c_min, c_max, d_min, d_max);
-
+        generate_curve(cr, horizontal, length, height, c_min, c_max, d_min, d_max);
     } else { // draw a straight line
         // move to starting point
         cairo_move_to(cr, start_point.first, start_point.second); 
-        cairo_line_to(cr, width, 0); 
+        cairo_line_to(cr, length, 0); 
         /*
         if(horizontal) {
             // make a line to width and a random height
