@@ -1043,7 +1043,8 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
   if (find(features.begin(), features.end(), Riverline)!= features.end()) {
     int river_min = getParam(std::string("river_num_lines_min"));
     int river_max = getParam(std::string("river_num_lines_max"))+1 - river_min;
-
+    double double_prob = getParam("river_double_line_prob");
+    
     num_lines = helper->rng()%river_max + river_min;
     c_min = getParam("river_curve_c_min");
     c_max = getParam("river_curve_c_max");
@@ -1052,8 +1053,8 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
 
     // add num_lines lines iteratively
     for (int i = 0; i < num_lines; i++) {
-      addLines(cr, false, false, false, true, (bool)helper->rng()%2, 
-               (bool)helper->rng()%2, width, height, color, c_min, c_max, d_min, d_max);
+      addLines(cr, false, false, false, true, helper->rndProbUnder(double_prob),
+       (bool)helper->rng()%2, width, height, color, c_min, c_max, d_min, d_max);
     }
   }
 
