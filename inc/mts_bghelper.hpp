@@ -120,11 +120,12 @@ class MTS_BackgroundHelper {
          * cr - cairo context
          * horizontal - gives the orientation of the line (false = vertical)
          * curved - informs whether the line will be curved (false = straight)
+         * length - length of the curve
          * width - surface width
          * height - surface height
          */
         coords
-            orient_path(cairo_t *cr, bool horizontal, bool curved, int width, int height);
+            orient_path(cairo_t *cr, bool horizontal, bool curved, int length, int width, int height);
 
 
         /*
@@ -320,13 +321,13 @@ class MTS_BackgroundHelper {
          *        curving equation
          * d_max - the max range value for cubed variable in the first cubic 
          *        curving equation
-
+         * color - color of the line to be drawn (already set, should only be used for boundary)
          */
         void
             addLines(cairo_t *cr, bool boundary, bool hatched, bool dashed, 
                     bool curved, bool doubleline, bool horizontal, int width, 
-                    int height, double color, double c_min, double c_max, 
-                    double d_min, double d_max);
+                    int height, double c_min=0, double c_max=0, 
+                    double d_min=0, double d_max=0, double color=0);
 
 
         /*
@@ -375,9 +376,10 @@ class MTS_BackgroundHelper {
          * cr - cairo context
          * width - surface width
          * height - surface height
+         * hollow - whether the point is hollow or not
          */
         void
-            cityPoint(cairo_t *cr, int width, int height);
+            cityPoint(cairo_t *cr, int width, int height, bool hollow);
 
 
     public://------------------------ PUBLIC METHODS ---------------------------

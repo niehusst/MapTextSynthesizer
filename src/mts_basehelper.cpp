@@ -756,7 +756,7 @@ MTS_BaseHelper::make_points_arc(double width, double height, double radius,
 
 
 std::vector<coords>
-MTS_BaseHelper::make_points_wave(double width, double height, 
+MTS_BaseHelper::make_points_wave(double length, double height, 
         int num_points, double y_var_min_ratio, double y_var_max_ratio) {
 
     std::vector<coords> points;
@@ -773,7 +773,7 @@ MTS_BaseHelper::make_points_wave(double width, double height,
 
         y_variance = (rng() % (y_var_max - y_var_min + 1)) + y_var_min;
 
-        x = ((width / (num_points - 1)) * i);
+        x = ((length / (num_points - 1)) * i);
         y = height - y_variance; //ensure points stay above the bottom of the canvas
 
         coords new_point(x,y);

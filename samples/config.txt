@@ -92,8 +92,8 @@ boundary_linewidth_min=3      //in multiples of thickness of main line
 boundary_linewidth_max=6      
 boundary_distance_min=4
 boundary_distance_max=9
-boundary_color_diff_min=.25   //min difference between padding color and line color
-boundary_color_diff_max=.35         
+boundary_color_diff_min=0   //min difference between padding color and line color
+boundary_color_diff_max=.3         
 boundary_curve_c_min=-2       //a+bx+cx^2+dx^3
 boundary_curve_c_max=2
 boundary_curve_d_min=-2
@@ -109,20 +109,23 @@ blob_size_max=0.25            //with respect to height
 blob_diminish_rate=100        //the larger this value, the slower the edge diminishes
 
 //straight line
-straight_prob=0
+straight_prob=0.1
 straight_num_lines_min=10
 straight_num_lines_max=20
 
 //grid
-grid_prob=0
-grid_curve_prob=0
+grid_prob=0.1
+grid_curve_prob=0.3
 grid_num_min=10
 grid_num_max=20
 
 //city point
-point_prob=0
-point_radius_min=5
-point_radius_max=20           //if greater than height/2, it's reset to height/2
+point_prob=1
+point_num_min=1
+point_num_max=3
+point_radius_min=0.1           //w.r.t height
+point_radius_max=0.3           //if greater than 0.5. it's reset to 0.5
+point_hollow_prob=0.5
 
 
 // bg curve params (to be distinguished from text curve params above)
@@ -200,9 +203,19 @@ bias_std_shift=0
 bias_mean=0
 
 
-//main line
+//bg line width (applied to all bg features)
 line_width_scale_min=0.0125
 line_width_scale_max=0.025    //with respect to min(width,height)
+
+//dash params (applied to all bg features)
+dash_pattern_len_min=2         // number of dashes in one pattern
+dash_pattern_len_max=6
+dash_len_min=1                 // length of each dash (in pixels)
+dash_len_max=10
+
+//bg color distance (from text color) (applied to all bg features except color blob and color diff)
+bg_feature_color_dis_min=0
+bg_feature_color_dis_max=20         // if larger than bg_color-text_color, reset to bg_color-text_color
 
 
 // GENERAL PARAMS

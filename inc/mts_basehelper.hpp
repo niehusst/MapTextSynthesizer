@@ -187,14 +187,14 @@ class MTS_BaseHelper {
          * is determined with rng within certain bounds to prevent
          * distorted results.
          *
-         * width - surface width in pixels
+         * length - the start to end straight line length of the curve
          * height - surface height in pixels
          * num_points - the number of points to push onto the vector 
          *              (minimum 3) (range 3-5 for least text distortion)
          * y_var_min_ratio - the minimum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
          * y_var_max_ratio - the maximum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
          */
-        std::vector<coords> make_points_wave(double width, double height, int num_points, double y_var_min_ratio, double y_var_max_ratio);
+        std::vector<coords> make_points_wave(double length, double height, int num_points, double y_var_min_ratio, double y_var_max_ratio);
 
         /*
          * Iterativly translates each cairo movement stored in path and 
