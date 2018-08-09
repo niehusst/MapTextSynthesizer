@@ -125,7 +125,6 @@ class MTS_BaseHelper {
 
         //All parameters
         unordered_map<string, double> params;
-        unordered_map<string, string> params2;
 
     public://----------------------- PUBLIC METHODS --------------------------
 

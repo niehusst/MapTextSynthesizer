@@ -34,6 +34,26 @@ double MTSImplementation::getParam(string key) {
     return val;
 }
 
+//strip the spaces in the front and end of the string
+string strip(string str) {
+    int i,j;
+    for (i=0;i<str.length();i++) {
+        if (str[i] != ' '){
+            break;
+        }
+    }
+    for (j=str.length()-1;j>=0;j--) {
+        if (str[j] != ' '){
+            break;
+        }
+    }
+    if (i>j) {
+        return "";
+    } else {
+        return str.substr(i,j-i+1);
+    }
+}
+
 unordered_map<string, double> MTSImplementation::parseConfig(string filename) {
 
     unordered_map<string, double> params = unordered_map<string, double>();
@@ -68,8 +88,8 @@ unordered_map<string, double> MTSImplementation::parseConfig(string filename) {
         }
         //CV_Assert(pos != line.npos);
 
-        key = line.substr(0, pos);
-        value = line.substr(pos+1, line.npos-pos);
+        key = strip(line.substr(0, pos));
+        value = strip(line.substr(pos+1, line.npos-pos));
         char * err_flag;
         val = strtod(value.c_str(), &err_flag);
 
