@@ -9,37 +9,33 @@ MapTextSynthesizer is a program to dynamically generate synthetic images contain
 * **Pango**, a text formatting library. It comes preinstalled on many Linux machines. See their [website](https://www.pango.org/) for more information.
 * **Cairo**, a vector graphics library. It comes preinstalled on many Linux machines. See their [website](https://cairographics.org/) for more information.
 * **OpenCV**, a computer vision repository. It can be found on [github](https://github.com/opencv).
-* **glib-2.0**, a low-level Gnome library. glib is a dependency of pango and cairo; by downloading the other libraries, you will get glib-2.0. Their website can be found [here](https://lazka.github.io/pgi-docs/GLib-2.0/index.html).
+* **Boost**, a collection C++ source libraries. See their [website](https://www.boost.org/) for more information.
 * **Google Fonts**, a collection of open-source fonts. This isn't necessary for the synthesizer to function, but it is highly recommended for training robust models. Find it on [github](https://github.com/google/fonts/).
 
 ##### Installing dependencies on MacOS and Linux
 
-You will need OpenCV2 and pangocairo to run the synthesizer.
-If you are running Linux, you should already have pangocairo installed in your system. To check whether it is installed, run `pkg-config --cflags --libs pangocairo` in your terminal. If you have it, your terminal should spit back a series of compiler flags that make up the pkg-config.
+You will need OpenCV2, Boost and pangocairo to run the synthesizer.
+Pangocairo is a crucial tool for our synthesizer; it is used for drawing all the backgrounds and text in synthesized images. If you are running Linux, you should already have pangocairo installed in your system. To check whether it is installed, run `pkg-config --cflags --libs pangocairo` in your terminal. If you have it, your terminal should spit back a series of compiler flags that make up the pkg-config. If you don't have pangocairo, follow the download instructions on the Pango [website](https://www.pango.org/Download).
 To install pangocairo on MacOS using homebrew, run ```brew install pango``` in the terminal. Since pango is the parent of pangocairo, pangocairo will be downloaded implicitly. 
 
 OpenCV is used for adding Gaussian blur and noise to the final image to make it more realistic.
-To install OpenCV on Linux, follow the steps [here](https://www.learnopencv.com/install-opencv3-on-ubuntu/). To install with homebrew on MacOS, run ```brew install opencv``` in the terminal.
+To install OpenCV on Linux using apt-get, follow these steps from [learnopencv.com](https://www.learnopencv.com/install-opencv3-on-ubuntu/). 
+To install with homebrew on MacOS, run ```brew install opencv``` in the terminal.
 
-After installing the dependencies, you should be able to jump into compiling sample programs.
+Boost is used for the distributions it provides, allowing our random samples to be more specific in shape. Boost-Python is used in the TensorFlow/Python integration of MapTextSynthesizer. To install Boost on Linux using apt-get, run ```sudo apt-get install libboost-all-dev``` and ```sudo apt-get  install libboost-python-dev``` in your terminal. If you don't have sudo privledges, follow the download instructions on their [website](https://www.boost.org/users/download/). 
+To install both Boost libraries on MacOS using homebrew, run ```brew install boost``` and ```brew install boost-python``` in the terminal.
 
-### Compile with CMake on Linux
+After installing the dependencies, you should be able to jump right into compiling sample programs.
 
-Open install.sh using a text editor and type in corresponding paths
-
-e.g. Edited Where is the source code: [path-to]/MapTextSynthesizer
-
-Then run `` $ ./install.sh ``.
-
-Resulting files will be in build folder.
+## Compiling Samples
 
 ### Compile samples with Makefile on UNIX  
 
-#### Python
+#### Python Samples
 
 TODO (requires Ben's ctype code and a shared object library)
 
-#### C++
+#### C++ Samples
 
 To compile a C++ sample from a shared library, do ```make shared```, this creates the shared library file in a bin subdirectory of MapTextSynthesizer, followed by ```make cpp_sample``` to make the executable. To run the resulting program (shared_sample) found in the samples directory, set an environment variable that allows your executable to find the shared library to your specific path to the shared library file: ```LD_LIBRARY_PATH=/directory/path/to/bin/``` and then run the executable from the samples directory with ```./shared_sample```.
 
@@ -47,13 +43,16 @@ To compile using a static library, ```make static``` followed by ```make cpp_sam
 
 ##### Compiling samples with CMake:
 
-Once you have followed the CMake installation instructions that download the MapTextSynthesizer into your machine, you can easily compile using pkg-config.
+To install MapTextSynthesizer in your machine using CMake, open install.sh using a text editor and fill in the necessary environment variables with complete paths to this repository and, if you are using one, to your virtual environment. 
+
+Once you have corrected the environment variables, run `` $ ./install.sh ``. The resulting files will be in the new build folder.
+
+Now that MapTextSynthesizer is installed on your machine, you can easily compile C++ programs that use MapTextSynthesizer with pkg-config:
 
 (if using virtual env,) `` export PKG_CONFIG_PATH=[install_prefix]/share/pkgconfig ``
-
 (if using virtual env,) `` export LD_LIBRARY_PATH="[install_prefix]/lib" ``
 
-``g++ text_syntheziser.cpp `pkg-config --cflags --libs mtsynth`; ./a.out``
+``g++ syntheziser_sample.cpp `pkg-config --cflags --libs mtsynth`; ./a.out``
 
 
 ### For More in-depth Information
