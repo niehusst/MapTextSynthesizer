@@ -43,22 +43,22 @@ MTS_BackgroundHelper::draw_boundary(cairo_t *cr, double linewidth,
     cairo_get_dash(cr, dash, offset);
 
     // calculate a distance between lines
-    int dis_min = config->getParamDouble("boundary_distance_min")*100;
-    int dis_max = config->getParamDouble("boundary_distance_max")*100;
-    double x_dis = (dis_min + helper->rng() % (dis_max-dis_min+1)) / 100.0 * linewidth;
-    double y_dis = (dis_min + helper->rng() % (dis_max-dis_min+1)) / 100.0 * linewidth;
+    double dis_min = config->getParamDouble("boundary_distance_min");
+    double dis_max = config->getParamDouble("boundary_distance_max");
+    double x_dis = helper->rndBetween(dis_min,dis_max) * linewidth;
+    double y_dis = helper->rndBetween(dis_min,dis_max) * linewidth;
 
     // set boundary line characteristics
-    int width_min = config->getParamDouble("boundary_linewidth_min")*100;
-    int width_max = config->getParamDouble("boundary_linewidth_max")*100;
-    double new_linewidth = linewidth * (width_min + helper->rng() % (width_max-width_min+1))/100.0;
+    double width_min = config->getParamDouble("boundary_linewidth_min");
+    double width_max = config->getParamDouble("boundary_linewidth_max");
+    double new_linewidth = linewidth * helper->rndBetween(width_min,width_max);
     cairo_set_line_width(cr, new_linewidth);
     cairo_set_dash(cr, dash, 0,0); //set dash pattern to none
 
     // set boundary line gray-scale color (lighter than original)
-    int color_min = 100 * config->getParamDouble("boundary_color_diff_min");
-    int color_max = 100 * config->getParamDouble("boundary_color_diff_max")+1 - color_min;
-    double color_diff = (color_min + helper->rng() % color_max) / 100.0;
+    double color_min = config->getParamDouble("boundary_color_diff_min");
+    double color_max = config->getParamDouble("boundary_color_diff_max");
+    double color_diff = helper->rndBetween(color_min,color_max);
     double color = og_col + color_diff;
     cairo_set_source_rgb(cr, color, color, color);
 
@@ -88,20 +88,20 @@ MTS_BackgroundHelper::draw_hatched(cairo_t *cr, double linewidth) {
     cairo_get_dash(cr, dash, offset);
 
     //set width of hatches (in multiples of original linewidth)
-    int width_min = config->getParamDouble("railroad_cross_width_min") * linewidth * 100;
-    int width_max = config->getParamDouble("railroad_cross_width_max") * linewidth * 100;
-    double wide = (width_min + (helper->rng() % (width_max-width_min+1))) / 100.0;
+    double width_min = config->getParamDouble("railroad_cross_width_min");
+    double width_max = config->getParamDouble("railroad_cross_width_max");
+    double wide = helper->rndBetween(width_min,width_max) * linewidth;
     cairo_set_line_width(cr, wide);
 
     //set width of each hatch (in multiples of original linewidth)
-    int hatch_width_min = config->getParamDouble("railroad_hatch_width_min") * linewidth * 100;
-    int hatch_width_max = config->getParamDouble("railroad_hatch_width_max") * linewidth * 100;
-    double hatch_wide = (hatch_width_min + (helper->rng() % (hatch_width_max-hatch_width_min+1))) / 100.0; 
+    double hatch_width_min = config->getParamDouble("railroad_hatch_width_min");
+    double hatch_width_max = config->getParamDouble("railroad_hatch_width_max");
+    double hatch_wide = helper->rndBetween(hatch_width_min,hatch_width_max) * linewidth; 
 
     // set distance between hatches (in multiples of original linewidth)
-    int dis_min = config->getParamDouble("railroad_distance_between_crosses_min") * linewidth * 100;
-    int dis_max = config->getParamDouble("railroad_distance_between_crosses_max") * linewidth * 100;
-    double hatch_dis = (dis_min + (helper->rng() % (dis_max-dis_min+1))) / 100.0; 
+    double dis_min = config->getParamDouble("railroad_distance_between_crosses_min");
+    double dis_max = config->getParamDouble("railroad_distance_between_crosses_max");
+    double hatch_dis = helper->rndBetween(dis_min,dis_max) * linewidth;
 
     //set dash pattern to be used
     const double pattern[] = {hatch_wide, hatch_dis};
@@ -121,13 +121,13 @@ MTS_BackgroundHelper::set_dash_pattern(cairo_t *cr) {
     double dash_pattern[pattern_len];
     double dash;
 
-    int len_min = (int)(config->getParamDouble("dash_len_min")*10000);
-    int len_max = (int)(config->getParamDouble("dash_len_max")*10000);
+    double len_min = config->getParamDouble("dash_len_min");
+    double len_max = config->getParamDouble("dash_len_max");
     double len;
 
     //make and set pattern
     for(int i = 0; i < pattern_len; i++) {
-        len = (helper->rng()%(len_max-len_min+1)+len_min)/10000.0;
+        len = helper->rndBetween(len_min,len_max);
         dash_pattern[i] = len;
     }
 
@@ -186,9 +186,9 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
     double magic_line_ratio, line_width;
 
     // set ratio to keep line scaled for image size
-    int ratio_min = (int)(config->getParamDouble("line_width_scale_min") * 10000);
-    int ratio_max = 1 + (int)(config->getParamDouble("line_width_scale_max") * 10000) - ratio_min;
-    magic_line_ratio = (ratio_min + helper->rng() % ratio_max) / 10000.0; 
+    double ratio_min = config->getParamDouble("line_width_scale_min");
+    double ratio_max = config->getParamDouble("line_width_scale_max");
+    magic_line_ratio = helper->rndBetween(ratio_min,ratio_max); 
     line_width = std::min(width, height) * magic_line_ratio;
     cairo_set_line_width(cr, line_width);
 
@@ -219,10 +219,10 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
     if(doubleline) { 
         cairo_stroke_preserve(cr);
         //draw_parallel(cr, horizontal, 3*line_width); 
-        int dis_min = config->getParamDouble("double_distance_min")*100;
-        int dis_max = config->getParamDouble("double_distance_max")*100;
-        double x_dis = (dis_min + helper->rng() % (dis_max-dis_min+1))/100.0 * line_width;
-        double y_dis = (dis_min + helper->rng() % (dis_max-dis_min+1))/100.0 * line_width;
+        double dis_min = config->getParamDouble("double_distance_min");
+        double dis_max = config->getParamDouble("double_distance_max");
+        double x_dis = helper->rndBetween(dis_min,dis_max) * line_width;
+        double y_dis = helper->rndBetween(dis_min,dis_max) * line_width;
         cairo_path_t *path_tmp = cairo_copy_path(cr);
         cairo_new_path(cr);
         cairo_translate(cr, x_dis, y_dis);
@@ -542,9 +542,9 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
         bool even, bool grid, bool curved) {
 
     double line_width, magic_line_ratio;
-    int ratio_min = (int)(config->getParamDouble("line_width_scale_min") * 10000);
-    int ratio_max = 1 + (int)(config->getParamDouble("line_width_scale_max") * 10000) - ratio_min;
-    magic_line_ratio = (ratio_min + helper->rng() % ratio_max) / 10000.0; 
+    double ratio_min = config->getParamDouble("line_width_scale_min");
+    double ratio_max = config->getParamDouble("line_width_scale_max");
+    magic_line_ratio = helper->rndBetween(ratio_min,ratio_max);
     line_width = std::min(width, height) * magic_line_ratio;
     cairo_set_line_width(cr, line_width);
 
@@ -681,7 +681,7 @@ MTS_BackgroundHelper::colorDiff (cairo_t *cr, int width, int height,
     int num = (helper->rng() % (num_colors_max - num_colors_min + 1)) + num_colors_min; 
 
     for (int i = 0; i < num; i++) {
-        double color = helper->rng()%((int)((color_max-color_min)*100)+1)/100.0+color_min;
+        double color = helper->rndBetween(color_min,color_max);
         cairo_set_source_rgb(cr,color,color,color);
 
         bool horizontal = helper->rng()%2;
@@ -744,11 +744,11 @@ MTS_BackgroundHelper::cityPoint(cairo_t *cr, int width, int height, bool hollow)
     int x,y; // circle origin coordinates
 
     // set point radius
-    int r_min = (int)(config->getParamDouble("point_radius_min") * height);
-    int r_max = (int)(config->getParamDouble("point_radius_max") * height);
-    if (r_max > (height/2)) r_max = height / 2; //verify perconditions
+    double r_min = config->getParamDouble("point_radius_min");
+    double r_max = config->getParamDouble("point_radius_max");
+    if (r_max > 0.5) r_max = 0.5; //verify perconditions
 
-    int radius = (helper->rng() % (r_max - r_min + 1)) + r_min; 
+    int radius = helper->rndBetween(r_min,r_max)*height; 
 
     // set circle origin coords based on random choice of side
     switch(option) {
@@ -774,9 +774,9 @@ MTS_BackgroundHelper::cityPoint(cairo_t *cr, int width, int height, bool hollow)
     cairo_arc(cr, x, y, radius, 0, 2*M_PI);
     if (hollow) {
         double line_width, magic_line_ratio;
-        int ratio_min = (int)(config->getParamDouble("line_width_scale_min") * 10000);
-        int ratio_max = 1 + (int)(config->getParamDouble("line_width_scale_max") * 10000) - ratio_min;
-        magic_line_ratio = (ratio_min + helper->rng() % ratio_max) / 10000.0; 
+        double ratio_min = config->getParamDouble("line_width_scale_min");
+        double ratio_max = config->getParamDouble("line_width_scale_max");
+        magic_line_ratio = helper->rndBetween(ratio_min,ratio_max); 
         line_width = std::min(width, height) * magic_line_ratio;
         cairo_set_line_width(cr, line_width);
         cairo_stroke(cr);

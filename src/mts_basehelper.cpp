@@ -31,6 +31,14 @@ MTS_BaseHelper::rndProbUnder(double probability){
     return (rng() % 10000) < (10000 * probability);
 }
 
+double
+MTS_BaseHelper::rndBetween(double min, double max) {
+    int min_ = (int)min*10000;
+    int max_ = (int)max*10000;
+    double ret = (rng()%(max_-min_+1)+min_)/10000.0;
+    return ret;
+}
+
 void
 MTS_BaseHelper::setSeed(uint64 rndState){
     rng_.state = rndState;
@@ -61,14 +69,11 @@ MTS_BaseHelper::addSpots (cairo_surface_t *surface, int num_min, int num_max, do
     int y_coords[num_spots];
     double radii[num_spots];
 
-    int size_min_int = (int)(100 * size_min);
-    int size_max_int = (int)(100 * size_max);
-
     // get random xy coords and the radius for each spot
     for (int i = 0; i < num_spots; i++) {
         x_coords[i] = rng() % stride;
         y_coords[i] = rng() % height;
-        double shrink = (rng() % (size_max_int - size_min_int + 1) + size_min_int) / 100.0;
+        double shrink = rndBetween(size_min,size_max); 
         radii[i] = shrink * height;
     }
 
@@ -671,7 +676,7 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
 
 std::vector<coords>
 MTS_BaseHelper::make_points_wave(double length, double height, 
-        int num_points, double y_var_min_ratio, double y_var_max_ratio) {
+        int num_points, double y_var_min, double y_var_max) {
 
     std::vector<coords> points;
 
@@ -682,10 +687,8 @@ MTS_BaseHelper::make_points_wave(double length, double height,
 
     //created num_points x,y coords
     for(int i = num_points - 1; i >= 0; i--) {
-        int y_var_min = (int)(height * y_var_min_ratio);
-        int y_var_max = (int)(height * y_var_max_ratio);
 
-        y_variance = (rng() % (y_var_max - y_var_min + 1)) + y_var_min;
+        y_variance = height * rndBetween(y_var_min, y_var_max);
 
         x = ((length / (num_points - 1)) * i);
         y = height - y_variance; //ensure points stay above the bottom of the canvas

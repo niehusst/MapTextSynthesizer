@@ -162,10 +162,10 @@ class MTS_BaseHelper {
          * height - surface height in pixels
          * num_points - the number of points to push onto the vector 
          *              (minimum 3) (range 3-5 for least text distortion)
-         * y_var_min_ratio - the minimum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
-         * y_var_max_ratio - the maximum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
+         * y_var_min - the minimum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
+         * y_var_max - the maximum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
          */
-        std::vector<coords> make_points_wave(double length, double height, int num_points, double y_var_min_ratio, double y_var_max_ratio);
+        std::vector<coords> make_points_wave(double length, double height, int num_points, double y_var_min, double y_var_max);
 
 
         //Another RNG for beta, gamma, normal distributions
@@ -184,6 +184,11 @@ class MTS_BaseHelper {
          * probability - the probability to be calculated under (0 - 1.0)
          */
         bool rndProbUnder(double probability);
+
+        /*
+         * Returns a random double between min and max (inclusive)
+         */
+        double rndBetween(double min, double max);
 
         /*
          * A wrapper for the openCV random number generator. Returns a

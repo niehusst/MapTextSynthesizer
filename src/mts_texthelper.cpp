@@ -111,9 +111,9 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved, double &sp
     y_pad = helper->rng() % (maxpad-minpad+1) + minpad;
     cout << "pad " << x_pad << " " << y_pad << endl;
 
-    int scale_max = (int)(100*config->getParamDouble("scale_max"));
-    int scale_min = (int)(100*config->getParamDouble("scale_min"));
-    scale = (helper->rng()%(scale_max-scale_min+1)+scale_min)/100.0;
+    double scale_max = config->getParamDouble("scale_max");
+    double scale_min = config->getParamDouble("scale_min");
+    scale = helper->rndBetween(scale_min,scale_max); 
     cout << "scale " << scale << endl;
 
     cout << "generate font" << endl;
@@ -606,9 +606,9 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         int num_max = config->getParamInt("distract_num_max");
         int dis_num = helper->rng()%(num_max-num_min+1)+num_min;
 
-        int shrink_min=(int)(100*config->getParamDouble("distract_size_min"));
-        int shrink_max=(int)(100*config->getParamDouble("distract_size_max"));
-        double shrink = (helper->rng()%(shrink_max-shrink_min+1)+shrink_min)/100.0;
+        double shrink_min=100*config->getParamDouble("distract_size_min");
+        double shrink_max=100*config->getParamDouble("distract_size_max");
+        double shrink = helper->rndBetween(shrink_min,shrink_max); 
         cout << "shrink " << shrink << endl;
 
         for (int i=0;i<dis_num;i++) {

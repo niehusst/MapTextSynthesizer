@@ -250,10 +250,10 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
     cairo_set_source_surface(cr, text_surface, 0, 0);
 
     // set the blend alpha range using user configured parameters
-    int blend_min=(int)(100 * config->getParamDouble("blend_alpha_min"));
-    int blend_max=(int)(100 * config->getParamDouble("blend_alpha_max"));
+    double blend_min=config->getParamDouble("blend_alpha_min");
+    double blend_max=config->getParamDouble("blend_alpha_max");
 
-    double blend_alpha=(helper->rng()%(blend_max-blend_min+1)+blend_min)/100.0;
+    double blend_alpha=helper->rndBetween(blend_min,blend_max);
 
     // blend with alpha or not based on user set probability
     if(helper->rndProbUnder(config->getParamDouble("blend_prob"))){
