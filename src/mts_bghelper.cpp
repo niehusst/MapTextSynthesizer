@@ -746,9 +746,11 @@ MTS_BackgroundHelper::cityPoint(cairo_t *cr, int width, int height, bool hollow)
     // set point radius
     double r_min = config->getParamDouble("point_radius_min");
     double r_max = config->getParamDouble("point_radius_max");
+    cout << r_min<< endl;
+    cout << r_max<< endl;
     if (r_max > 0.5) r_max = 0.5; //verify perconditions
 
-    int radius = helper->rndBetween(r_min,r_max)*height; 
+    int radius = (int)(helper->rndBetween(r_min,r_max)*height); 
 
     // set circle origin coords based on random choice of side
     switch(option) {
