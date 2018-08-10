@@ -103,9 +103,11 @@ MTSImplementation::MTSImplementation(string config_file)
                 config->getParamDouble("noise_sigma_beta")),
         noise_gen(helper->rng2_, noise_dist)
 {
+    /*
     namedWindow("__w");
     waitKey(1);
     destroyWindow("__w");
+    */
     this->updateFontNameList(this->availableFonts_);
 
     //initialize rng in BaseHelper

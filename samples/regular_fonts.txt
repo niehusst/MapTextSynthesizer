@@ -1,3 +1,3 @@
-cmmi10
+jsMath-cmmi10
 Sans
 Serif

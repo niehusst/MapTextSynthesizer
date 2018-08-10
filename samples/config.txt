@@ -1,3 +1,10 @@
+//FILE PATHS
+blocky_fonts=blocky_fonts.txt
+regular_fonts=regular_fonts.txt
+cursive_fonts=cursive_fonts.txt
+captions=IA/Civil.txt
+
+
 //TEXT PARAMS
 
 //Stretch (beta distribution)

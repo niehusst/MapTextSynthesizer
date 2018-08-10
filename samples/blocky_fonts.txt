@@ -1,2 +1,1 @@
-MathJax_Fraktur
-eufm10
+Chromaletter
