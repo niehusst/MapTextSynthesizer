@@ -1,12 +1,12 @@
 //FILE PATHS
-fonts=total_fonts.txt,blocky_fonts.txt,regular_fonts.txt,cursive_fonts.txt
-captions=IA/Civil.txt
+fonts = blocky_fonts.txt, regular_fonts.txt, cursive_fonts.txt
+captions = IA/Civil.txt
 
 
 //TEXT PARAMS
 
 //Stretch (beta distribution)
-stretch_alpha = 1
+stretch_alpha=1
 stretch_beta=2
 stretch_scale=3
 stretch_shift=0.5
