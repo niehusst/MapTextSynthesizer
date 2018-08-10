@@ -34,6 +34,7 @@ double MTSImplementation::getParam(string key) {
     return val;
 }
 
+/*
 //strip the spaces in the front and end of the string
 string strip(string str) {
     int i,j;
@@ -107,6 +108,7 @@ unordered_map<string, double> MTSImplementation::parseConfig(string filename) {
     infile.close();
     return params;
 }
+*/
 
 void MTSImplementation::cairoToMat(cairo_surface_t *surface,Mat &mat) {
     // make a 4 channel opencv matrix
@@ -174,14 +176,10 @@ MTSImplementation::MTSImplementation(string config_file)
     fonts_{(&(this->blockyFonts_)),
         (&(this->regularFonts_)),
         (&(this->cursiveFonts_))},
-        /*
-    fonts_{std::shared_ptr<std::vector<string> >(&(this->blockyFonts_)),
-        std::shared_ptr<std::vector<string> >(&(this->regularFonts_)),
-        std::shared_ptr<std::vector<string> >(&(this->cursiveFonts_))},
-        */
-        helper(make_shared<MTS_BaseHelper>(MTS_BaseHelper(parseConfig(config_file)))),
-        th(helper),
-        bh(helper),
+        config(make_shared<MTSConfig>(MTSConfig(config_file))),
+        helper(make_shared<MTS_BaseHelper>(MTS_BaseHelper(config))),
+        th(helper,config),
+        bh(helper,config),
         noise_dist(getParam("noise_sigma_alpha"),
                 getParam("noise_sigma_beta")),
         noise_gen(helper->rng2_, noise_dist)

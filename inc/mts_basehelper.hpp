@@ -10,6 +10,8 @@
 #include <pango/pangocairo.h>
 #include <opencv2/opencv.hpp>
 
+#include "mts_config.hpp"
+
 using namespace std;
 using namespace cv;
 using boost::random::mt19937;
@@ -123,10 +125,9 @@ class MTS_BaseHelper {
 
         RNG rng_;
 
-        //All parameters
-        unordered_map<string, double> params;
-
     public://----------------------- PUBLIC METHODS --------------------------
+
+        MTSConfig* config;
 
         /* Projects the current path of cr onto the provided path. */
         /* from https://github.com/phuang/pango/blob/master/examples/cairotwisted.c */
@@ -171,21 +172,13 @@ class MTS_BaseHelper {
         mt19937 rng2_;
 
         //Constructor
-        MTS_BaseHelper(unordered_map<string, double> params);
+        MTS_BaseHelper(shared_ptr<MTSConfig> c);
 
         //Destructor
         ~MTS_BaseHelper();
 
         /* Returns the value for key*/
         double getParam(string key);
-
-        /*
-         * Sets all the user configurable parameters from a text file
-         *
-         * params - a map from the name of the value to the value
-         */
-        void setParams(unordered_map<string, double> params);
-
 
         /*
          * Returns true or false based on a randomly generated probability under

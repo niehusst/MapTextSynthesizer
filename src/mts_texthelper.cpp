@@ -18,9 +18,9 @@ double MTS_TextHelper::getParam(string key) {
     return val;
 }
 
-MTS_TextHelper::MTS_TextHelper(shared_ptr<MTS_BaseHelper> h)
-    //:helper(make_shared<MTS_BaseHelper>(*h)),  // initialize fields
+MTS_TextHelper::MTS_TextHelper(shared_ptr<MTS_BaseHelper> h, shared_ptr<MTSConfig> c)
     :helper(&(*h)),  // initialize fields
+    config(&(*c)),
     spacing_dist(h->getParam("spacing_alpha"),h->getParam("spacing_beta")),
     spacing_gen(h->rng2_, spacing_dist),
     stretch_dist(h->getParam("stretch_alpha"),h->getParam("stretch_beta")),

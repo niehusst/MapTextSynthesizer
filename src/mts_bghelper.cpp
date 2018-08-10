@@ -23,8 +23,9 @@ MTS_BackgroundHelper::getParam(string key) {
     return helper->getParam(key);
 }
 
-MTS_BackgroundHelper::MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h)
+MTS_BackgroundHelper::MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h, shared_ptr<MTSConfig> c)
     :helper(&(*h)),  // initialize fields
+    config(&(*c)),  
     bias_var_dist(h->getParam("bias_std_alpha"),
             h->getParam("bias_std_beta")),
     bias_var_gen(h->rng2_, bias_var_dist),

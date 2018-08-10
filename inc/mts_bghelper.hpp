@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "mts_basehelper.hpp"
+#include "mts_config.hpp"
 
 using namespace std;
 using namespace cv;
@@ -359,8 +360,10 @@ class MTS_BackgroundHelper {
         //shared_ptr<MTS_BaseHelper> helper;
         MTS_BaseHelper* helper;
 
+        MTSConfig* config;
+
         //Constructor
-        MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h);
+        MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h, shared_ptr<MTSConfig> c);
 
         //Destructor
         ~MTS_BackgroundHelper();

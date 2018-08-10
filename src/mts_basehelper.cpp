@@ -17,9 +17,9 @@ using boost::random::mt19937;
 
 // SEE mts_basehelper.hpp FOR ALL DOCUMENTATION
 
-MTS_BaseHelper::MTS_BaseHelper(unordered_map<string, double> params){
-    this->params = params;
-    cout << "param number " << this->params.size() << endl;
+MTS_BaseHelper::MTS_BaseHelper(shared_ptr<MTSConfig> c)
+    :config(&(*c))
+{
 }
 
 MTS_BaseHelper::~MTS_BaseHelper(){
@@ -27,11 +27,7 @@ MTS_BaseHelper::~MTS_BaseHelper(){
 }
 
 double MTS_BaseHelper::getParam(string key) {
-    return this->params.find(key)->second;
-}
-
-void MTS_BaseHelper::setParams(unordered_map<string, double> params) {
-    this->params = params;
+    return config->getParamDouble(key);
 }
 
 bool 
@@ -164,7 +160,7 @@ MTS_BaseHelper::addSpots (cairo_surface_t *surface, int num_min, int num_max, do
  * It is provided "as is" without express or implied warranty.
  */
 
-    double
+double
 MTS_BaseHelper::two_points_distance (cairo_path_data_t *a, cairo_path_data_t *b)
 {
     double dx, dy;
@@ -176,7 +172,7 @@ MTS_BaseHelper::two_points_distance (cairo_path_data_t *a, cairo_path_data_t *b)
 }
 
 
-    double
+double
 MTS_BaseHelper::curve_length (double x0, double y0,
         double x1, double y1,
         double x2, double y2,
@@ -225,7 +221,7 @@ MTS_BaseHelper::curve_length (double x0, double y0,
 }
 
 
-    parametrization_t *
+parametrization_t *
 MTS_BaseHelper::parametrize_path (cairo_path_t *path)
 {
     int i;
@@ -274,7 +270,7 @@ MTS_BaseHelper::parametrize_path (cairo_path_t *path)
 }
 
 
-    void
+void
 MTS_BaseHelper::transform_path (cairo_path_t *path, transform_point_func_t f, 
         void *closure)
 {
@@ -300,7 +296,7 @@ MTS_BaseHelper::transform_path (cairo_path_t *path, transform_point_func_t f,
 }
 
 
-    void
+void
 MTS_BaseHelper::point_on_path (parametrized_path_t *param,
         double *x, double *y)
 {
@@ -420,7 +416,7 @@ MTS_BaseHelper::point_on_path (parametrized_path_t *param,
     }
 }
 
-    void
+void
 MTS_BaseHelper::map_path_onto (cairo_t *cr, cairo_path_t *path)
 {
     cairo_path_t *current_path;
@@ -536,7 +532,7 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
      */
 
     double x = start.first / 100, y = start.second, u = end.first / 100, w = end.second;
-    
+
     //cout << "x, y " << x*100 << " " << y  << endl;
 
     // set coefficients of cubic equation to describe curve

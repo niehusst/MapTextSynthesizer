@@ -13,6 +13,7 @@
 // our method includes
 #include "mtsynth/map_text_synthesizer.hpp"
 #include "mts_basehelper.hpp"
+#include "mts_config.hpp"
 #include "mts_texthelper.hpp"
 #include "mts_bghelper.hpp"
 
@@ -90,6 +91,7 @@ class MTSImplementation: public MapTextSynthesizer{
         /* The list of captions to sample from.*/
         std::vector<string> sampleCaptions_ = std::vector<string>();
 
+        shared_ptr<MTSConfig> config;
         shared_ptr<MTS_BaseHelper> helper;
         MTS_TextHelper th;
         MTS_BackgroundHelper bh;
