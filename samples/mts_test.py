@@ -2,6 +2,8 @@ import numpy as np
 import mtsynth
 import time
 
+# Python example that uses boost-python to run MTS
+
 def read_words(words_file):
     open_file = open(words_file, 'r')
     words_list =[] 
@@ -26,25 +28,30 @@ def initialiseSynthesizers(s):
     s.setCursiveFonts(cursive_fonts)
 
 
-#val = mtsynth.generate_sample()
-#exit()
-#s = (mtsynth.MapTextSynthesizer.create())
-s = mtsynth.MapTextSynthesizer()
-initialiseSynthesizers(s)
-
 def data_gen():
     while True:
         [caption, [h,w,img_data]] = s.generateSample()
         img = np.reshape(np.fromiter(img_data, np.uint8),(h,w))
         yield caption
 
-iter = data_gen()
 
-start=time.time()
-for _ in range(1000):
-    next(iter)
-end=time.time()
-print('Time: ', end-start)
-#cv2.imshow("Sample", img)
-#cv2.waitKey(0)
+def main():
+    iter = data_gen()
 
+    start=time.time()
+    for _ in range(1000):
+        next(iter)
+        
+    end=time.time()
+    print('Time: ', end-start)
+    #cv2.imshow("Sample", img)
+    #cv2.waitKey(0)
+    #val = mtsynth.generate_sample()
+    #exit()
+    #s = (mtsynth.MapTextSynthesizer.create())
+    s = mtsynth.MapTextSynthesizer()
+    initialiseSynthesizers(s)
+
+
+if __name__=="__main__":
+    main()

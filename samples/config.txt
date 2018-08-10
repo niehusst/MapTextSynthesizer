@@ -84,8 +84,8 @@ scale_max=1.1
 // Blend
 blend_prob=0.2                // The probability that this feature appears.
 
-blend_alpha_min=0.8           
-blend_alpha_max=1
+blend_alpha_min=0.8           // Range of text opacity in the alpha layer.
+blend_alpha_max=1             // 1 is fully opaque, 0 is invisible.
 
 
 

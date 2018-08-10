@@ -75,9 +75,11 @@ std::unordered_map<std::string, double> MTSImplementation::parseConfig(std::stri
 
     std::string line, key, value;
     double val;
+    int line_num = 0;
 
     // parse file line by line
     while (getline(infile, line)) {
+        line_num++;
         // if line is empty or is a comment, erase it
         size_t com_pos = line.find("//");
         if (com_pos != line.npos) {
@@ -89,7 +91,7 @@ std::unordered_map<std::string, double> MTSImplementation::parseConfig(std::stri
         size_t pos = line.find(delimiter);
         if (pos == line.npos) {
             std::cerr << "A line does not contain delimiter in config file!"
-                      << std::endl;
+                      << std::endl << "On line " << line_num << std::endl;
             exit(1);
         }
         //CV_Assert(pos != line.npos);

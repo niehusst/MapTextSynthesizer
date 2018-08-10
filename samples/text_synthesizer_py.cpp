@@ -5,6 +5,10 @@
 #include <vector>
 #include <string>
 
+/*
+A boost-python wrapping of MTS for use in Python files
+*/
+
 using namespace boost::python;
 typedef std::vector<cv::String> py_vec;
 
@@ -25,10 +29,10 @@ class mts_wrapper {
             return vec;
         }
 
-       static boost::python::list vec_to_list(std::vector<unsigned char> vec) {
+        static boost::python::list vec_to_list(std::vector<unsigned char> vec) {
             boost::python::list list;
             for (int i=0; i<vec.size(); i++) {
-	      list.append(vec[i]);
+                list.append(vec[i]);
             }
             return list;
         }
@@ -48,7 +52,7 @@ class mts_wrapper {
         void setCursiveFonts(string fontfile) {
             mts->setCursiveFonts(fontfile);
         }
-       /*
+       
         void setSampleCaptions(boost::python::list words) {
             std::vector<cv::String> vec_words = list_to_vec(words);
             mts->setSampleCaptions(vec_words);
@@ -68,49 +72,49 @@ class mts_wrapper {
             std::vector<cv::String> vec_fonts = list_to_vec(fonts);
             mts->setCursiveFonts(vec_fonts);
         }
-        */
+        
 
-        object generateSample() {
+  object generateSample() {
 
-	  /*
-	    Py_Initialize();
-	    boost::python::numpy::initialize();
+    /*
+      Py_Initialize();
+      boost::python::numpy::initialize();
 
- unsigned char data[] = {1,2,3,4,5};
+      unsigned char data[] = {1,2,3,4,5};
 
-            boost::python::numpy::dtype dt = boost::python::numpy::dtype::get_builtin<unsigned char>();
+      boost::python::numpy::dtype dt = boost::python::numpy::dtype::get_builtin<unsigned char>();
 
-	    boost::python::tuple shape = boost::python::make_tuple(height*width);
-	    boost::python::tuple stride = boost::python::make_tuple(sizeof(unsigned char));
-	    boost::python::object own = boost::python::object();
+      boost::python::tuple shape = boost::python::make_tuple(height*width);
+      boost::python::tuple stride = boost::python::make_tuple(sizeof(unsigned char));
+      boost::python::object own = boost::python::object();
 
-	    boost::python::numpy::ndarray image_arr = boost::python::numpy::from_data(data, dt, shape, stride, own);
-	  */
+      boost::python::numpy::ndarray image_arr = boost::python::numpy::from_data(data, dt, shape, stride, own);
+    */
 
-            string caption;
-            Mat sample;
-            int actual_h;
-            mts->generateSample(caption, sample, actual_h);
+    string caption;
+    Mat sample;
+    int actual_h;
+    mts->generateSample(caption, sample, actual_h);
             
 
-            int height = sample.rows;
-            int width = sample.cols;
+    int height = sample.rows;
+    int width = sample.cols;
 
-	      //object py_image = (object)(const char*)sample.data;
+    //object py_image = (object)(const char*)sample.data;
 	    
-	    std::vector<unsigned char> data_vec(sample.data, 
-	    	sample.data + height * width);
-            boost::python::list data_list = vec_to_list(data_vec);
-	    auto image_data = boost::python::make_tuple(height, width, data_list);
-	    //boost::python::numpy::ndarray np_sample(sample);
-            string cap = caption;
-            boost::python::object py_caption(cap);
-	    //boost::python::object py_image(data);
-            //auto image_data = boost::python::make_tuple(height, width, image_arr);
-            //Mat py_image(np_sample);
+    std::vector<unsigned char> data_vec(sample.data, 
+                                        sample.data + height * width);
+    boost::python::list data_list = vec_to_list(data_vec);
+    auto image_data = boost::python::make_tuple(height, width, data_list);
+    //boost::python::numpy::ndarray np_sample(sample);
+    string cap = caption;
+    boost::python::object py_caption(cap);
+    //boost::python::object py_image(data);
+    //auto image_data = boost::python::make_tuple(height, width, image_arr);
+    //Mat py_image(np_sample);
 
-            return boost::python::make_tuple(py_caption, image_data, actual_h);
-        }
+    return boost::python::make_tuple(py_caption, image_data, actual_h);
+  }
 };
 
 BOOST_PYTHON_MODULE(mtsynth) {
