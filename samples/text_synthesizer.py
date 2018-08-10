@@ -1,16 +1,31 @@
+'''
+   Python sample program that uses MapTextSynthesizer through Ctypes.
+   Copyright (C) 2018 Liam Niehus-Staab, Ziwen Chen, Benjamin Gafford
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
 import cv2
 import sys
 import os
 import numpy as np
-from ctypes import CDLL
 
-# Set up MTS using Ctypes
-path = os.environ['LD_LIBRARY_PATH']
-sharedlibc = str(path) + 'libmtsynth.so'
-mtsynth = CDLL(sharedlibc)
+# for Ctypes usage, see tensorflow/generator/data_synth.py
+sys.path.insert(0, '../tensorflow/generator/') #insert path to find data_synth
+from data_synth import data_generator as data_generator
 
 # Global Variable definition
-mts = mtsynth.create()
+mts = data_generator("config.txt", "IA_placenames/civil.txt")
 pause=200 #starting miliseconds between images
 
 
@@ -20,16 +35,6 @@ pause=200 #starting miliseconds between images
 def updateTime(x):
     global pause
     pause=x
-
-def initialiseSynthesizers():
-    global mts
-    # setup mts fonts and captions
-    mts.setSampleCaptions("IA/Civil.txt")
-    #mts.setSampleCaptions("latin_extended_additional.txt")
-
-    mts.setBlockyFonts("blocky.txt")
-    mts.setRegularFonts("regular.txt")
-    mts.setCursiveFonts("cursive.txt")
 
 
     
@@ -59,13 +64,13 @@ def guiLoop():
     while ord('q')!=k:
         if pause<500:
             # generate sample and store data
-            [caption, [h,w,img_data], actual_h] = mts.generateSample()
+            [caption, [h,w,img_data], actual_h] = next( mts )
             img = np.reshape(np.fromiter(img_data, np.uint8),(h,w))
-            # show the sample image
-            cv2.imshow('Text Synthesizer Demo',img)
             # print sample information
             print caption
             print "Image height: ", actual_h
+            # show the sample image
+            cv2.imshow('Text Synthesizer Demo',img)
         k=cv2.waitKey(pause+1)
 
 
@@ -73,7 +78,6 @@ def guiLoop():
 # main; run the gui
 if __name__=='__main__':
     # init MTS and gui window info
-    initialiseSynthesizers()
     initWindows()
     updateTrackbars()
     # show images
