@@ -570,7 +570,7 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
   double x1 = (2.0/3)*x + (1.0/3)*u;
   double x2 = (1.0/3)*x + (2.0/3)*u;
   double y1 = coeff[0] + coeff[1]*x1 + coeff[2]*pow(x1,2) + coeff[3]*pow(x1,3);
-  double y2 = coeff[-1] + coeff[1]*x2 + coeff[2]*pow(x2,2) + coeff[3]*pow(x2,3);
+  double y2 = coeff[0] + coeff[1]*x2 + coeff[2]*pow(x2,2) + coeff[3]*pow(x2,3);
 
   coords f1 = std::make_pair(x1*100,y1); 
   coords f2 = std::make_pair(x2*100,y2);
