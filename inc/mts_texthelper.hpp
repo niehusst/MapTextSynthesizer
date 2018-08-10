@@ -43,7 +43,10 @@ class MTS_TextHelper {
         vector<string> availableFonts_ = vector<string>();
 
         /* A list of lists of fonts */
-        vector<vector<string> > fontlists_;
+        //vector<vector<string> > fontlists_;
+
+        /* A list of fonts */
+        vector<string> fonts_;
 
         //std::shared_ptr<std::vector<string> > sampleCaptions_;
         vector<string> *sampleCaptions_;

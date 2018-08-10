@@ -82,7 +82,8 @@ MTS_TextHelper::addFontlist(std::vector<string>& font_list){
             exit(1);
         }
     }
-    this->fontlists_.push_back(font_list);
+    //this->fontlists_.push_back(font_list);
+    this->fonts_.insert(this->fonts_.end(),font_list.begin(),font_list.end());
 }
 
 void
@@ -94,13 +95,17 @@ MTS_TextHelper::addFontlist(string font_file){
 void 
 MTS_TextHelper::generateFont(char *font, int fontsize){
 
-    cout << "in generate font" << endl;
-
+    /*
     int listsize = fontlists_.size();
     unsigned int fontlist_index = helper->rng() % listsize;
     vector<string> fonts = fontlists_[fontlist_index];
     const char *font_name;
     font_name = fonts.at(helper->rng()%fonts.size()).c_str();
+    strcpy(font,font_name);
+     */
+
+    const char *font_name;
+    font_name = fonts_.at(helper->rng()%fonts_.size()).c_str();
     strcpy(font,font_name);
 
     //set probability of being Italic
