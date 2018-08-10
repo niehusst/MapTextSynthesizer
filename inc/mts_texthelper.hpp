@@ -34,9 +34,14 @@ class MTS_TextHelper {
         void updateFontNameList(std::vector<string>& font_list);
 
 
-        /* Adds a list of fonts to font lists */
+        /* Adds a list of fonts to fonts*/
         void addFontlist(std::vector<string>& font_list);
         void addFontlist(string font_file);
+
+
+        /* Adds a list of captions to captions*/
+        void addCaptionlist(std::vector<string>& words);
+        void addCaptionlist(string caption_file);
 
 
         /* The list of available system font names. */
@@ -48,8 +53,8 @@ class MTS_TextHelper {
         /* A list of fonts */
         vector<string> fonts_;
 
-        //std::shared_ptr<std::vector<string> > sampleCaptions_;
-        vector<string> *sampleCaptions_;
+        /* A list of captions */
+        vector<string> captions_;
 
         /* Generator for the spacing degree */
         beta_distribution<> spacing_dist;
@@ -213,17 +218,7 @@ class MTS_TextHelper {
         /* Destructor */
         ~MTS_TextHelper();
 
-
-        /*
-         * A setter method for the private sampleCaptions_ field
-         *
-         * data - a vector of strings containing words to be displayed
-         */
-        void
-            //setSampleCaptions(std::shared_ptr<std::vector<string> > data);
-            setSampleCaptions(std::vector<string> *data);
-
-
+        
         /*
          * Provides the randomly rendered text 
          *

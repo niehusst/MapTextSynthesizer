@@ -39,6 +39,21 @@ MTS_TextHelper::MTS_TextHelper(shared_ptr<MTS_BaseHelper> h, shared_ptr<MTSConfi
         cerr << "config file need a fonts parameter in it!" << endl;
         exit(1);
     }
+
+    if (config->findParam("captions")) {
+        string caplists_str = config->getParam("captions");
+        vector<string> caplists = helper->tokenize(caplists_str,",");
+        if (caplists.size()==0) {
+            cerr << "captions parameter does not have any file in it!" << endl;
+            exit(1);
+        }
+        for (int i=0;i<caplists.size();i++) {
+            addCaptionlist(caplists[i]);
+        }
+    } else {
+        cerr << "config file need a captions parameter in it!" << endl;
+        exit(1);
+    }
 }
 
 MTS_TextHelper::~MTS_TextHelper(){
@@ -90,6 +105,17 @@ void
 MTS_TextHelper::addFontlist(string font_file){
     std::vector<string> fonts = helper->readLines(font_file);
     addFontlist(fonts);
+}
+
+void
+MTS_TextHelper::addCaptionlist(vector<string>& words) {
+    this->captions_.insert(this->captions_.end(),words.begin(),words.end());
+}
+
+void
+MTS_TextHelper::addCaptionlist(string caption_file){
+    std::vector<string> captions = helper->readLines(caption_file);
+    addCaptionlist(captions);
 }
 
 void 
@@ -695,9 +721,9 @@ MTS_TextHelper::generateTextSample (string &caption, cairo_surface_t *&text_surf
             caption+=randomDigit();
         }
     } else {
-        if(sampleCaptions_->size() != 0){
+        if(captions_.size() != 0){
             // if there are sample captions, select one randomly and generate text
-            caption = sampleCaptions_->at(helper->rng() % sampleCaptions_->size());
+            caption = captions_.at(helper->rng() % captions_.size());
         } else {
             caption = "MapTextSynthesizer";
         }
@@ -774,9 +800,4 @@ MTS_TextHelper::distractText (cairo_t *cr, int width, int height, char *font) {
     cairo_identity_matrix(cr);
     g_object_unref(layout);
     pango_font_description_free (desc);
-}
-
-void
-MTS_TextHelper::setSampleCaptions(std::vector<string> *data) {
-    sampleCaptions_ = data;
 }

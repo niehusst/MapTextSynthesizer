@@ -79,32 +79,13 @@ MTSImplementation::MTSImplementation(string config_file)
                 config->getParamDouble("noise_sigma_beta")),
         noise_gen(helper->rng2_, noise_dist)
 {
-    if (config->findParam("captions")) {
-        setSampleCaptions(config->getParam("captions"));
-    } else {
-        cerr << "config file need a captions parameter in it!" << endl;
-        exit(1);
-    }
-
     //initialize rng in BaseHelper
     uint64 seed = (uint64)config->getParamDouble("seed");
     helper->setSeed(seed != 0 ? seed : time(NULL));
-
-    th.setSampleCaptions(&(sampleCaptions_));
 }
 
 MTSImplementation::~MTSImplementation() {
     cout << "impl destructed" << endl;
-}
-
-
-void MTSImplementation::setSampleCaptions(std::vector<string>& words) {
-    this->sampleCaptions_.assign(words.begin(),words.end());
-}
-
-void MTSImplementation::setSampleCaptions(string caption_file){
-    std::vector<string> captions = helper->readLines(caption_file);
-    setSampleCaptions(captions);
 }
 
 void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sample, CV_OUT int &actual_height){
@@ -140,17 +121,14 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
     }
     actual_height = height;
 
-    string text;
-    //cout << "generating text sample" << endl;
     // use TextHelper instance to generate synthetic text
     if (find(bg_features.begin(), bg_features.end(), Distracttext)!= bg_features.end()) {
         // do generate distractor text
-        th.generateTextSample(text,text_surface,height,width,text_color,true);
+        th.generateTextSample(caption,text_surface,height,width,text_color,true);
     } else {
         // dont generate distractor text
-        th.generateTextSample(text,text_surface,height,width,text_color,false);
+        th.generateTextSample(caption,text_surface,height,width,text_color,false);
     }
-    caption = string(text);
 
     //cout << "generating bg sample" << endl;
     cout << "bg feature num " << bg_features.size() << endl; 

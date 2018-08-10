@@ -50,13 +50,6 @@ class MTSImplementation: public MapTextSynthesizer{
          */
         void addGaussianBlur(Mat& out);
 
-        void setSampleCaptions(std::vector<string>& words);
-        void setSampleCaptions(string caption_file);
-
-
-        /* The list of captions to sample from.*/
-        std::vector<string> sampleCaptions_ = std::vector<string>();
-
         shared_ptr<MTSConfig> config;
         shared_ptr<MTS_BaseHelper> helper;
         MTS_TextHelper th;

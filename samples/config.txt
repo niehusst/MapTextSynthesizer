@@ -1,6 +1,6 @@
 //FILE PATHS
 fonts = blocky_fonts.txt, regular_fonts.txt, cursive_fonts.txt
-captions = IA/Civil.txt
+captions = IA/Civil.txt, IA/Bar.txt
 
 
 //TEXT PARAMS
@@ -18,7 +18,7 @@ spacing_scale=20
 spacing_shift=-1
 
 //Baseline Curve
-curve_prob=1
+curve_prob=0.1
 curve_min_spacing=-1          //min spacing required for the text to be curved
 curve_min_char_num_per_point=1    //min number of chars required for each point of curve
 curve_num_points_min=2
