@@ -10,6 +10,12 @@ using namespace std;
 class MTSConfig {
     private://----------------------- PRIVATE METHODS --------------------------
 
+        /*
+         * Parses a text file for variable names and values, using '='
+         * as the delimeter, and places the data into parameter_map.
+         *
+         * filename - the name of the file to parse for values
+         */
         unordered_map<string,string> parseConfig(string filename);
 
         unordered_map<string, string> params;

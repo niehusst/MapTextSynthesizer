@@ -42,10 +42,6 @@ class MTS_TextHelper {
         gamma_distribution<> digit_len_dist;
         variate_generator<mt19937, gamma_distribution<> > digit_len_gen;
 
-        /* Returns the value of the parameter given key */
-        double
-            getParam(string key);
-
         /*
          * Returns a random latin character or numeral or punctuation
          */

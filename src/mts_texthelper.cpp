@@ -13,19 +13,14 @@ using namespace std;
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
 
-double MTS_TextHelper::getParam(string key) {
-    double val = helper->getParam(key);
-    return val;
-}
-
 MTS_TextHelper::MTS_TextHelper(shared_ptr<MTS_BaseHelper> h, shared_ptr<MTSConfig> c)
     :helper(&(*h)),  // initialize fields
     config(&(*c)),
-    spacing_dist(h->getParam("spacing_alpha"),h->getParam("spacing_beta")),
+    spacing_dist(c->getParamDouble("spacing_alpha"),c->getParamDouble("spacing_beta")),
     spacing_gen(h->rng2_, spacing_dist),
-    stretch_dist(h->getParam("stretch_alpha"),h->getParam("stretch_beta")),
+    stretch_dist(c->getParamDouble("stretch_alpha"),c->getParamDouble("stretch_beta")),
     stretch_gen(h->rng2_, stretch_dist),
-    digit_len_dist(h->getParam("digit_len_alpha"),h->getParam("digit_len_beta")),
+    digit_len_dist(c->getParamDouble("digit_len_alpha"),c->getParamDouble("digit_len_beta")),
     digit_len_gen(h->rng2_, digit_len_dist)
 {}
 
@@ -41,8 +36,8 @@ MTS_TextHelper::generateFont(char *font, int fontsize){
     cout << "in generate font" << endl;
     // get font probabilities from user configured parameters
     int font_prob = helper->rng() % 10000;
-    double blockyProb=getParam("font_blocky");
-    double normalProb=getParam("font_normal");
+    double blockyProb=config->getParamDouble("font_blocky");
+    double normalProb=config->getParamDouble("font_normal");
     double probs[3]={blockyProb, normalProb + blockyProb, 1};
     cout << "got probs" << endl;
 
@@ -65,7 +60,7 @@ MTS_TextHelper::generateFont(char *font, int fontsize){
     }
 
     //set probability of being Italic
-    if (helper->rndProbUnder(getParam("italic_prob"))) {
+    if (helper->rndProbUnder(config->getParamDouble("italic_prob"))) {
         // add italic information to the font string
         strcat(font," Italic");
     }
@@ -82,9 +77,9 @@ void
 MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved, double &spacing_deg, double &spacing, double &stretch_deg, int &x_pad, int &y_pad, double &scale, PangoFontDescription *&desc, int height) {
 
     // if determined by probability of rotation, set rotated angle
-    if (helper->rndProbUnder(getParam("rotate_prob"))){
-        int min_deg = getParam("rotate_degree_min");
-        int max_deg = getParam("rotate_degree_max");
+    if (helper->rndProbUnder(config->getParamDouble("rotate_prob"))){
+        int min_deg = config->getParamInt("rotate_degree_min");
+        int max_deg = config->getParamInt("rotate_degree_max");
         int degree = helper->rng() % (max_deg-min_deg+1) + min_deg;
         cout << "degree " << degree << endl;
         rotated_angle=((double)degree / 180) * M_PI;
@@ -92,7 +87,7 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved, double &sp
         rotated_angle= 0;
     }
 
-    double curvingProb=getParam("curve_prob");
+    double curvingProb=config->getParamDouble("curve_prob");
 
     // set probability of being curved
     if(helper->rndProbUnder(curvingProb)){
@@ -108,16 +103,16 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved, double &sp
     double fontsize = (double)height;
     spacing = fontsize / 20 * spacing_deg;
 
-    double pad_max = getParam("pad_max");
-    double pad_min = getParam("pad_min");
+    double pad_max = config->getParamDouble("pad_max");
+    double pad_min = config->getParamDouble("pad_min");
     int maxpad=(int)(height*pad_max);
     int minpad=(int)(height*pad_min);
     x_pad = helper->rng() % (maxpad-minpad+1) + minpad;
     y_pad = helper->rng() % (maxpad-minpad+1) + minpad;
     cout << "pad " << x_pad << " " << y_pad << endl;
 
-    int scale_max = (int)(100*getParam("scale_max"));
-    int scale_min = (int)(100*getParam("scale_min"));
+    int scale_max = (int)(100*config->getParamDouble("scale_max"));
+    int scale_min = (int)(100*config->getParamDouble("scale_min"));
     scale = (helper->rng()%(scale_max-scale_min+1)+scale_min)/100.0;
     cout << "scale " << scale << endl;
 
@@ -131,8 +126,8 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved, double &sp
     desc = pango_font_description_from_string(font);
 
     //Weight
-    double light_prob = getParam("weight_light_prob");
-    double normal_prob = getParam("weight_normal_prob");
+    double light_prob = config->getParamDouble("weight_light_prob");
+    double normal_prob = config->getParamDouble("weight_normal_prob");
     int weight_prob = helper->rng()%10000;
 
     if(weight_prob < 10000*light_prob){
@@ -407,7 +402,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     generateFeatures(rotated_angle, curved, spacing_deg, spacing, stretch_deg, x_pad, y_pad, scale, desc, height);
 
-    int point_num_max = len / (int)(getParam("curve_min_char_num_per_point"));
+    int point_num_max = len / config->getParamInt("curve_min_char_num_per_point");
     if (point_num_max < 2) {
         curved = false;
     }
@@ -493,34 +488,34 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         pango_cairo_show_layout (cr, layout);
 
     } else if (curved 
-            //&& patch_width > getParam("curve_min_wid_hei_ratio")*height && 
-            && spacing_deg >= getParam("curve_min_spacing")
+            //&& patch_width > config->getParamDouble("curve_min_wid_hei_ratio")*height && 
+            && spacing_deg >= config->getParamDouble("curve_min_spacing")
             ) {
 
-        int num_min = (int)(getParam("curve_num_points_min"));
-        int num_max = (int)(getParam("curve_num_points_max"));
+        int num_min = config->getParamInt("curve_num_points_min");
+        int num_max = config->getParamInt("curve_num_points_max");
         int num_points = helper->rng()%(num_max-num_min+1)+num_min;
         num_points = min(num_points, point_num_max);
 
         cout << "num curve points " << num_points << endl;
 
-        double c_min = getParam("curve_c_min");
-        double c_max = getParam("curve_c_max");
-        double d_min = getParam("curve_d_min");
-        double d_max = getParam("curve_d_max");
+        double c_min = config->getParamDouble("curve_c_min");
+        double c_max = config->getParamDouble("curve_c_max");
+        double d_min = config->getParamDouble("curve_d_min");
+        double d_max = config->getParamDouble("curve_d_max");
 
-        double cd_sum_max = getParam("curve_cd_sum_max");
-        double cd_increase_rate = getParam("curve_cd_increase_rate");
+        double cd_sum_max = config->getParamDouble("curve_cd_sum_max");
+        double cd_increase_rate = config->getParamDouble("curve_cd_increase_rate");
 
         c_min -= cd_increase_rate*(num_points - 2);
         c_max += cd_increase_rate*(num_points - 2);
         d_min -= cd_increase_rate*(num_points - 2);
         d_max += cd_increase_rate*(num_points - 2);
         
-        double y_var_min = getParam("curve_y_variance_min");
-        double y_var_max = getParam("curve_y_variance_max");
+        double y_var_min = config->getParamDouble("curve_y_variance_min");
+        double y_var_max = config->getParamDouble("curve_y_variance_max");
 
-        double deform = getParam("curve_is_deformed_prob");
+        double deform = config->getParamDouble("curve_is_deformed_prob");
 
         if (helper->rndProbUnder(deform)) {
             create_curved_text_deformed(cr, layout, (double)patch_width, (double)height,
@@ -607,12 +602,12 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     // draw the remaining stuff on new surface
     cairo_set_source_rgb(cr_n, text_color/255.0,text_color/255.0,text_color/255.0);
     if (distract) {
-        int num_min = (int)getParam("distract_num_min");
-        int num_max = (int)getParam("distract_num_max");
+        int num_min = config->getParamInt("distract_num_min");
+        int num_max = config->getParamInt("distract_num_max");
         int dis_num = helper->rng()%(num_max-num_min+1)+num_min;
 
-        int shrink_min=(int)(100*getParam("distract_size_min"));
-        int shrink_max=(int)(100*getParam("distract_size_max"));
+        int shrink_min=(int)(100*config->getParamDouble("distract_size_min"));
+        int shrink_max=(int)(100*config->getParamDouble("distract_size_max"));
         double shrink = (helper->rng()%(shrink_max-shrink_min+1)+shrink_min)/100.0;
         cout << "shrink " << shrink << endl;
 
@@ -626,12 +621,12 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     cairo_destroy (cr_n);
 
     cout << "add spots" << endl;
-    if(helper->rndProbUnder(getParam("missing_prob"))){
-        int num_min=(int)getParam("missing_num_min");
-        int num_max=(int)getParam("missing_num_max");
-        double size_min=getParam("missing_size_min");
-        double size_max=getParam("missing_size_max");
-        double dim_rate=getParam("missing_diminish_rate");
+    if(helper->rndProbUnder(config->getParamDouble("missing_prob"))){
+        int num_min=config->getParamInt("missing_num_min");
+        int num_max=config->getParamInt("missing_num_max");
+        double size_min=config->getParamDouble("missing_size_min");
+        double size_max=config->getParamDouble("missing_size_max");
+        double dim_rate=config->getParamDouble("missing_diminish_rate");
         helper->addSpots(surface_n,num_min,num_max,size_min,size_max,dim_rate,true);
     }
 
@@ -645,10 +640,10 @@ MTS_TextHelper::generateTextSample (string &caption, cairo_surface_t *&text_surf
         int &width, int text_color, bool distract){
 
     cout << "text color " << text_color << endl;
-    if (helper->rndProbUnder(getParam("digit_prob"))) {
+    if (helper->rndProbUnder(config->getParamDouble("digit_prob"))) {
         caption = "";
-        int digit_len = int(ceil(1/digit_len_gen()));
-        int max_len = int(getParam("digit_len_max"));
+        int digit_len = (int)ceil(1/digit_len_gen());
+        int max_len = config->getParamInt("digit_len_max");
         if (digit_len>max_len) digit_len=max_len;
         for (int i = 0; i < digit_len; i++) {
             caption+=randomDigit();
@@ -684,8 +679,8 @@ void
 MTS_TextHelper::distractText (cairo_t *cr, int width, int height, char *font) {
 
     // generate text
-    int len_min = (int)getParam("distract_len_min");
-    int len_max = (int)getParam("distract_len_max");
+    int len_min = config->getParamInt("distract_len_min");
+    int len_max = config->getParamInt("distract_len_max");
     int len = helper->rng() % (len_max-len_min + 1) + len_min;
     char text[len+1];
 

@@ -112,6 +112,10 @@ MTSConfig::getParamInt(string key) {
         string value = getParam(key);
         char *endptr;
         int val = strtol(value.c_str(), &endptr, 10);
+        if (endptr[0] != '\0') {
+            cerr << key << " must be an integer!" << endl;
+            exit(1);
+        }
         paramsInt.insert(pair<string, int>(key, val));
         return val;
     }
@@ -125,6 +129,10 @@ MTSConfig::getParamDouble(string key) {
         string value = getParam(key);
         char *endptr;
         double val = strtod(value.c_str(), &endptr);
+        if (endptr[0] != '\0') {
+            cerr << key << " must be a double!" << endl;
+            exit(1);
+        }
         paramsDouble.insert(pair<string, double>(key, val));
         return val;
     }

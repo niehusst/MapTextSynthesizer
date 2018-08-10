@@ -26,10 +26,6 @@ MTS_BaseHelper::~MTS_BaseHelper(){
     cout << "base helper destructed" << endl;
 }
 
-double MTS_BaseHelper::getParam(string key) {
-    return config->getParamDouble(key);
-}
-
 bool 
 MTS_BaseHelper::rndProbUnder(double probability){
     return (rng() % 10000) < (10000 * probability);

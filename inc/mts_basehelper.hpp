@@ -177,9 +177,6 @@ class MTS_BaseHelper {
         //Destructor
         ~MTS_BaseHelper();
 
-        /* Returns the value for key*/
-        double getParam(string key);
-
         /*
          * Returns true or false based on a randomly generated probability under
          * the input value probability

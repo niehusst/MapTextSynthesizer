@@ -31,15 +31,6 @@ class MTS_BackgroundHelper {
         variate_generator<mt19937, beta_distribution<> > texture_distrib_gen;
 
         /*
-         * A method to get the value pairing for the input key from the
-         * user configurable parameters
-         *
-         * key - the key name of a configurable parameter
-         */
-        double
-            getParam(string key);
-
-        /*
          * Makes a thicker line behind the original that is a different gray-scale hue
          *
          * cr - cairo context

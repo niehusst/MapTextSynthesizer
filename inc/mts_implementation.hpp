@@ -26,19 +26,6 @@ using boost::random::variate_generator;
 class MTSImplementation: public MapTextSynthesizer{
 
     protected:
-        /* Returns the corresponding value given key in config.txt
-         *
-         * key - key in hashmap constructed from config.txt
-         */
-        double getParam(string key);
-
-        /*
-         * Parses a text file for variable names and values, using '='
-         * as the delimeter, and places the data into parameter_map.
-         *
-         * filename - the name of the file to parse for values
-         */
-        static unordered_map<string, double> parseConfig(string filename);
 
         /* Converts cairo surface to mat object in opencv
          *

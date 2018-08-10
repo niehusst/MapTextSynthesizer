@@ -29,87 +29,6 @@ using namespace cv;
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
 
-double MTSImplementation::getParam(string key) {
-    double val = helper->getParam(key);
-    return val;
-}
-
-/*
-//strip the spaces in the front and end of the string
-string strip(string str) {
-    int i,j;
-    for (i=0;i<str.length();i++) {
-        if (str[i] != ' '){
-            break;
-        }
-    }
-    for (j=str.length()-1;j>=0;j--) {
-        if (str[j] != ' '){
-            break;
-        }
-    }
-    if (i>j) {
-        return "";
-    } else {
-        return str.substr(i,j-i+1);
-    }
-}
-
-unordered_map<string, double> MTSImplementation::parseConfig(string filename) {
-
-    unordered_map<string, double> params = unordered_map<string, double>();
-
-    string delimiter = "=";
-
-    // open file
-    ifstream infile(filename);
-    if (! infile.is_open()) {
-        cerr << "input file cannot be openned!" << endl;
-        exit(1);
-    }
-    //CV_Assert(infile.is_open());
-
-    string line, key, value;
-    double val;
-
-    // parse file line by line
-    while (getline(infile, line)) {
-        // if line is empty or is a comment, erase it
-        size_t com_pos = line.find("//");
-        if (com_pos != line.npos) {
-            line.erase(com_pos);
-        }
-        if (line.length()==0) {
-            continue;
-        }
-        size_t pos = line.find(delimiter);
-        if (pos == line.npos) {
-            cerr << "A line does not contain delimiter in config file!" << endl;
-            exit(1);
-        }
-        //CV_Assert(pos != line.npos);
-
-        key = strip(line.substr(0, pos));
-        value = strip(line.substr(pos+1, line.npos-pos));
-        char * err_flag;
-        val = strtod(value.c_str(), &err_flag);
-
-        // check if strtod produced error in casting
-        if (value.c_str() == err_flag && val == 0) { 
-            // tell user there was an error at this point and exit failure
-            cout << "An unparseable value was encountered for variable "
-                << key <<".\nPlease enter a valid number.\n";
-            exit(1);
-        }
-        params.insert(pair<string, double>(key, val));
-
-    }   
-    // close file
-    infile.close();
-    return params;
-}
-*/
-
 void MTSImplementation::cairoToMat(cairo_surface_t *surface,Mat &mat) {
     // make a 4 channel opencv matrix
     Mat mat4 = Mat(cairo_image_surface_get_height(surface),cairo_image_surface_get_width(surface),CV_8UC4,cairo_image_surface_get_data(surface));
@@ -124,8 +43,8 @@ void MTSImplementation::cairoToMat(cairo_surface_t *surface,Mat &mat) {
 
 void MTSImplementation::addGaussianNoise(Mat& out) {
     // get and use user config parameters to set sigma
-    double scale = getParam("noise_sigma_scale");
-    double shift = getParam("noise_sigma_shift");
+    double scale = config->getParamDouble("noise_sigma_scale");
+    double shift = config->getParamDouble("noise_sigma_shift");
     double sigma = round((pow(1/(noise_gen() + 0.1), 0.5) * scale + shift) * 100) / 100;
 
     // create noise matrix
@@ -142,8 +61,8 @@ void MTSImplementation::addGaussianNoise(Mat& out) {
 
 void MTSImplementation::addGaussianBlur(Mat& out) {
     // get user config parameters for kernel size
-    int size_min = (int)getParam("blur_kernel_size_min") / 2;
-    int size_max = (int)getParam("blur_kernel_size_max") / 2;
+    int size_min = config->getParamInt("blur_kernel_size_min") / 2;
+    int size_max = config->getParamInt("blur_kernel_size_max") / 2;
     int ker_size = (helper->rng() % (size_max-size_min) + size_min) * 2 + 1;
 
     GaussianBlur(out,out,Size(ker_size,ker_size),0,0,BORDER_REFLECT_101);
@@ -180,8 +99,8 @@ MTSImplementation::MTSImplementation(string config_file)
         helper(make_shared<MTS_BaseHelper>(MTS_BaseHelper(config))),
         th(helper,config),
         bh(helper,config),
-        noise_dist(getParam("noise_sigma_alpha"),
-                getParam("noise_sigma_beta")),
+        noise_dist(config->getParamDouble("noise_sigma_alpha"),
+                config->getParamDouble("noise_sigma_beta")),
         noise_gen(helper->rng2_, noise_dist)
 {
     namedWindow("__w");
@@ -190,7 +109,7 @@ MTSImplementation::MTSImplementation(string config_file)
     this->updateFontNameList(this->availableFonts_);
 
     //initialize rng in BaseHelper
-    uint64 seed = (uint64)getParam("seed");
+    uint64 seed = (uint64)config->getParamDouble("seed");
     helper->setSeed(seed != 0 ? seed : time(NULL));
 
     //set required fields for TextHelper instance (th)
@@ -280,8 +199,8 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
     //cout << "after bg feature" << endl;
 
     // set bg and text color (brightness) based on user configured parameters
-    int bgcolor_min = (int)getParam("bg_color_min");
-    int textcolor_max = (int)getParam("text_color_max");
+    int bgcolor_min = config->getParamInt("bg_color_min");
+    int textcolor_max = config->getParamInt("text_color_max");
     // assert colors are valid values
     if (bgcolor_min > 255 || textcolor_max < 0 || bgcolor_min<=textcolor_max) {
         cerr << "Invalid color input!" << endl;
@@ -300,8 +219,8 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
     int width;
 
     // set image height from user configured parameters
-    int height_min = (int)getParam("height_min");
-    int height_max = (int)getParam("height_max");
+    int height_min = config->getParamInt("height_min");
+    int height_max = config->getParamInt("height_max");
     if (height_min == height_max) {
         height = height_min;
     } else {
@@ -331,13 +250,13 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
     cairo_set_source_surface(cr, text_surface, 0, 0);
 
     // set the blend alpha range using user configured parameters
-    int blend_min=(int)(100 * getParam("blend_alpha_min"));
-    int blend_max=(int)(100 * getParam("blend_alpha_max"));
+    int blend_min=(int)(100 * config->getParamDouble("blend_alpha_min"));
+    int blend_max=(int)(100 * config->getParamDouble("blend_alpha_max"));
 
     double blend_alpha=(helper->rng()%(blend_max-blend_min+1)+blend_min)/100.0;
 
     // blend with alpha or not based on user set probability
-    if(helper->rndProbUnder(getParam("blend_prob"))){
+    if(helper->rndProbUnder(config->getParamDouble("blend_prob"))){
         cairo_paint_with_alpha(cr, blend_alpha);
     } else {
         cairo_paint(cr); // dont blend
@@ -361,12 +280,12 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
     addGaussianBlur(sample_float);
 
     bool zero_padding = true;
-    if (getParam("zero_padding")==0) zero_padding = false;
+    if (config->getParamDouble("zero_padding")==0) zero_padding = false;
 
     if (!zero_padding) {
         sample = Mat(height,width,CV_8UC1,Scalar_<uchar>(0,0,0));
     } else {
-        int height_max = int(getParam("height_max"));
+        int height_max = int(config->getParamDouble("height_max"));
         sample = Mat(height_max,width,CV_8UC1,Scalar_<uchar>(0,0,0));
     }
 
