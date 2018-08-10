@@ -22,6 +22,7 @@ In contrast with the static dataset, our dynamic text image generator occupies o
 |       |-mts_basehelper.hpp
 |       |-mts_texthelper.hpp
 |       |-mts_bghelper.hpp
+|       |-mts_config.hpp
 |
 |-src/
 |       |-map_text_synthesizer.cpp
@@ -29,6 +30,7 @@ In contrast with the static dataset, our dynamic text image generator occupies o
 |       |-mts_basehelper.cpp
 |       |-mts_texthelper.cpp
 |       |-mts_bghelper.cpp
+|       |-mts_config.cpp
 ```
 
 ### Why this architecture?
@@ -53,7 +55,10 @@ The header and source files of the ```MTS_BaseHelper``` class. Being a shared lo
 The header and source files of the ```MTS_BackgroundHelper``` class. They contain the definitions and implementation for all unshared background generating methods that do not need to be exposed to the user. Handles drawing of lines, textures, and the background bias field in cairo.
 
 ##### mts_texthelper.hpp/mts_texthelper.cpp:
-The header and source files of the ```MTS_TextHelper``` class. They contain the definitions and implementation for all unshared text generating methods that do not need to be exposed to the user. Handles creation of the main text attributes and distracting text in pango and cairo. 
+The header and source files of the ```MTS_TextHelper``` class. They contain the definitions and implementation for all unshared text generating methods that do not need to be exposed to the user. Handles creation of the main text attributes and distracting text in pango and cairo.
+
+##### mts_config.hpp/mts_config.cpp:  
+The header and source files of the ```MTSConfig``` class. The class handles all fetching and storage of user configurable parameters from a text file. It also managest the distribution of those variablse to the classes that use the values. 
 
 
 ## How (on Debian/Ubuntu)
