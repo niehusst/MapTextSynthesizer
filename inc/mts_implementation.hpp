@@ -50,30 +50,9 @@ class MTSImplementation: public MapTextSynthesizer{
          */
         void addGaussianBlur(Mat& out);
 
-        /* Updates the list of available system fonts by 
-         * clearing and reloading font_list
-         *
-         * font_list - the output
-         * Base of this method from Ben K. Bullock at
-         * url: https://www.lemoda.net/pango/list-fonts/index.html
-         */
-        void updateFontNameList(std::vector<string>& font_list);
+        void setSampleCaptions(std::vector<string>& words);
+        void setSampleCaptions(string caption_file);
 
-        /* The list of blocky font names set by user. */
-        std::vector<string> blockyFonts_ = std::vector<string>();
-
-        /* The list of regular font names set by user. */
-        std::vector<string> regularFonts_ = std::vector<string>();
-
-        /* The list of cursive font names set by user. */
-        std::vector<string> cursiveFonts_ = std::vector<string>();
-
-        /* The list of available system font names. */
-        std::vector<string> availableFonts_ = std::vector<string>();
-
-        /* Pointers pointing to blocky, regular, cursive font lists. */
-        //std::shared_ptr<std::vector<string> > fonts_[3];
-        std::vector<string>* fonts_[3];
 
         /* The list of captions to sample from.*/
         std::vector<string> sampleCaptions_ = std::vector<string>();
@@ -94,20 +73,6 @@ class MTSImplementation: public MapTextSynthesizer{
 
         /* Destructor */
         ~MTSImplementation();
-
-        /* See MapTextSynthesizer for documentations.*/
-
-        void setBlockyFonts(std::vector<string>& font_list);
-        void setBlockyFonts(string font_file);
-
-        void setRegularFonts(std::vector<string>& font_list);
-        void setRegularFonts(string font_file);
-
-        void setCursiveFonts(std::vector<string>& font_list);
-        void setCursiveFonts(string font_file);
-
-        void setSampleCaptions(std::vector<string>& words);
-        void setSampleCaptions(string caption_file);
 
         void generateSample(CV_OUT string &caption, CV_OUT Mat &sample, CV_OUT int &actual_height);
 };

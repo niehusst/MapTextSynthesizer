@@ -1,7 +1,5 @@
 //FILE PATHS
-blocky_fonts=blocky_fonts.txt
-regular_fonts=regular_fonts.txt
-cursive_fonts=cursive_fonts.txt
+fonts=total_fonts.txt,blocky_fonts.txt,regular_fonts.txt,cursive_fonts.txt
 captions=IA/Civil.txt
 
 
@@ -41,10 +39,6 @@ italic_prob=0.05
 //Weight
 weight_light_prob=0.3
 weight_normal_prob=0.3        // prob for heavy weight is 1-light-normal
-
-//Font
-font_blocky=0.3
-font_normal=0.3               // prob for cursive font is 1-blocky-normal
 
 //Missing Ink
 missing_prob=0.2

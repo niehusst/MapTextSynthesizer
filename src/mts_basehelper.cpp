@@ -49,6 +49,57 @@ MTS_BaseHelper::rng(){
     return rng_.next();
 }
 
+//strip the spaces in the front and end of the string
+string 
+MTS_BaseHelper::strip(string str) {
+    int i,j;
+    for (i=0;i<str.length();i++) {
+        if (str[i] != ' '){
+            break;
+        }
+    }
+    for (j=str.length()-1;j>=0;j--) {
+        if (str[j] != ' '){
+            break;
+        }
+    }
+    if (i>j) {
+        return "";
+    } else {
+        return str.substr(i,j-i+1);
+    }
+}
+
+
+vector<string>
+MTS_BaseHelper::readLines(string filename) {
+    vector<string> lines;
+    ifstream infile(filename);
+    if (! infile.is_open()) {
+        cerr << "cannot open " << filename << endl;
+        exit(1);
+    }
+
+    string line;
+    while (std::getline(infile, line)) {
+        lines.push_back(string(line));
+    }
+    return lines;
+}
+
+vector<string>
+MTS_BaseHelper::tokenize(string str, const char *delim) {
+    vector<string> tokens = vector<string>();
+    char cstr[str.length()+1];
+    strcpy(cstr, str.c_str());
+    char *token = strtok(cstr, delim);
+    while (token != NULL) {
+        tokens.push_back(strip(string(token)));
+        token = strtok(NULL, delim);
+    }
+    return tokens;
+}
+
 void 
 MTS_BaseHelper::addSpots (cairo_surface_t *surface, int num_min, int num_max, double size_min,
         double size_max, double diminish_rate, bool transparent, int color_min, int color_max){

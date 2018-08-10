@@ -6,30 +6,12 @@
 #include <memory>
 
 #include "mts_config.hpp"
+#include "mts_basehelper.hpp"
 
 using namespace std;
 
 // SEE mts_config.hpp FOR ALL DOCUMENTATION
 
-//strip the spaces in the front and end of the string
-string strip(string str) {
-    int i,j;
-    for (i=0;i<str.length();i++) {
-        if (str[i] != ' '){
-            break;
-        }
-    }   
-    for (j=str.length()-1;j>=0;j--) {
-        if (str[j] != ' '){
-            break;
-        }
-    }   
-    if (i>j) {
-        return ""; 
-    } else {
-        return str.substr(i,j-i+1);
-    }   
-}
 
 unordered_map<string,string> 
 MTSConfig::parseConfig(string filename) {
@@ -63,23 +45,10 @@ cerr << "A line does not contain delimiter in config file!" << endl;
             exit(1);
         }
 
-        key = strip(line.substr(0, pos));
-        value = strip(line.substr(pos+1, line.npos-pos));
+        key = MTS_BaseHelper::strip(line.substr(0, pos));
+        value = MTS_BaseHelper::strip(line.substr(pos+1, line.npos-pos));
 
-        /*
-        char * err_flag;
-        val = strtod(value.c_str(), &err_flag);
-
-        // check if strtod produced error in casting
-        if (value.c_str() == err_flag && val == 0) {
-            // tell user there was an error at this point and exit failure
-            cout << "An unparseable value was encountered for variable "
-                << key <<".\nPlease enter a valid number.\n";
-            exit(1);
-        }
-        */
         params.insert(pair<string, string>(key, value));
-
     }
     // close file
     infile.close();
@@ -92,6 +61,11 @@ MTSConfig::MTSConfig(string filename){
     params = parseConfig(filename);
     paramsInt = unordered_map<string, int>();
     paramsDouble = unordered_map<string, double>();
+}
+
+bool
+MTSConfig::findParam(string key) {
+    return params.find(key) != params.end();
 }
 
 string

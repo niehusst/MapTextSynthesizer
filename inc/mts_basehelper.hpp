@@ -203,6 +203,22 @@ class MTS_BaseHelper {
          */
         void setSeed(uint64 rndState);
 
+        //strip the spaces in the front and end of the string
+        static string
+            strip(string str);
+
+        /*
+         * A Helper method to easily read lines from a file
+         *
+         * filename - the path to the file.
+         */
+        vector<string>
+            readLines(string filename);
+
+        // tokenize str according to delim
+        vector<string>
+            tokenize(string str, const char *delim);
+
         /*
          * Makes a mask that has holes in it to project over background or text
          *

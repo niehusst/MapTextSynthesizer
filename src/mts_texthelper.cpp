@@ -22,7 +22,24 @@ MTS_TextHelper::MTS_TextHelper(shared_ptr<MTS_BaseHelper> h, shared_ptr<MTSConfi
     stretch_gen(h->rng2_, stretch_dist),
     digit_len_dist(c->getParamDouble("digit_len_alpha"),c->getParamDouble("digit_len_beta")),
     digit_len_gen(h->rng2_, digit_len_dist)
-{}
+{
+    this->updateFontNameList(this->availableFonts_);
+
+    if (config->findParam("fonts")) {
+        string fontlists_str = config->getParam("fonts");
+        vector<string> fontlists = helper->tokenize(fontlists_str,",");
+        if (fontlists.size()==0) {
+            cerr << "fonts parameter does not have any file in it!" << endl;
+            exit(1);
+        }
+        for (int i=0;i<fontlists.size();i++) {
+            addFontlist(fontlists[i]);
+        }
+    } else {
+        cerr << "config file need a fonts parameter in it!" << endl;
+        exit(1);
+    }
+}
 
 MTS_TextHelper::~MTS_TextHelper(){
     cout << "text helper destructed" << endl;
@@ -31,33 +48,60 @@ MTS_TextHelper::~MTS_TextHelper(){
 // SEE mts_texthelper.hpp FOR ALL DOCUMENTATION
 
 void 
+MTS_TextHelper::updateFontNameList(std::vector<string>& font_list) {
+    // clear existing fonts for a fresh load of available fonts
+    font_list.clear(); 
+
+    PangoFontFamily ** families;
+    int num_families;
+    PangoFontMap * fontmap;
+
+    fontmap = pango_cairo_font_map_get_default();
+    pango_font_map_list_families (fontmap, &families, &num_families);
+
+    // iterativly add all available fonts to font_list
+    for (int k = 0; k < num_families; k++) {
+        PangoFontFamily * family = families[k];
+        const char * family_name;
+        family_name = pango_font_family_get_name (family);
+        font_list.push_back(string(family_name));
+    }   
+    // clean up
+    free (families);
+}
+
+void
+MTS_TextHelper::addFontlist(std::vector<string>& font_list){
+    std::vector<string> availableList=this->availableFonts_;
+
+    // loop through fonts in availableFonts_ to check if the system 
+    // contains every font in the font_list
+    for(size_t k = 0; k < font_list.size(); k++){
+        if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
+            cerr << "The blocky font name list must only contain fonts in your system" << endl;
+            exit(1);
+        }
+    }
+    this->fontlists_.push_back(font_list);
+}
+
+void
+MTS_TextHelper::addFontlist(string font_file){
+    std::vector<string> fonts = helper->readLines(font_file);
+    addFontlist(fonts);
+}
+
+void 
 MTS_TextHelper::generateFont(char *font, int fontsize){
 
     cout << "in generate font" << endl;
-    // get font probabilities from user configured parameters
-    int font_prob = helper->rng() % 10000;
-    double blockyProb=config->getParamDouble("font_blocky");
-    double normalProb=config->getParamDouble("font_normal");
-    double probs[3]={blockyProb, normalProb + blockyProb, 1};
-    cout << "got probs" << endl;
 
+    int listsize = fontlists_.size();
+    unsigned int fontlist_index = helper->rng() % listsize;
+    vector<string> fonts = fontlists_[fontlist_index];
     const char *font_name;
-    // randomly select a font style 
-    for (int i = 0; i < 3; i++) {
-        if(font_prob < 10000 * probs[i]){
-            cout << "in if " << endl;
-            int listsize = fonts_[i]->size();
-            cout << "got size " << endl;
-            if (listsize <= 0) {
-                cerr << "font list size should be positive integer!" << endl;
-                exit(0);
-            }
-            //CV_Assert(listsize);
-            font_name = fonts_[i]->at(helper->rng()%listsize).c_str();
-            strcpy(font,font_name);
-            break;
-        }
-    }
+    font_name = fonts.at(helper->rng()%fonts.size()).c_str();
+    strcpy(font,font_name);
 
     //set probability of being Italic
     if (helper->rndProbUnder(config->getParamDouble("italic_prob"))) {
@@ -727,16 +771,7 @@ MTS_TextHelper::distractText (cairo_t *cr, int width, int height, char *font) {
     pango_font_description_free (desc);
 }
 
-
 void
-//MTS_TextHelper::setFonts(std::shared_ptr<std::vector<string> > *data) {
-MTS_TextHelper::setFonts(std::vector<string> **data) {
-    fonts_ = data;
-}
-
-
-void
-//MTS_TextHelper::setSampleCaptions(std::shared_ptr<std::vector<string> > data) {
 MTS_TextHelper::setSampleCaptions(std::vector<string> *data) {
     sampleCaptions_ = data;
 }

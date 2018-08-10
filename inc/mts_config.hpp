@@ -26,6 +26,8 @@ class MTSConfig {
 
         MTSConfig(string filename);
 
+        bool findParam(string key);
+
         string getParam(string key);
 
         int getParamInt(string key);

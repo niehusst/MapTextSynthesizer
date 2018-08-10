@@ -24,11 +24,29 @@ using boost::random::variate_generator;
 class MTS_TextHelper {
     private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
 
-        /* See MapTextSynthesizer class for the documentation*/
-        //std::shared_ptr<std::vector<string> > *fonts_;
-        std::vector<string> **fonts_;
+         /* Updates the list of available system fonts by
+         * clearing and reloading font_list
+         *
+         * font_list - the output
+         * Base of this method from Ben K. Bullock at
+         * url: https://www.lemoda.net/pango/list-fonts/index.html
+         */
+        void updateFontNameList(std::vector<string>& font_list);
+
+
+        /* Adds a list of fonts to font lists */
+        void addFontlist(std::vector<string>& font_list);
+        void addFontlist(string font_file);
+
+
+        /* The list of available system font names. */
+        vector<string> availableFonts_ = vector<string>();
+
+        /* A list of lists of fonts */
+        vector<vector<string> > fontlists_;
+
         //std::shared_ptr<std::vector<string> > sampleCaptions_;
-        std::vector<string> *sampleCaptions_;
+        vector<string> *sampleCaptions_;
 
         /* Generator for the spacing degree */
         beta_distribution<> spacing_dist;
@@ -191,15 +209,6 @@ class MTS_TextHelper {
 
         /* Destructor */
         ~MTS_TextHelper();
-
-        /*
-         * A setter method for the private fonts_ field
-         *
-         * data - an array of vectors of strings that are font names
-         */
-        void
-            //setFonts(std::shared_ptr<std::vector<string> > *data);
-            setFonts(std::vector<string> **data);
 
 
         /*
