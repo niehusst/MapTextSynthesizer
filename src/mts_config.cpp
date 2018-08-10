@@ -36,7 +36,7 @@ MTSConfig::parseConfig(string filename) {
         if (com_pos != line.npos) {
             line.erase(com_pos);
         }
-        if (line.length()==0) {
+        if (MTS_BaseHelper::strip(line).length()==0) {
             continue;
         }
         size_t pos = line.find(delimiter);

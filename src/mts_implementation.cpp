@@ -63,7 +63,7 @@ void MTSImplementation::addGaussianBlur(Mat& out) {
     // get user config parameters for kernel size
     int size_min = config->getParamInt("blur_kernel_size_min") / 2;
     int size_max = config->getParamInt("blur_kernel_size_max") / 2;
-    int ker_size = (helper->rng() % (size_max-size_min) + size_min) * 2 + 1;
+    int ker_size = (helper->rndBetween(size_min,size_max)) * 2 + 1;
 
     GaussianBlur(out,out,Size(ker_size,ker_size),0,0,BORDER_REFLECT_101);
 }
@@ -103,8 +103,8 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
         exit(1);
     }
 
-    int bg_brightness = helper->rng()%(255-bgcolor_min+1)+bgcolor_min;
-    int text_color = helper->rng()%(textcolor_max+1);
+    int bg_brightness = helper->rndBetween(bgcolor_min,255);
+    int text_color = helper->rndBetween(0,textcolor_max);
     int contrast = bg_brightness - text_color;
 
     cairo_surface_t *text_surface;
@@ -117,7 +117,7 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
     if (height_min == height_max) {
         height = height_min;
     } else {
-        height = (helper->rng()%(height_max-height_min+1))+height_min;
+        height = helper->rndBetween(height_min,height_max); 
     }
     actual_height = height;
 

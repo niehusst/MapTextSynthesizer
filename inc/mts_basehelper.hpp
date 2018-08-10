@@ -189,6 +189,7 @@ class MTS_BaseHelper {
          * Returns a random double between min and max (inclusive)
          */
         double rndBetween(double min, double max);
+        int rndBetween(int min, int max);
 
         /*
          * A wrapper for the openCV random number generator. Returns a

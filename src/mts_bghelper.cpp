@@ -117,7 +117,7 @@ void
 MTS_BackgroundHelper::set_dash_pattern(cairo_t *cr) {
     int pat_len_min = config->getParamInt("dash_pattern_len_min");
     int pat_len_max = config->getParamInt("dash_pattern_len_max");
-    int pattern_len = pat_len_min + (helper->rng() % (pat_len_max-pat_len_min+1));
+    int pattern_len = helper->rndBetween(pat_len_min,pat_len_max); 
     double dash_pattern[pattern_len];
     double dash;
 
@@ -140,8 +140,8 @@ MTS_BackgroundHelper::orient_path(cairo_t *cr, bool curved,
         int length, int width, int height) {
     int translation_x, translation_y;
     double angle = (helper->rng() % 360)/180.0*M_PI; //get angle 0 - 2PI
-    translation_x = helper->rng() % (width+1); // 0 - width
-    translation_y = helper->rng() % (height+1); // 0 - height 
+    translation_x = helper->rndBetween(0,width); 
+    translation_y = helper->rndBetween(0,height); 
 
     cairo_translate(cr, translation_x, translation_y);
     cairo_rotate(cr, angle); 
@@ -161,7 +161,7 @@ MTS_BackgroundHelper::generate_curve(cairo_t *cr, int width,
         num_min *=scale;
         num_max *=scale;
     }
-    int num_points = num_min + (helper->rng() % (num_max-num_min+1));
+    int num_points = helper->rndBetween(num_min,num_max); 
 
     double y_var_min = config->getParamDouble("bg_curve_y_variance_min");
     double y_var_max = config->getParamDouble("bg_curve_y_variance_max");
@@ -481,13 +481,13 @@ MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
 
     // set the number of points
     int points_min = config->getParamInt("bias_vert_num_min");
-    int points_max = config->getParamInt("bias_vert_num_max")+1 - points_min;
-    int num_points_vertical = helper->rng()%points_max + points_min;
-    int num_points_horizontal = helper->rng()%points_max + points_min;
+    int points_max = config->getParamInt("bias_vert_num_max");
+    int num_points_vertical = helper->rndBetween(points_min,points_max); 
+    int num_points_horizontal = helper->rndBetween(points_min,points_max); 
 
     if (width > height) {
         // num points in horizontal direction is multiplied by ratio width/height
-        num_points_horizontal = helper->rng()%((width/height)*points_max) + points_min; 
+        num_points_horizontal = helper->rndBetween((width/height)*points_min,(width/height)*points_max); 
     }
     double offset_vertical = 1.0 / (num_points_vertical - 1);
     double offset_horizontal = 1.0 / (num_points_horizontal - 1);
@@ -552,15 +552,15 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
     int lines_min, lines_max;
     if (grid) { // correctly get number of lines to draw from user config
         lines_min = config->getParamInt("grid_num_min");
-        lines_max = config->getParamInt("grid_num_max")+1 - lines_min;
+        lines_max = config->getParamInt("grid_num_max");
     } else if (even) {
         lines_min = config->getParamInt("para_num_min");
-        lines_max = config->getParamInt("para_num_max")+1 - lines_min;
+        lines_max = config->getParamInt("para_num_max");
     } else {
         lines_min = config->getParamInt("vpara_num_min");
-        lines_max = config->getParamInt("vpara_num_max")+1 - lines_min;
+        lines_max = config->getParamInt("vpara_num_max");
     }
-    int num = helper->rng()%lines_max + lines_min;
+    int num = helper->rndBetween(lines_min,lines_max); 
     cout << "line nums " << num << endl;
 
     //length of lines
@@ -600,7 +600,7 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
         double y_var_max = config->getParamDouble("bg_curve_y_variance_max");
         int num_min = config->getParamInt("bg_curve_num_points_min");
         int num_max = config->getParamInt("bg_curve_num_points_max");
-        int num_points = num_min + (helper->rng() % (num_max-num_min+1));
+        int num_points = helper->rndBetween(num_min,num_max); 
         curve_points = helper->make_points_wave(length,length,num_points,y_var_min,y_var_max);
     }
 
@@ -678,7 +678,7 @@ MTS_BackgroundHelper::colorDiff (cairo_t *cr, int width, int height,
     int num_colors_min = config->getParamInt("diff_num_colors_min");
     int num_colors_max = config->getParamInt("diff_num_colors_max");
 
-    int num = (helper->rng() % (num_colors_max - num_colors_min + 1)) + num_colors_min; 
+    int num = helper->rndBetween(num_colors_min,num_colors_max); 
 
     for (int i = 0; i < num; i++) {
         double color = helper->rndBetween(color_min,color_max);
@@ -888,7 +888,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
     int color_dis_max = config->getParamInt("bg_feature_color_dis_max");
     if (color_dis_max > contrast) color_dis_max = contrast;
     int text_color = bg_color - contrast;
-    double color = (text_color + color_dis_min + helper->rng() % (color_dis_max-color_dis_min + 1)) / 255.0;
+    double color = (text_color + helper->rndBetween(color_dis_min,color_dis_max)) / 255.0;
     cairo_set_source_rgb(cr,color,color,color);
 
     // GENERATE BACKGROUND FEATURES:
@@ -901,7 +901,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
 
         int num_lines_min = config->getParamInt("texture_num_lines_min");
         int num_lines_max = config->getParamInt("texture_num_lines_max");
-        num_lines = helper->rng()%(num_lines_max-num_lines_min+1) + num_lines_min; 
+        num_lines = helper->rndBetween(num_lines_min,num_lines_max); 
 
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
@@ -931,12 +931,12 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
     // add railroads by probability
     if (find(features.begin(), features.end(), Railroad)!= features.end()) {
         int railroad_min = config->getParamInt("railroad_num_lines_min");
-        int railroad_max = config->getParamInt("railroad_num_lines_max")+1 - railroad_min;
+        int railroad_max = config->getParamInt("railroad_num_lines_max");
         c_min = config->getParamDouble("railroad_curve_c_min");
         c_max = config->getParamDouble("railroad_curve_c_max");
         d_min = config->getParamDouble("railroad_curve_d_min");
         d_max = config->getParamDouble("railroad_curve_d_max");
-        num_lines = helper->rng()%railroad_max + railroad_min;
+        num_lines = helper->rndBetween(railroad_min,railroad_max); 
 
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
@@ -949,7 +949,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
         int boundary_min = config->getParamInt("boundary_num_lines_min");
         int boundary_max = config->getParamInt("boundary_num_lines_max")+1 - boundary_min;
 
-        num_lines = helper->rng()%boundary_max + boundary_min;
+        num_lines = helper->rndBetween(boundary_min,boundary_max); 
         double dash_probability = config->getParamDouble("boundary_dashed_prob");
         c_min = config->getParamDouble("boundary_curve_c_min");
         c_max = config->getParamDouble("boundary_curve_c_max");
@@ -968,7 +968,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
         int straight_min = config->getParamInt("straight_num_lines_min");
         int straight_max = config->getParamInt("straight_num_lines_max")+1 - straight_min;
         double dash_probability = config->getParamDouble("straight_dashed_prob");
-        num_lines = helper->rng() % straight_max + straight_min;
+        num_lines = helper->rndBetween(straight_min,straight_max); 
 
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
@@ -982,7 +982,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
         int river_min = config->getParamInt("river_num_lines_min");
         int river_max = config->getParamInt("river_num_lines_max")+1 - river_min;
 
-        num_lines = helper->rng()%river_max + river_min;
+        num_lines = helper->rndBetween(river_min,river_max); 
         c_min = config->getParamDouble("river_curve_c_min");
         c_max = config->getParamDouble("river_curve_c_max");
         d_min = config->getParamDouble("river_curve_d_min");
@@ -1000,7 +1000,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
         double hollow = config->getParamDouble("point_hollow_prob");
         int num_min = config->getParamInt("point_num_min");
         int num_max = config->getParamInt("point_num_max");
-        int point_num = helper->rng()%(num_max-num_min+1)+num_min;
+        int point_num = helper->rndBetween(num_min,num_max); 
         for (int i = 0; i < point_num; i++) {
             cityPoint(cr, width, height, helper->rndProbUnder(hollow));
         }

@@ -155,7 +155,7 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved, double &sp
     if (helper->rndProbUnder(config->getParamDouble("rotate_prob"))){
         int min_deg = config->getParamInt("rotate_degree_min");
         int max_deg = config->getParamInt("rotate_degree_max");
-        int degree = helper->rng() % (max_deg-min_deg+1) + min_deg;
+        int degree = helper->rndBetween(min_deg, max_deg);
         cout << "degree " << degree << endl;
         rotated_angle=((double)degree / 180) * M_PI;
     } else {
@@ -182,8 +182,8 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved, double &sp
     double pad_min = config->getParamDouble("pad_min");
     int maxpad=(int)(height*pad_max);
     int minpad=(int)(height*pad_min);
-    x_pad = helper->rng() % (maxpad-minpad+1) + minpad;
-    y_pad = helper->rng() % (maxpad-minpad+1) + minpad;
+    x_pad = helper->rndBetween(pad_min,pad_max);
+    y_pad = helper->rndBetween(pad_min,pad_max);
     cout << "pad " << x_pad << " " << y_pad << endl;
 
     double scale_max = config->getParamDouble("scale_max");
@@ -566,7 +566,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
         int num_min = config->getParamInt("curve_num_points_min");
         int num_max = config->getParamInt("curve_num_points_max");
-        int num_points = helper->rng()%(num_max-num_min+1)+num_min;
+        int num_points = helper->rndBetween(num_min,num_max); 
         num_points = min(num_points, point_num_max);
 
         cout << "num curve points " << num_points << endl;
@@ -676,7 +676,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     if (distract) {
         int num_min = config->getParamInt("distract_num_min");
         int num_max = config->getParamInt("distract_num_max");
-        int dis_num = helper->rng()%(num_max-num_min+1)+num_min;
+        int dis_num = helper->rndBetween(num_min,num_max); 
 
         double shrink_min=100*config->getParamDouble("distract_size_min");
         double shrink_max=100*config->getParamDouble("distract_size_max");
@@ -753,7 +753,7 @@ MTS_TextHelper::distractText (cairo_t *cr, int width, int height, char *font) {
     // generate text
     int len_min = config->getParamInt("distract_len_min");
     int len_max = config->getParamInt("distract_len_max");
-    int len = helper->rng() % (len_max-len_min + 1) + len_min;
+    int len = helper->rndBetween(len_min,len_max); 
     char text[len+1];
 
     // generate a random string of characters

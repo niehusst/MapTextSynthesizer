@@ -35,7 +35,13 @@ double
 MTS_BaseHelper::rndBetween(double min, double max) {
     int min_ = (int)(min*10000);
     int max_ = (int)(max*10000);
-    double ret = (rng()%(max_-min_+1)+min_)/10000.0;
+    double ret = ((int)(rng()%(max_-min_+1))+min_)/10000.0;
+    return ret;
+}
+
+int
+MTS_BaseHelper::rndBetween(int min, int max) {
+    int ret = (int)(rng()%(max-min+1))+min;
     return ret;
 }
 
@@ -115,7 +121,7 @@ MTS_BaseHelper::addSpots (cairo_surface_t *surface, int num_min, int num_max, do
     // make space in memory for image data for the cairo mask
     data = (unsigned char *) malloc(stride * height);
 
-    int num_spots = rng() % (num_max - num_min + 1) + num_min;
+    int num_spots = rndBetween(num_min,num_max);
     int x_coords[num_spots];
     int y_coords[num_spots];
     double radii[num_spots];
@@ -143,7 +149,7 @@ MTS_BaseHelper::addSpots (cairo_surface_t *surface, int num_min, int num_max, do
         int y = y_coords[i];
         double rad = radii[i];
 
-        int color = rng() % (color_max-color_min+1) + color_min;
+        int color = rndBetween(color_min, color_max);
         unsigned char trans = 255 - color;
 
         // iterate through mask and set pixels within range to 255
@@ -589,18 +595,15 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
 
     // set coefficients of cubic equation to describe curve
     double a=0, b=0, c=0, d=0;
-    int c_variance, d_variance;
-    c_variance = (int)((cmax*100) - (cmin*100) + 1);
-    d_variance = (int)((dmax*100) - (dmin*100) + 1);
 
     // prevent both c and d become 0
     while (c==0 && d==0) {
-        c = (rng() % c_variance) / 100.0 + cmin;
+        c = rndBetween(cmin,cmax);
 
         if (count == 0) {
             d = 0;
         } else {
-            d = (rng() % d_variance) / 100.0 + dmin;
+            d = rndBetween(dmin,dmax); 
 
             if (abs(c+d) > cd_sum_max) {
                 d = cd_sum_max - c;

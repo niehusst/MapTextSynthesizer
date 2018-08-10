@@ -1,6 +1,6 @@
 //FILE PATHS
 fonts = blocky_fonts.txt, regular_fonts.txt, cursive_fonts.txt
-captions = IA/Civil.txt, IA/Bar.txt
+captions = IA/Civil.txt, IA/Pillar.txt, IA/Bar.txt
 
 
 //TEXT PARAMS
@@ -182,7 +182,7 @@ double_distance_min=6
 double_distance_max=9
 
 //river line
-river_prob=0.1
+river_prob=0
 river_num_lines_min=1
 river_num_lines_max=5
 river_double_line_prob=.5

@@ -15,16 +15,18 @@ int main() {
     string label;
     Mat image;
     int height;
-    //int start = time(NULL);
+    int start = time(NULL);
     while (k<10000) {
         s->generateSample(label, image, height);
+        /*
         imshow("Sample image", image);
         waitKey(0);
+        */
         cout << label << endl;
         k++;
     }
-    //int end = time(NULL);
-    //cout << "time " << end-start << endl;
+    int end = time(NULL);
+    cout << "time " << end-start << endl;
 
     return 0;
 }
