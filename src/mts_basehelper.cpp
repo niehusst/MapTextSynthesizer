@@ -597,8 +597,8 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
     double a=0, b=100, c=0, d=0;
 
     do {
-        cout << "in loop" << endl;
-        cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
+        //cout << "in loop" << endl;
+        //cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
         do {
             c = rndBetween(cmin,cmax);
             d = rndBetween(dmin,dmax); 

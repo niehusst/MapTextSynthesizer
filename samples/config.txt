@@ -27,7 +27,6 @@ curve_c_min=-5                //c is the quadratic coefficient of the first segm
 curve_c_max=5                 //while d is the cubic
 curve_d_min=-5
 curve_d_max=5
-curve_cd_increase_rate=0
 curve_cd_sum_max=3           //prevent huge curvature at the beginning of curve
 curve_b_abs_max=50
 curve_y_variance_min=-0.2      //the fluctuation of the fixing points of the curve in y-direction
@@ -35,7 +34,7 @@ curve_y_variance_max=0.2      //w.r.t. the height of image
 curve_is_deformed_prob=0           // probility that curving text is deformed
 curve_line_prob=1          //prob of displaying the baseline
 curve_line_width_min=0.0125
-curve_line_width_max=0.05    //with respect to height
+curve_line_width_max=0.1    //with respect to height
 
 
 //Italic
