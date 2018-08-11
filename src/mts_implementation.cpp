@@ -38,11 +38,11 @@
 #include <vector>
 #include <unordered_map>
 
-// opencv includes
+/* opencv includes
 #include <opencv2/imgproc.hpp>
-#include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
-#include <opencv2/calib3d.hpp>
+#include <opencv2/calib3d.hpp>*/
+#include <opencv2/core.hpp>
 #include <opencv2/core/mat.hpp>   // cv::Mat
 
 // Pango/cairo includes
@@ -51,88 +51,33 @@
 
 #include "mts_implementation.hpp"
 
-
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
 
-double MTSImplementation::getParam(std::string key) {
-    double val = helper->getParam(key);
-    return val;
-}
+// SEE mts_implementation.hpp FOR ALL DOCUMENTATION
 
-std::unordered_map<std::string, double> MTSImplementation::parseConfig(std::string filename) {
-
-    std::unordered_map<std::string, double> params = std::unordered_map<std::string, double>();
-
-    std::string delimiter = "=";
-
-    // open file
-    std::ifstream infile(filename);
-    if (! infile.is_open()) {
-        std::cerr << "Input file couldn't be opened!" << std::endl;
-        exit(1);
-    }
-
-    std::string line, key, value;
-    double val;
-    int line_num = 0;
-
-    // parse file line by line
-    while (getline(infile, line)) {
-        line_num++;
-        // if line is empty or is a comment, erase it
-        size_t com_pos = line.find("//");
-        if (com_pos != line.npos) {
-            line.erase(com_pos);
-        }
-        if (line.length()==0) {
-            continue;
-        }
-        size_t pos = line.find(delimiter);
-        if (pos == line.npos) {
-            std::cerr << "A line does not contain delimiter in config file!"
-                      << std::endl << "On line " << line_num << std::endl;
-            exit(1);
-        }
-        //CV_Assert(pos != line.npos);
-
-        key = line.substr(0, pos);
-        value = line.substr(pos+1, line.npos-pos);
-        char * err_flag;
-        val = strtod(value.c_str(), &err_flag);
-
-        // check if strtod produced error in casting
-        if (value.c_str() == err_flag && val == 0) { 
-            // tell user there was an error at this point and exit failure
-          std::cout << "An unparseable value was encountered for variable "
-                << key <<".\nPlease enter a valid number.\n";
-            exit(1);
-        }
-        params.insert(std::pair<std::string, double>(key, val));
-
-    }   
-    // close file
-    infile.close();
-    return params;
-}
-
-void MTSImplementation::cairoToMat(cairo_surface_t *surface,cv::Mat &mat) {
+void
+MTSImplementation::cairoToMat(cairo_surface_t *surface,cv::Mat &mat) {
+  
     // make a 4 channel opencv matrix
-    cv::Mat mat4 = cv::Mat(cairo_image_surface_get_height(surface),cairo_image_surface_get_width(surface),CV_8UC4,cairo_image_surface_get_data(surface));
+    cv::Mat mat4 = cv::Mat(cairo_image_surface_get_height(surface),
+                           cairo_image_surface_get_width(surface),CV_8UC4,
+                           cairo_image_surface_get_data(surface));
 
     std::vector<cv::Mat> channels;
 
     cv::split(mat4,channels);
 
-    //iterate through all channels
+    //truncate the unnecessary channells (it's going to 1 channel grey-scale)
     mat = channels[0];
 }
 
 void MTSImplementation::addGaussianNoise(cv::Mat& out) {
     // get and use user config parameters to set sigma
-    double scale = getParam("noise_sigma_scale");
-    double shift = getParam("noise_sigma_shift");
-    double sigma = round((pow(1/(noise_gen() + 0.1), 0.5) * scale + shift) * 100) / 100;
+    double scale = config->getParamDouble("noise_sigma_scale");
+    double shift = config->getParamDouble("noise_sigma_shift");
+    double sigma = round((pow(1/(noise_gen() + 0.1),0.5) * scale + shift) * 100)
+                   / 100;
 
     // create noise matrix
     cv::Mat noise = cv::Mat(out.rows, out.cols, CV_32F);
@@ -148,141 +93,42 @@ void MTSImplementation::addGaussianNoise(cv::Mat& out) {
 
 void MTSImplementation::addGaussianBlur(cv::Mat& out) {
     // get user config parameters for kernel size
-    int size_min = (int)getParam("blur_kernel_size_min") / 2;
-    int size_max = (int)getParam("blur_kernel_size_max") / 2;
-    int ker_size = (helper->rng() % (size_max-size_min) + size_min) * 2 + 1;
+    int size_min = config->getParamInt("blur_kernel_size_min") / 2;
+    int size_max = config->getParamInt("blur_kernel_size_max") / 2;
+    int ker_size = (helper->rndBetween(size_min,size_max)) * 2 + 1;
 
-    cv::GaussianBlur(out,out,cv::Size(ker_size,ker_size),0,0,cv::BORDER_REFLECT_101);
+    cv::GaussianBlur(out,out,cv::Size(ker_size,ker_size),0,0,
+                     cv::BORDER_REFLECT_101);
 }
 
-void MTSImplementation::updateFontNameList(std::vector<std::string>& font_list) {
-    // clear existing fonts for a fresh load of available fonts
-    font_list.clear(); 
-
-    PangoFontFamily ** families;
-    int num_families;
-    PangoFontMap * fontmap;
-
-    fontmap = pango_cairo_font_map_get_default();
-    pango_font_map_list_families (fontmap, &families, &num_families);
-
-    // iterativly add all available fonts to font_list
-    for (int k = 0; k < num_families; k++) {
-        PangoFontFamily * family = families[k];
-        const char * family_name;
-        family_name = pango_font_family_get_name (family);
-        font_list.push_back(std::string(family_name));
-    }   
-    // clean up
-    free (families);
-}
 
 MTSImplementation::MTSImplementation(std::string config_file)
-    : MapTextSynthesizer(),  // initialize class fields
-    fonts_{(&(this->blockyFonts_)),
-        (&(this->regularFonts_)),
-        (&(this->cursiveFonts_))},
-
-        helper(std::make_shared<MTS_BaseHelper>(MTS_BaseHelper(parseConfig(config_file)))),
-        th(helper),
-        bh(helper),
-        noise_dist(getParam("noise_sigma_alpha"),
-                getParam("noise_sigma_beta")),
+        : MapTextSynthesizer(),  // initialize class fields
+        config(make_shared<MTSConfig>(MTSConfig(config_file))),
+        helper(make_shared<MTS_BaseHelper>(MTS_BaseHelper(config))),
+        th(helper,config),
+        bh(helper,config),
+        noise_dist(config->getParamDouble("noise_sigma_alpha"),
+                   config->getParamDouble("noise_sigma_beta")),
         noise_gen(helper->rng2_, noise_dist)
 {
-    this->updateFontNameList(this->availableFonts_);
-
     //initialize rng in BaseHelper
-    uint64 seed = (uint64)getParam("seed");
+    uint64 seed = (uint64)config->getParamDouble("seed");
     helper->setSeed(seed != 0 ? seed : time(NULL));
-
-    //set required fields for TextHelper instance (th)
-    th.setFonts(fonts_);
-    th.setSampleCaptions(&(sampleCaptions_));
 }
 
 MTSImplementation::~MTSImplementation() {}
 
-void MTSImplementation::setBlockyFonts(std::vector<std::string>& font_list){
-  std::vector<std::string> availableList=this->availableFonts_;
 
-  // loop through fonts in availableFonts_ to check if the system 
-  // contains every font in the font_list
-  for(size_t k = 0; k < font_list.size(); k++){
-    if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
-      std::cerr << "The font name list must only contain fonts in your "
-                << "system.\nThe font " << font_list[k]
-                << " is not in your system.\n";
-      exit(1);
-    }
-  }
-  this->blockyFonts_.assign(font_list.begin(),font_list.end());
-}
-
-void MTSImplementation::setBlockyFonts(std::string font_file){
-    std::vector<std::string> fonts = MapTextSynthesizer::readLines(font_file);
-    setBlockyFonts(fonts);
-}
-
-void MTSImplementation::setRegularFonts(std::vector<std::string>& font_list){
-    std::vector<std::string> availableList=this->availableFonts_;
-
-    // loop through fonts in availableFonts_ to check if the system 
-    // contains every font in the font_list
-    for(size_t k = 0; k < font_list.size(); k++){
-        if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
-          std::cerr << "The font name list must only contain fonts in your "
-                    << "system.\nThe font " << font_list[k]
-                    << " is not in your system.\n";
-          exit(1);
-        }
-    }
-    this->regularFonts_.assign(font_list.begin(),font_list.end());
-}
-
-void MTSImplementation::setRegularFonts(std::string font_file){
-    std::vector<std::string> fonts = MapTextSynthesizer::readLines(font_file);
-    setRegularFonts(fonts);
-}
-
-void MTSImplementation::setCursiveFonts(std::vector<std::string>& font_list){
-    std::vector<std::string> availableList=this->availableFonts_;
-
-    // loop through fonts in availableFonts_ to check if the system 
-    // contains every font in the font_list
-    for(size_t k = 0; k < font_list.size(); k++){
-        if(std::find(availableList.begin(), availableList.end(), font_list[k]) == availableList.end()){
-            std::cerr << "The font name list must only contain fonts in your "
-                      << "system.\nThe font " << font_list[k]
-                      << " is not in your system.\n";
-            exit(1);
-        }
-    }
-    this->cursiveFonts_.assign(font_list.begin(),font_list.end());
-}
-
-void MTSImplementation::setCursiveFonts(std::string font_file){
-    std::vector<std::string> fonts = MapTextSynthesizer::readLines(font_file);
-    setCursiveFonts(fonts);
-}
-
-void MTSImplementation::setSampleCaptions(std::vector<std::string>& words) {
-    this->sampleCaptions_.assign(words.begin(),words.end());
-}
-
-void MTSImplementation::setSampleCaptions(std::string caption_file){
-    std::vector<std::string> captions = MapTextSynthesizer::readLines(caption_file);
-    setSampleCaptions(captions);
-}
-
-void MTSImplementation::generateSample(CV_OUT std::string &caption, CV_OUT cv::Mat &sample, CV_OUT int &actual_height){
+void MTSImplementation::generateSample(CV_OUT string &caption,
+                                CV_OUT Mat &sample, CV_OUT int &actual_height){
 
     std::vector<BGFeature> bg_features;
     bh.generateBgFeatures(bg_features);
 
     // set bg and text color (brightness) based on user configured parameters
-    int bgcolor_min = (int)getParam("bg_color_min");
-    int textcolor_max = (int)getParam("text_color_max");
+    int bgcolor_min = config->getParamInt("bg_color_min");
+    int textcolor_max = config->getParamInt("text_color_max");
     // assert colors are valid values
 
     if (bgcolor_min > 255 || textcolor_max < 0 || bgcolor_min<=textcolor_max) {
@@ -290,8 +136,8 @@ void MTSImplementation::generateSample(CV_OUT std::string &caption, CV_OUT cv::M
         exit(1);
     }
 
-    int bg_brightness = helper->rng()%(255-bgcolor_min+1)+bgcolor_min;
-    int text_color = helper->rng()%(textcolor_max+1);
+    int bg_brightness = helper->rndBetween(bgcolor_min,255);
+    int text_color = helper->rndBetween(0,textcolor_max);
     int contrast = bg_brightness - text_color;
 
     cairo_surface_t *text_surface;
@@ -299,43 +145,43 @@ void MTSImplementation::generateSample(CV_OUT std::string &caption, CV_OUT cv::M
     int width;
 
     // set image height from user configured parameters
-    int height_min = (int)getParam("height_min");
-    int height_max = (int)getParam("height_max");
-
+    int height_min = config->getParamInt("height_min");
+    int height_max = config->getParamInt("height_max");
     if (height_min == height_max) {
         height = height_min;
     } else {
-        height = (helper->rng() % (height_max - height_min + 1)) + height_min;
+        height = helper->rndBetween(height_min,height_max); 
     }
 
     actual_height = height;
 
-    std::string text;
-
     // use TextHelper instance to generate synthetic text
-    if (std::find(bg_features.begin(), bg_features.end(), Distracttext)!= bg_features.end()) {
-        // do generate distractor text
-        th.generateTextSample(text,text_surface,height,width,text_color,true);
+    if (std::find(bg_features.begin(), bg_features.end(), Distracttext)!=
+        bg_features.end()) {
+        // generate distractor text
+        th.generateTextSample(caption,text_surface,height,
+                              width,text_color,true);
     } else {
         // dont generate distractor text
-        th.generateTextSample(text,text_surface,height,width,text_color,false);
+        th.generateTextSample(caption,text_surface,height,
+                              width,text_color,false);
     }
-    caption = std::string(text);
 
     // use BackgroundHelper to generate the background image
     cairo_surface_t *bg_surface;
-    bh.generateBgSample(bg_surface, bg_features, height, width, bg_brightness, contrast);
+    bh.generateBgSample(bg_surface, bg_features, height, width,
+                        bg_brightness, contrast);
     cairo_t *cr = cairo_create(bg_surface);
     cairo_set_source_surface(cr, text_surface, 0, 0);
 
     // set the blend alpha range using user configured parameters
-    int blend_min=(int)(100 * getParam("blend_alpha_min"));
-    int blend_max=(int)(100 * getParam("blend_alpha_max"));
+    double blend_min=config->getParamDouble("blend_alpha_min");
+    double blend_max=config->getParamDouble("blend_alpha_max");
 
-    double blend_alpha=(helper->rng()%(blend_max-blend_min+1)+blend_min)/100.0;
+    double blend_alpha=helper->rndBetween(blend_min,blend_max);
 
     // blend with alpha or not based on user set probability
-    if(helper->rndProbUnder(getParam("blend_prob"))){
+    if(helper->rndProbUnder(config->getParamDouble("blend_prob"))){
         cairo_paint_with_alpha(cr, blend_alpha);
     } else { // dont blend
         cairo_paint(cr);
@@ -359,13 +205,13 @@ void MTSImplementation::generateSample(CV_OUT std::string &caption, CV_OUT cv::M
     addGaussianBlur(sample_float);
 
     bool zero_padding = true;
-    if (getParam("zero_padding")==0) zero_padding = false;
+    if (config->getParamDouble("zero_padding")==0) zero_padding = false;
 
     if (!zero_padding) {
       sample = cv::Mat(height,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
     } else {
-        int height_max = int(getParam("height_max"));
-        sample = cv::Mat(height_max,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
+        int height_max = int(config->getParamDouble("height_max"));
+        sample = Mat(height_max,width,CV_8UC1,Scalar_<uchar>(0,0,0));
     }
 
     sample_float.convertTo(sample_uchar, CV_8UC1, 255.0);

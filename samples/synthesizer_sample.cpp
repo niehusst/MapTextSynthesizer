@@ -46,30 +46,12 @@ int main(int argc, char **argv) {
        found in input filename */
     auto mts = MapTextSynthesizer::create("config.txt");
 
-    // add font types (these fonts should be available on most machines)
-    // if you are getting an error about unavailable fonts, run 
-    // list_available_fonts.cpp to see what fonts are available on your machine
-    vector<string> blocky;
-    blocky.push_back("Monospace");
-
-    vector<string> regular;
-    regular.push_back("Sans");
-    
-    vector<string> cursive;
-    cursive.push_back("Serif");
-
-    // use the list of civil entity names in Iowa file for image captions
-    mts->setSampleCaptions("IA_placenames/Civil.txt");
-    // set the fonts
-    mts->setBlockyFonts(blocky);
-    mts->setRegularFonts(regular);
-    mts->setCursiveFonts(cursive);
-
     int k=0;
     string label;
     Mat image;
     int height;
 
+    // Run a benchmark test of production speed
     if( (argc > 1) && (string(argv[1]) == "benchmark") ) {
       cout << "Running benchmark" << flush;
       int start = time(NULL);
