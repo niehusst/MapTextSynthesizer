@@ -127,6 +127,7 @@ class MTS_TextHelper {
          *
          * cr - cairo context
          * layout - the PangoLayout used for the desired text
+         * path - the cairo path to store the base line curve 
          * width - the width of the surface
          * height - the height of the surface
          * num_points - the number of points that form the path.
@@ -138,15 +139,14 @@ class MTS_TextHelper {
          * d_min - the min range value for cubed variable in the first cubic
          *        curving equation
          * d_max - the max range value for cubed variable in the first cubic
-         * cd_sum_max - the maximum sum of cubic and quadratic coeff of the curve
          * stretch_deg - the horizontal stretch degree
          * y_var_min_ratio - the minimum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
          * y_var_max_ratio - the maximum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
          */
         void
-            create_curved_text(cairo_t *cr, PangoLayout *layout,
+            create_curved_text(cairo_t *cr, PangoLayout *layout, cairo_path_t *&path,
                     double width, double height, int num_points, double c_min,
-                    double c_max, double d_min, double d_max, double cd_sum_max, double stretch_deg,
+                    double c_max, double d_min, double d_max,double stretch_deg,
                     double y_var_min_ratio, double y_var_max_ratio);
 
         /*
@@ -154,6 +154,7 @@ class MTS_TextHelper {
          *
          * cr - cairo context
          * layout - the PangoLayout used for the desired text
+         * path - the cairo path to store the base line curve 
          * width - the width of the surface
          * height - the height of the surface
          * num_points - the number of points that form the path.
@@ -165,15 +166,14 @@ class MTS_TextHelper {
          * d_min - the min range value for cubed variable in the first cubic
          *        curving equation
          * d_max - the max range value for cubed variable in the first cubic
-         * cd_sum_max - the maximum sum of cubic and quadratic coeff of the curve
          * stretch_deg - the horizontal stretch degree
          * y_var_min_ratio - the minimum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
          * y_var_max_ratio - the maximum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
          */
         void create_curved_text_deformed(cairo_t *cr, 
-                PangoLayout *layout, double width, double height,
+                PangoLayout *layout, cairo_path_t *&path, double width, double height,
                 int num_points, double c_min, double c_max, double d_min,
-                double d_max, double cd_sum_max, double stretch_deg, 
+                double d_max, double stretch_deg, 
                 double y_var_min_ratio, double y_var_max_ratio);
 
         /*

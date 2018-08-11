@@ -562,7 +562,7 @@ MTS_BaseHelper::four_point_to_cp(coords start,
 
 
 void 
-MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double cmin, double cmax, double dmin, double dmax, double cd_sum_max) {
+MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double cmin, double cmax, double dmin, double dmax, bool text) {
 
     unsigned int count = points.size();
 
@@ -591,44 +591,50 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
 
     double x = start.first / 100, y = start.second, u = end.first / 100, w = end.second;
 
-    //cout << "x, y " << x*100 << " " << y  << endl;
+    cout << "x, y " << x*100 << " " << y  << endl;
 
     // set coefficients of cubic equation to describe curve
-    double a=0, b=0, c=0, d=0;
+    double a=0, b=100, c=0, d=0;
 
-    // prevent both c and d become 0
-    while (c==0 && d==0) {
-        c = rndBetween(cmin,cmax);
-
-        if (count == 0) {
-            d = 0;
-        } else {
+    do {
+        cout << "in loop" << endl;
+        cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
+        do {
+            c = rndBetween(cmin,cmax);
             d = rndBetween(dmin,dmax); 
-
-            if (abs(c+d) > cd_sum_max) {
-                d = cd_sum_max - c;
+            if (count == 0) {
+                d = 0;
+            } else {
+                if (text) {
+                    double cd_sum_max = config->getParamDouble("curve_cd_sum_max");
+                    if (abs(c+d) > cd_sum_max) {
+                        d = cd_sum_max - c;
+                    }
+                }
             }
         }
-    }
+        // prevent both c and d become 0
+        while (c==0 && d==0);
 
-    if (x == u) {
-        cerr << "Cannot draw vertical curve in points_to_path()!" << endl;
-        exit(1);
-    }
-    else if (x == 0) {
-        a = y;
-        b = (w - y - d*pow(u,3) - c*pow(u,2)) / u;
-    } else if (u == 0) {
-        a = w;
-        b = (y - w - d*pow(x,3) - c*pow(x,2)) / x;
-    } else {
-        a = (y - d*pow(x,3) - c*pow(x,2) - (x/u)*(w - d*pow(u,3) - c*pow(u,2))) / (1 - x/u);
-        b = (y - d*pow(x,3) - c*pow(x,2) - a) / x;
-    }
+        if (x == u) {
+            cerr << "Cannot draw vertical curve in points_to_path()!" << endl;
+            exit(1);
+        } else if (x == 0) {
+            a = y;
+            b = (w - y - d*pow(u,3) - c*pow(u,2)) / u;
+        } else if (u == 0) {
+            a = w;
+            b = (y - w - d*pow(x,3) - c*pow(x,2)) / x;
+        } else {
+            a = (y - d*pow(x,3) - c*pow(x,2) - (x/u)*(w - d*pow(u,3) - c*pow(u,2))) / (1 - x/u);
+            b = (y - d*pow(x,3) - c*pow(x,2) - a) / x;
+        }
+
+    } while (text && abs(b)>(config->getParamDouble("curve_b_abs_max")));
 
     double coeff[4] = {a,b,c,d};
 
-    //cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
+    cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
 
     // get two points in the middle to calculate control points
     double x1 = (2.0/3)*x + (1.0/3)*u;
@@ -687,10 +693,18 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
              */
 
             // (n,m) is the arbitrary new middle point
-            double n = (x+u)/2;
-            double m = (y+w)/2;
+            double y_var_min, y_var_max, n, m;
+            if (text) {
+                y_var_min = config->getParamDouble("curve_y_variance_min");
+                y_var_max = config->getParamDouble("curve_y_variance_max");
+            } else {
+                y_var_min = config->getParamDouble("bg_curve_y_variance_min");
+                y_var_max = config->getParamDouble("bg_curve_y_variance_max");
+            }
+            n = (x+u)/2;
+            m = (y+w)/2+(w-y)*rndBetween(y_var_min, y_var_max);
 
-            //cout << "x, y, n, m " << x*100 << " " << y << " " << n*100 << " " << m << endl;
+            cout << "x, y, n, m " << x*100 << " " << y << " " << n*100 << " " << m << endl;
 
             double k = (x-u)/(x-n);
             double x_2 = pow(x,2), u_2 = pow(u,2), n_2 = pow(n,2);

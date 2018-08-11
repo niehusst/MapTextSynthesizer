@@ -438,8 +438,8 @@ MTS_BackgroundHelper::addTexture(cairo_t *cr, bool curved, double brightness, in
     int spacing = std::max(4, width/100);
     spacing = spacing + helper->rng() % (2*spacing);  
 
-    // linewidth range (1/3)height - (1/2)height
-    int linewidth = (1.0 / (0.5 + texture_distrib_gen() * 2.5)) * height;
+    // linewidth range (1/10)width - (1/2)width
+    int linewidth = (1.0 / (2 + texture_distrib_gen() * 8)) * width;
     int texture = helper->rng() % 3; // range 0-2
     //coords start_point;
 

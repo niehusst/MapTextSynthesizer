@@ -150,7 +150,7 @@ class MTS_BaseHelper {
          * points - a vector of x,y coordinate pairs 
          *          (precondition: must contain at least 2 elements)
          */
-        void points_to_path(cairo_t *cr, std::vector<coords> points, double c_min=-2, double c_max=2, double d_min=-2, double d_max=2, double cd_sum_max=10);
+        void points_to_path(cairo_t *cr, std::vector<coords> points, double c_min=-2, double c_max=2, double d_min=-2, double d_max=2, bool text = false);
 
         /*
          * Makes and returns a vector of x,y coordinate points for
