@@ -26,6 +26,7 @@
 #include <iostream> 
 #include <unordered_map>
 #include <memory>
+#include <fstream>
 
 #include <pango/pangocairo.h>
 
@@ -38,10 +39,6 @@ using boost::random::mt19937;
 
 MTS_BaseHelper::MTS_BaseHelper(std::shared_ptr<MTSConfig> c) : config(&(*c)) {}
 
-
-MTS_BaseHelper::MTS_BaseHelper(std::unordered_map<std::string, double> params){
-  this->params = params;
-}
 
 bool 
 MTS_BaseHelper::rndProbUnder(double probability){
@@ -99,7 +96,7 @@ MTS_BaseHelper::strip(std::string str) {
 std::vector<std::string>
 MTS_BaseHelper::readLines(std::string filename) {
     std::vector<std::string> lines;
-    std::ifstream infile(filename);
+    std::ifstream infile(filename.c_str());
     
     if (! infile.is_open()) {
         std::cerr << "Could not open " << filename << std::endl;

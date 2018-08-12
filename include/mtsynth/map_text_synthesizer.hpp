@@ -27,15 +27,15 @@ class CV_EXPORTS_W MapTextSynthesizer{
          * sample - the resulting text sample.
          */
         CV_WRAP virtual void 
-            generateSample (CV_OUT string &caption, CV_OUT Mat &sample,
+          generateSample (CV_OUT std::string &caption, CV_OUT cv::Mat &sample,
                             CV_OUT int &actual_height) = 0;
 
         /*
          * A wrapper for the protected MapTextSynthesizer constructor.
          * Use this method to create a MTS object.
          */
-        CV_WRAP static Ptr<MapTextSynthesizer> 
-            create(string config_file);
+        CV_WRAP static cv::Ptr<MapTextSynthesizer> 
+            create(std::string config_file);
 
         /*
          * The destructor for the MapTextSynthesizer class 

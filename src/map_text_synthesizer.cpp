@@ -17,10 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 
-#include <fstream>
 #include <string>
-#include <vector>
 #include <memory>
+
+#include <opencv2/core/cvstd.hpp>
 
 #include "map_text_synthesizer.hpp"
 #include "mts_implementation.hpp"

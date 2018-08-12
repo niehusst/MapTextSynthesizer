@@ -1,6 +1,7 @@
 //FILE PATHS
 // The files to fetch font names from
-fonts = blocky.txt, regular.txt, cursive.txt
+fonts = fonts.txt
+//blocky.txt, regular.txt, cursive.txt
 // The files to fetch captions from
 captions = IA_placenames/Civil.txt, IA_placenames/Pillar.txt
 

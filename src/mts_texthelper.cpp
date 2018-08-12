@@ -47,8 +47,8 @@ MTS_TextHelper::MTS_TextHelper(shared_ptr<MTS_BaseHelper> h, shared_ptr<MTSConfi
     this->updateFontNameList(this->availableFonts_);
 
     if (config->findParam("fonts")) {
-        string fontlists_str = config->getParam("fonts");
-        vector<string> fontlists = helper->tokenize(fontlists_str,",");
+        std::string fontlists_str = config->getParam("fonts");
+        std::vector<std::string> fontlists = helper->tokenize(fontlists_str,",");
         if (fontlists.size()==0) {
             cerr << "fonts parameter does not have any file in it!" << endl;
             exit(1);
@@ -62,8 +62,8 @@ MTS_TextHelper::MTS_TextHelper(shared_ptr<MTS_BaseHelper> h, shared_ptr<MTSConfi
     }
 
     if (config->findParam("captions")) {
-        string caplists_str = config->getParam("captions");
-        vector<string> caplists = helper->tokenize(caplists_str,",");
+        std::string caplists_str = config->getParam("captions");
+        std::vector<std::string> caplists = helper->tokenize(caplists_str,",");
         if (caplists.size()==0) {
             cerr << "captions parameter does not have any file in it!" << endl;
             exit(1);
@@ -80,7 +80,7 @@ MTS_TextHelper::MTS_TextHelper(shared_ptr<MTS_BaseHelper> h, shared_ptr<MTSConfi
 MTS_TextHelper::~MTS_TextHelper(){}
 
 void 
-MTS_TextHelper::updateFontNameList(std::vector<string>& font_list) {
+MTS_TextHelper::updateFontNameList(std::vector<std::string>& font_list) {
     // clear existing fonts for a fresh load of available fonts
     font_list.clear(); 
 
@@ -96,15 +96,15 @@ MTS_TextHelper::updateFontNameList(std::vector<string>& font_list) {
         PangoFontFamily * family = families[k];
         const char * family_name;
         family_name = pango_font_family_get_name (family);
-        font_list.push_back(string(family_name));
+        font_list.push_back(std::string(family_name));
     }   
     // clean up
     free (families);
 }
 
 void
-MTS_TextHelper::addFontlist(std::vector<string>& font_list){
-    std::vector<string> availableList=this->availableFonts_;
+MTS_TextHelper::addFontlist(std::vector<std::string>& font_list){
+    std::vector<std::string> availableList=this->availableFonts_;
 
     // loop through fonts in availableFonts_ to check if the system 
     // contains every font in the font_list
@@ -121,19 +121,19 @@ MTS_TextHelper::addFontlist(std::vector<string>& font_list){
 }
 
 void
-MTS_TextHelper::addFontlist(string font_file){
-    std::vector<string> fonts = helper->readLines(font_file);
+MTS_TextHelper::addFontlist(std::string font_file){
+    std::vector<std::string> fonts = helper->readLines(font_file);
     addFontlist(fonts);
 }
 
 void
-MTS_TextHelper::addCaptionlist(vector<string>& words) {
+MTS_TextHelper::addCaptionlist(std::vector<std::string>& words) {
     this->captions_.insert(this->captions_.end(),words.begin(),words.end());
 }
 
 void
-MTS_TextHelper::addCaptionlist(string caption_file){
-    std::vector<string> captions = helper->readLines(caption_file);
+MTS_TextHelper::addCaptionlist(std::string caption_file){
+    std::vector<std::string> captions = helper->readLines(caption_file);
     addCaptionlist(captions);
 }
 

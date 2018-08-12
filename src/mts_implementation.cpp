@@ -38,10 +38,10 @@
 #include <vector>
 #include <unordered_map>
 
-/* opencv includes
-#include <opencv2/imgproc.hpp>
+// opencv includes
 #include <opencv2/highgui.hpp>
-#include <opencv2/calib3d.hpp>*/
+#include <opencv2/calib3d.hpp>
+#include <opencv2/imgproc.hpp> //cv::GaussianBlur
 #include <opencv2/core.hpp>
 #include <opencv2/core/mat.hpp>   // cv::Mat
 
@@ -120,8 +120,8 @@ MTSImplementation::MTSImplementation(std::string config_file)
 MTSImplementation::~MTSImplementation() {}
 
 
-void MTSImplementation::generateSample(CV_OUT string &caption,
-                                CV_OUT Mat &sample, CV_OUT int &actual_height){
+void MTSImplementation::generateSample(CV_OUT std::string &caption,
+                                CV_OUT cv::Mat &sample, CV_OUT int &actual_height){
 
     std::vector<BGFeature> bg_features;
     bh.generateBgFeatures(bg_features);
@@ -211,7 +211,7 @@ void MTSImplementation::generateSample(CV_OUT string &caption,
       sample = cv::Mat(height,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
     } else {
         int height_max = int(config->getParamDouble("height_max"));
-        sample = Mat(height_max,width,CV_8UC1,Scalar_<uchar>(0,0,0));
+        sample = cv::Mat(height_max,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
     }
 
     sample_float.convertTo(sample_uchar, CV_8UC1, 255.0);

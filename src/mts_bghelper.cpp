@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <iostream>
-#include <string>
+
 
 #include <pango/pangocairo.h>
 
@@ -37,8 +37,8 @@ using boost::random::variate_generator;
 // SEE mts_bghelper.hpp FOR ALL DOCUMENTATION
 
 
-MTS_BackgroundHelper::MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h,
-                                           shared_ptr<MTSConfig> c)
+MTS_BackgroundHelper::MTS_BackgroundHelper(std::shared_ptr<MTS_BaseHelper> h,
+                                           std::shared_ptr<MTSConfig> c)
     :helper(&(*h)),  // initialize fields
     config(&(*c)),  
     bias_var_dist(c->getParamDouble("bias_std_alpha"),
@@ -54,8 +54,8 @@ MTS_BackgroundHelper::~MTS_BackgroundHelper(){}
 
 
 void
-MTS_BackgroundHelper::draw_boundary(cairo_t *cr, double linewidth, 
-                                    double og_col, bool horizontal) {
+MTS_BackgroundHelper::draw_boundary(cairo_t *cr, double linewidth,
+                                    double og_col) {
 
     // get original dash code
     int dash_len = cairo_get_dash_count(cr);
@@ -263,41 +263,7 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
     cairo_set_dash(cr, NULL, 0, 0);
 }
 
-  // set path shape 
-  if(curved) { 
-    // draw a wiggly line
-    generate_curve(cr, horizontal, width, height, c_min, c_max, d_min, d_max);
 
-  } else { // draw a straight line
-    // move to starting point
-    cairo_move_to(cr, start_point.first, start_point.second); 
-    if(horizontal) {
-      // make a line to width and a random height
-      cairo_line_to(cr, width, helper->rng() % height); 
-    } else { //vertical 
-      // make a line to height and a random width
-      cairo_line_to(cr, helper->rng() % width, height); 
-    }
-  } 
-
-  // set line style to dashed or not (default solid)
-  if(dashed) { set_dash_pattern(cr); } 
-
-  // set boundry or not
-  if(boundary) { draw_boundary(cr, line_width, color, horizontal); }
-
-  // set hatching or not
-  if(hatched) { draw_hatched(cr, line_width); } 
-
-  // draw parallel or not
-  if(doubleline) { draw_parallel(cr, horizontal, 3*line_width); }
-
-  //stroke
-  cairo_stroke(cr);
-
-  //set rotations and translations back to normal
-  cairo_identity_matrix(cr); 
-}
 
 
 void
@@ -832,7 +798,6 @@ MTS_BackgroundHelper::colorDiff (cairo_t *cr, int width, int height,
         cairo_fill(cr);
     }
     cairo_fill(cr);
-  }
 }
 
 

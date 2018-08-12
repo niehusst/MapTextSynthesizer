@@ -14,9 +14,9 @@
 
 using boost::random::mt19937;
 
-// All possible features that can be incorporated into a background
 
-enum BGFeature {Colordiff=0, Distracttext, Boundry, Colorblob, 
+// All possible features that can be incorporated into a background
+enum BGFeature {Colordiff=0, Distracttext, Boundary, Colorblob, 
                 Straight, Grid, Citypoint, Parallel, 
                 Vparallel, Texture, Railroad, Riverline};
 
@@ -126,7 +126,7 @@ private://----------------------- PRIVATE METHODS --------------------------
                     coords *cp2);
 
         //the random number generator
-        RNG rng_;
+        cv::RNG rng_;
 
 public://----------------------- PUBLIC METHODS --------------------------
 
@@ -181,11 +181,11 @@ public://----------------------- PUBLIC METHODS --------------------------
         //Another RNG for beta, gamma, and normal distributions
         mt19937 rng2_;
 
-        //Constructor
-        MTS_BaseHelper(shared_ptr<MTSConfig> c);
+        //Constructors
+        MTS_BaseHelper(std::shared_ptr<MTSConfig> c);
 
         //Destructor
-        ~MTS_BaseHelper();
+        ~MTS_BaseHelper() {}
 
         /*
          * Returns true or false based on a randomly generated probability under
