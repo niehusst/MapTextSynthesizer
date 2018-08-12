@@ -585,7 +585,7 @@ MTS_BaseHelper::four_point_to_cp(coords start,
 void 
 MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points,
                                double cmin, double cmax, double dmin,
-                               double dmax, double cd_sum_max) {
+                               double dmax, bool text) {
 
     unsigned int count = points.size();
 
@@ -612,46 +612,49 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points,
        b = (y - dx^3 - cx^2 - a) / x
     */
 
-    double x = start.first / 100, y = start.second,
-           u = end.first / 100, w = end.second;
-
     // set coefficients of cubic equation to describe curve
-    double a=0, b=0, c=0, d=0;
+    double a=0, b=100, c=0, d=0;
 
-    // prevent both c and d become 0
-    while (c==0 && d==0) {
-        c = rndBetween(cmin,cmax);
-
-        if (count == 0) {
-            d = 0;
-        } else {
+    do {
+        do {
+            c = rndBetween(cmin,cmax);
             d = rndBetween(dmin,dmax); 
-
-            if (abs(c+d) > cd_sum_max) {
-                d = cd_sum_max - c;
+            if (count == 0) {
+                d = 0;
+            } else {
+                if (text) {
+                    double cd_sum_max = config->getParamDouble("curve_cd_sum_max");
+                    if (abs(c+d) > cd_sum_max) {
+                        d = cd_sum_max - c;
+                    }
+                }
             }
         }
-    }
+        // prevent both c and d become 0
+        while (c==0 && d==0);
 
-    if (x == u) { // starting x cannot equal ending x position
-        std::cerr << "Cannot draw vertical curve in points_to_path()!"
-                  << std::endl;
-        exit(1);
-    }
-    else if (x == 0) {
-        a = y;
-        b = (w - y - d*pow(u,3) - c*pow(u,2)) / u;
-    } else if (u == 0) {
-        a = w;
-        b = (y - w - d*pow(x,3) - c*pow(x,2)) / x;
-    } else {
-        a = (y - d*pow(x,3) - c*pow(x,2) -
-             (x/u)*(w - d*pow(u,3) - c*pow(u,2))) / (1 - x/u);
-        b = (y - d*pow(x,3) - c*pow(x,2) - a) / x;
-    }
+
+        if (x == u) {// starting x cannot equal ending x position
+            std::cerr << "Cannot draw vertical curve in points_to_path()!"
+                      << std::endl;
+            exit(1);
+        } else if (x == 0) {
+            a = y;
+            b = (w - y - d*pow(u,3) - c*pow(u,2)) / u;
+        } else if (u == 0) {
+            a = w;
+            b = (y - w - d*pow(x,3) - c*pow(x,2)) / x;
+        } else {
+            a = (y - d*pow(x,3) - c*pow(x,2) - (x/u)*(w - d*pow(u,3)
+                                                    - c*pow(u,2))) / (1 - x/u);
+            b = (y - d*pow(x,3) - c*pow(x,2) - a) / x;
+        }
+
+    } while (text && abs(b)>(config->getParamDouble("curve_b_abs_max")));
 
     double coeff[4] = {a,b,c,d};
 
+    // get two points in the middle to calculate control points
     double x1 = (2.0/3)*x + (1.0/3)*u;
     double x2 = (1.0/3)*x + (2.0/3)*u;
     double y1 =coeff[0] + coeff[1]*x1 + coeff[2]*pow(x1,2) + coeff[3]*pow(x1,3);
@@ -712,8 +715,16 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points,
              */
 
             // (n,m) is the arbitrary new middle point
-            double n = (x+u)/2;
-            double m = (y+w)/2;
+            double y_var_min, y_var_max, n, m;
+            if (text) {
+                y_var_min = config->getParamDouble("curve_y_variance_min");
+                y_var_max = config->getParamDouble("curve_y_variance_max");
+            } else {
+                y_var_min = config->getParamDouble("bg_curve_y_variance_min");
+                y_var_max = config->getParamDouble("bg_curve_y_variance_max");
+            }
+            n = (x+u)/2;
+            m = (y+w)/2+(w-y)*rndBetween(y_var_min, y_var_max);
 
             double k = (x-u)/(x-n);
             double x_2 = pow(x,2), u_2 = pow(u,2), n_2 = pow(n,2);

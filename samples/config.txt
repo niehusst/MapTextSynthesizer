@@ -35,18 +35,24 @@ curve_num_points_max=5        // in a curved line. More means many low amplitude
                               // curves in the overall line.
                               
 curve_c_min=-2                // Curved line cubic function coefficient ranges. 
-curve_c_max=2                 // c does...
-curve_d_min=-2                // d does...
+curve_c_max=2                 // Increasing either b, c, or d will increase
+curve_d_min=-2                // the amplitude of produced curves.
 curve_d_max=2                 // f(x) = a + bx + cx^2 + dx^3
-
-curve_cd_increase_rate=3
+curve_b_abs_max=50
 
 curve_cd_sum_max=3            //prevent huge curvature at the beginning of curve
 
 curve_y_variance_min=0        // Range of possible curve amplitude in the
 curve_y_variance_max=0.8      // y-direction with respect to image height
 
-curve_is_deformed_prob=0.5    // Probility that curved text may be deformed
+curve_is_deformed_prob=0.5    // Probability that curved text may be deformed
+
+curve_line_prob=1             // Probability of drawing a line along the
+                              // text baseline.
+
+curve_line_width_min=0.0125   // Range of the ratio of width of the curved line
+curve_line_width_max=0.1      // with respect to image height (for if the
+                              // baseline is drawn)
 
 
 // Italic

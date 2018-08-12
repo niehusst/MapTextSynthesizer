@@ -153,11 +153,13 @@ public://----------------------- PUBLIC METHODS --------------------------
          *        curving equation (optional)
          * d_max - the max range value for cubed variable in the first cubic 
          *        curving equation (optional)
-         * cd_sum_max - The maximum sum of c and d (optional)
+         * text - Boolean flag say whether this function is being called to 
+         *        draw a path for text or a line. (optional)
          */
         void points_to_path(cairo_t *cr, std::vector<coords> points,
                             double c_min=-2, double c_max=2, double d_min=-2,
-                            double d_max=2, double cd_sum_max=10);
+                            double d_max=2, bool text = false);
+
 
         /*
          * Makes and returns a vector of x,y coordinate points for
