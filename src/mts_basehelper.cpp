@@ -23,7 +23,7 @@ MTS_BaseHelper::MTS_BaseHelper(shared_ptr<MTSConfig> c)
 }
 
 MTS_BaseHelper::~MTS_BaseHelper(){
-    cout << "base helper destructed" << endl;
+    //cout << "base helper destructed" << endl;
 }
 
 bool 
@@ -591,12 +591,24 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
 
     double x = start.first / 100, y = start.second, u = end.first / 100, w = end.second;
 
-    cout << "x, y " << x*100 << " " << y  << endl;
+    //cout << "x, y " << x*100 << " " << y  << endl;
 
     // set coefficients of cubic equation to describe curve
     double a=0, b=100, c=0, d=0;
 
+    int loop_count = 0;
+
     do {
+        //gradually increase the limit for c and d so that they won't stuck here
+        double l = (loop_count/1000)*0.5;
+        //cout << "l " << loop_count << " " << l << endl;
+        cmin-=l;
+        cmax+=l;
+        dmin-=l;
+        dmax+=l;
+
+        //cout << "cminmax dminmax " << cmin << " " << cmax << " " << dmin << " " << dmax << endl;
+
         //cout << "in loop" << endl;
         //cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
         do {
@@ -630,11 +642,13 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
             b = (y - d*pow(x,3) - c*pow(x,2) - a) / x;
         }
 
+        loop_count++;
+
     } while (text && abs(b)>(config->getParamDouble("curve_b_abs_max")));
 
     double coeff[4] = {a,b,c,d};
 
-    cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
+    //cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
 
     // get two points in the middle to calculate control points
     double x1 = (2.0/3)*x + (1.0/3)*u;
@@ -704,7 +718,7 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
             n = (x+u)/2;
             m = (y+w)/2+(w-y)*rndBetween(y_var_min, y_var_max);
 
-            cout << "x, y, n, m " << x*100 << " " << y << " " << n*100 << " " << m << endl;
+            //cout << "x, y, n, m " << x*100 << " " << y << " " << n*100 << " " << m << endl;
 
             double k = (x-u)/(x-n);
             double x_2 = pow(x,2), u_2 = pow(u,2), n_2 = pow(n,2);

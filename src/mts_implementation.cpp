@@ -85,7 +85,7 @@ MTSImplementation::MTSImplementation(string config_file)
 }
 
 MTSImplementation::~MTSImplementation() {
-    cout << "impl destructed" << endl;
+    //cout << "impl destructed" << endl;
 }
 
 void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sample, CV_OUT int &actual_height){
@@ -131,7 +131,7 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
     }
 
     //cout << "generating bg sample" << endl;
-    cout << "bg feature num " << bg_features.size() << endl; 
+    //cout << "bg feature num " << bg_features.size() << endl; 
 
     // use BackgroundHelper to generate the background image
     cairo_surface_t *bg_surface;
@@ -166,8 +166,8 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
     cairo_surface_destroy(bg_surface);
 
     // add image smoothing using blur and noise
-    addGaussianNoise(sample_float);
-    addGaussianBlur(sample_float);
+    //addGaussianNoise(sample_float);
+    //addGaussianBlur(sample_float);
 
     bool zero_padding = true;
     if (config->getParamDouble("zero_padding")==0) zero_padding = false;

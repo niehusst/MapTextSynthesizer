@@ -30,7 +30,7 @@ MTS_BackgroundHelper::MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h, shared_
 {}
 
 MTS_BackgroundHelper::~MTS_BackgroundHelper(){
-    cout << "bg helper destructed" << endl;
+    //cout << "bg helper destructed" << endl;
 }
 
 void
@@ -473,7 +473,7 @@ MTS_BackgroundHelper::addTexture(cairo_t *cr, bool curved, double brightness, in
 
 void
 MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
-    cout << "start adding bias" << endl;
+    //cout << "start adding bias" << endl;
     cairo_pattern_t *pattern_vertical = cairo_pattern_create_linear(helper->rng()%width, 0,
             helper->rng()%width, height);
     cairo_pattern_t *pattern_horizontal = cairo_pattern_create_linear(0, helper->rng()%height,
@@ -532,7 +532,7 @@ MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
     cairo_paint_with_alpha(cr,0.3);
     cairo_set_source(cr, pattern_vertical);
     cairo_paint_with_alpha(cr,0.3);
-    cout << "finished bias" << endl;
+    //cout << "finished bias" << endl;
 
 }
 
@@ -561,7 +561,7 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
         lines_max = config->getParamInt("vpara_num_max");
     }
     int num = helper->rndBetween(lines_min,lines_max); 
-    cout << "line nums " << num << endl;
+    //cout << "line nums " << num << endl;
 
     //length of lines
     double length = std::max(width, height)*pow(2,0.5);
@@ -746,8 +746,8 @@ MTS_BackgroundHelper::cityPoint(cairo_t *cr, int width, int height, bool hollow)
     // set point radius
     double r_min = config->getParamDouble("point_radius_min");
     double r_max = config->getParamDouble("point_radius_max");
-    cout << r_min<< endl;
-    cout << r_max<< endl;
+    //cout << r_min<< endl;
+    //cout << r_max<< endl;
     if (r_max > 0.5) r_max = 0.5; //verify perconditions
 
     int radius = (int)(helper->rndBetween(r_min,r_max)*height); 
@@ -839,19 +839,19 @@ MTS_BackgroundHelper::generateBgFeatures(std::vector<BGFeature> &bg_features){
             }
         }
     }
-    cout << "got all features" << endl;
+    //cout << "got all features" << endl;
 }
 
 
 void 
 MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector<BGFeature> &features, int height, int width, int bg_color, int contrast){
 
-    cout << "bg color " << bg_color << endl;
-    cout << "constrast " << contrast << endl;
+    //cout << "bg color " << bg_color << endl;
+    //cout << "constrast " << contrast << endl;
 
     double c_min, c_max, d_min, d_max, curve_prob;
     int num_lines;
-    cout << "generating bg sample" << endl;
+    //cout << "generating bg sample" << endl;
     // initialize the cairo image variables for background
     cairo_surface_t *surface;
     cairo_t *cr;
@@ -871,7 +871,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
     }
 
     //add background bias field
-    addBgBias(cr, width, height, bg_color);
+    //addBgBias(cr, width, height, bg_color);
 
     if (find(features.begin(), features.end(), Colorblob)!= features.end()) {
         int num_min= config->getParamInt("blob_num_min");
@@ -980,7 +980,9 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
     // add rivers by probability
     if (find(features.begin(), features.end(), Riverline)!= features.end()) {
         int river_min = config->getParamInt("river_num_lines_min");
-        int river_max = config->getParamInt("river_num_lines_max")+1 - river_min;
+        int river_max = config->getParamInt("river_num_lines_max");
+
+        double double_prob = config->getParamDouble("river_double_line_prob");
 
         num_lines = helper->rndBetween(river_min,river_max); 
         c_min = config->getParamDouble("river_curve_c_min");
@@ -990,7 +992,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
 
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
-            addLines(cr, false, false, false, true, helper->rng()%2, true, 
+            addLines(cr, false, false, false, true, helper->rndProbUnder(double_prob), true, 
                     width, height, c_min, c_max, d_min, d_max);
         }
     }

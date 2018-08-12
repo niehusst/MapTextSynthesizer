@@ -57,7 +57,7 @@ MTS_TextHelper::MTS_TextHelper(shared_ptr<MTS_BaseHelper> h, shared_ptr<MTSConfi
 }
 
 MTS_TextHelper::~MTS_TextHelper(){
-    cout << "text helper destructed" << endl;
+    //cout << "text helper destructed" << endl;
 }
 
 // SEE mts_texthelper.hpp FOR ALL DOCUMENTATION
@@ -145,7 +145,7 @@ MTS_TextHelper::generateFont(char *font, int fontsize){
     std::ostringstream stm;
     stm << fontsize;
     strcat(font,stm.str().c_str());
-    cout << font << endl;
+    //cout << font << endl;
 }
 
 void
@@ -156,7 +156,7 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved, double &sp
         int min_deg = config->getParamInt("rotate_degree_min");
         int max_deg = config->getParamInt("rotate_degree_max");
         int degree = helper->rndBetween(min_deg, max_deg);
-        cout << "degree " << degree << endl;
+        //cout << "degree " << degree << endl;
         rotated_angle=((double)degree / 180) * M_PI;
     } else {
         rotated_angle= 0;
@@ -170,10 +170,10 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved, double &sp
     }
 
     spacing_deg = round((20*spacing_gen()-1)*100)/100;
-    cout << "spacing deg " << spacing_deg << endl;
+    //cout << "spacing deg " << spacing_deg << endl;
 
     stretch_deg = round((3*stretch_gen()+0.5)*100)/100;
-    cout << "stretch deg " << stretch_deg << endl;
+    //cout << "stretch deg " << stretch_deg << endl;
 
     double fontsize = (double)height;
     spacing = fontsize / 20 * spacing_deg;
@@ -182,17 +182,17 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved, double &sp
     double pad_min = config->getParamDouble("pad_min");
     x_pad = helper->rndBetween(pad_min,pad_max);
     y_pad = helper->rndBetween(pad_min,pad_max);
-    cout << "pad " << x_pad << " " << y_pad << endl;
+    //cout << "pad " << x_pad << " " << y_pad << endl;
 
     double scale_max = config->getParamDouble("scale_max");
     double scale_min = config->getParamDouble("scale_min");
     scale = helper->rndBetween(scale_min,scale_max); 
-    cout << "scale " << scale << endl;
+    //cout << "scale " << scale << endl;
 
-    cout << "generate font" << endl;
+    //cout << "generate font" << endl;
     char font[50];
     generateFont(font,(int)fontsize);
-    cout << font << endl;
+    //cout << font << endl;
     //cout << caption << endl;
 
     //set font destcription
@@ -334,14 +334,14 @@ MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,cairo_path_t
         cerr << "number of points is less than 2 in create_curved_text() !" << endl;
         exit(1);
     } 
-    cout << "curved text width " << width << endl;
+    //cout << "curved text width " << width << endl;
 
     //set the points for the path
     std::vector<coords> points= helper->make_points_wave(width+8*height, height, num_points, y_var_min_ratio, y_var_max_ratio);
 
     helper->points_to_path(cr, points, c_min,c_max,d_min,d_max, true); //draw path shape
 
-    cout << "finished getting curve path!" << endl;
+    //cout << "finished getting curve path!" << endl;
 
     // Decrease tolerance, since the text going to be magnified 
     cairo_set_tolerance(cr, 0.01);
@@ -362,7 +362,7 @@ MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,cairo_path_t
     int caption_len = strlen(caption);
 
     int path_point_num = (path->num_data)/2;
-    cout << "num of point flat: " << path_point_num << endl;
+    //cout << "num of point flat: " << path_point_num << endl;
     double spacing = width / (caption_len-1);
 
     // Loop through the text
@@ -498,7 +498,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     stm << spacing_1024;
     // set the markup string and put into pango layout
     string mark = "<span letter_spacing='"+stm.str()+"'>"+caption+"</span>";
-    cout << "mark " << mark << endl;
+    //cout << "mark " << mark << endl;
 
     pango_layout_set_markup(layout, mark.c_str(), -1);
 
@@ -509,7 +509,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     getTextExtents(layout, desc, ink_x, ink_y, ink_w, ink_h, size);
 
     size = (int)((double)size/ink_h*height);
-    cout << "size " << size << endl;
+    //cout << "size " << size << endl;
     pango_font_description_set_size(desc, size);
     pango_layout_set_font_description (layout, desc);
 
@@ -522,7 +522,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     cairo_path_t *path = NULL;
 
     if (rotated_angle!=0) {
-        cout << "rotated angle" << rotated_angle << endl;
+        //cout << "rotated angle" << rotated_angle << endl;
         cairo_rotate(cr, rotated_angle);
 
         double sine = abs(sin(rotated_angle));
@@ -538,7 +538,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         // adjust text attributes according to rotate angle
         size = pango_font_description_get_size(desc);
         size = (int)((double)size/ink_h*text_height);
-        cout << "rotate size " << size << endl;
+        //cout << "rotate size " << size << endl;
         pango_font_description_set_size(desc, size);
         pango_layout_set_font_description (layout, desc);
 
@@ -547,7 +547,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         std::ostringstream stm;
         stm << spacing_1024;
         string mark = "<span letter_spacing='"+stm.str()+"'>"+caption+"</span>";
-        cout << "mark " << mark << endl;
+        //cout << "mark " << mark << endl;
 
         pango_layout_set_markup(layout, mark.c_str(), -1);
 
@@ -580,7 +580,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         int num_points = helper->rndBetween(num_min,num_max); 
         num_points = min(num_points, point_num_max);
 
-        cout << "num curve points " << num_points << endl;
+        //cout << "num curve points " << num_points << endl;
 
         double c_min = config->getParamDouble("curve_c_min");
         double c_max = config->getParamDouble("curve_c_max");
@@ -659,7 +659,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         cairo_path_destroy(path_n);
         cairo_destroy (cr_c);
         cairo_surface_destroy (surface_c);
-        cout << "real curved text width " << patch_width << endl;
+        //cout << "real curved text width " << patch_width << endl;
     } else {
         cairo_scale(cr, stretch_deg, 1);
         cairo_translate (cr, -ink_x, -ink_y);
@@ -682,10 +682,12 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     // apply arbitrary padding and scaling
     cairo_save(cr_n);
+    /*
     cairo_translate (cr_n, x_pad, y_pad);
     cairo_translate (cr_n, patch_width/2, height/2);
     cairo_scale(cr_n, scale, scale);
     cairo_translate (cr_n, -patch_width/2, -height/2);
+    */
     if (path != NULL && helper->rndProbUnder(config->getParamDouble("curve_line_prob"))) {
         cairo_save(cr_n);
         cairo_append_path(cr_n,path);
@@ -725,7 +727,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         double shrink_min=100*config->getParamDouble("distract_size_min");
         double shrink_max=100*config->getParamDouble("distract_size_max");
         double shrink = helper->rndBetween(shrink_min,shrink_max); 
-        cout << "shrink " << shrink << endl;
+        //cout << "shrink " << shrink << endl;
 
         for (int i=0;i<dis_num;i++) {
             char distract_font[50];
@@ -736,7 +738,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     cairo_destroy (cr_n);
 
-    cout << "add spots" << endl;
+    //cout << "add spots" << endl;
     if(helper->rndProbUnder(config->getParamDouble("missing_prob"))){
         int num_min=config->getParamInt("missing_num_min");
         int num_max=config->getParamInt("missing_num_max");
@@ -755,7 +757,7 @@ void
 MTS_TextHelper::generateTextSample (string &caption, cairo_surface_t *&text_surface, int height, 
         int &width, int text_color, bool distract){
 
-    cout << "text color " << text_color << endl;
+    //cout << "text color " << text_color << endl;
     if (helper->rndProbUnder(config->getParamDouble("digit_prob"))) {
         caption = "";
         int digit_len = (int)ceil(1/digit_len_gen());
@@ -772,7 +774,7 @@ MTS_TextHelper::generateTextSample (string &caption, cairo_surface_t *&text_surf
             caption = "MapTextSynthesizer";
         }
     }
-    cout << "generating text patch" << endl;
+    //cout << "generating text patch" << endl;
     generateTextPatch(text_surface,caption,height,width,text_color,distract);
 }
 
