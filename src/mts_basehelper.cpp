@@ -612,6 +612,9 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points,
        b = (y - dx^3 - cx^2 - a) / x
     */
 
+    double x = start.first / 100, y = start.second,
+           u = end.first / 100, w = end.second;
+    
     // set coefficients of cubic equation to describe curve
     double a=0, b=100, c=0, d=0;
 
