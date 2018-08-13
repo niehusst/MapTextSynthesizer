@@ -2,6 +2,10 @@
 
 MapTextSynthesizer is a program to dynamically generate synthetic images containing text, which appear to be from historical maps. The produced images serve as training data for a Convolutional Neural Network that recognizes text in scanned images of historical maps. (Data not intended for training a text detection model)
 
+![MTS produced image, Shambaugh](https://www.github.com/niehusst/MapTextSynthesizer/master/samples/images/Shambaugh.png)
+![MTS produced image, Maynard](https://www.github.com/niehusst/MapTextSynthesizer/master/samples/images/Maynard.png)
+
+
 ## Getting Started
 
 ### Prerequisites/Dependencies
@@ -33,13 +37,15 @@ After installing the dependencies, you should be able to jump right into compili
 
 #### Python Samples
 
-TODO (requires Ben's ctype code and a shared object library)
+To compile a Ctypes Python sample that uses a shared library, call ```make python_ctypes``` from the base directory to compile a shared object file and the C code wrapper for the MTS C++ code. Then navigate to the samples directory and run the code from your terminal; ```python text_synthesizer.py```.
 
 #### C++ Samples
 
-To compile a C++ sample from a shared library, do ```make shared```, this creates the shared library file in a bin subdirectory of MapTextSynthesizer, followed by ```make cpp_sample``` to make the executable. To run the resulting program (shared_sample) found in the samples directory, set an environment variable that allows your executable to find the shared library to your specific path to the shared library file: ```LD_LIBRARY_PATH=/directory/path/to/bin/``` and then run the executable from the samples directory with ```./shared_sample```.
+To compile a C++ sample from a shared library, call ```make shared``` from the base directory to create the shared library file in a bin subdirectory of MapTextSynthesizer, followed by ```make cpp_sample``` to make the executable. To run the resulting executable (shared_sample) found in the samples directory, set an environment variable that allows your executable to find the shared library to your specific path to the shared library file: ```LD_LIBRARY_PATH=/directory/path/to/bin/``` and then run the executable from the samples directory with ```./shared_sample```.
 
 To compile using a static library, ```make static``` followed by ```make cpp_sample_static```. To run the resulting executable (static_sample) located in the samples directory, call ```./static_sample``` in the samples directory.
+
+To run either the static or shared executables as a benchmark test instead of visualizing the images, call either executable with the command line flag `benchmark`. For example, you might run ```./static_sample benchmark``` to see the image production rate.
 
 ### Compiling samples with CMake:
 

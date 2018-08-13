@@ -1,7 +1,7 @@
 //FILE PATHS
 
 // Files to fetch font names from (e.g. blocky.txt, regular.txt, cursive.txt)
-fonts = fonts.txt
+fonts = font_files/basic_fonts.txt
 
 // The files to sample image captions from
 captions = IA_placenames/Civil.txt, IA_placenames/Pillar.txt
