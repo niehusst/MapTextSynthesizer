@@ -8,7 +8,12 @@
 #include "mts_config.hpp"
 #include "mts_basehelper.hpp"
 
-using namespace std;
+using std::string;
+using std::vector;
+using std::unordered_map;
+using std::pair;
+using std::cerr;
+using std::endl;
 
 // SEE mts_config.hpp FOR ALL DOCUMENTATION
 
@@ -21,7 +26,7 @@ MTSConfig::parseConfig(string filename) {
     string delimiter = "=";
 
     // open file
-    ifstream infile(filename);
+    std::ifstream infile(filename);
     if (! infile.is_open()) {
         cerr << "config file cannot be openned!" << endl;
         exit(1);

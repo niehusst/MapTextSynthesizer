@@ -9,7 +9,13 @@
 
 #include "mts_texthelper.hpp"
 
-using namespace std;
+using std::string;
+using std::vector;
+using std::cerr;
+using std::endl;
+using std::min;
+using std::shared_ptr;
+
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
 
@@ -63,7 +69,7 @@ MTS_TextHelper::~MTS_TextHelper(){
 // SEE mts_texthelper.hpp FOR ALL DOCUMENTATION
 
 void 
-MTS_TextHelper::updateFontNameList(std::vector<string>& font_list) {
+MTS_TextHelper::updateFontNameList(vector<string>& font_list) {
     // clear existing fonts for a fresh load of available fonts
     font_list.clear(); 
 
@@ -86,8 +92,8 @@ MTS_TextHelper::updateFontNameList(std::vector<string>& font_list) {
 }
 
 void
-MTS_TextHelper::addFontlist(std::vector<string>& font_list){
-    std::vector<string> availableList=this->availableFonts_;
+MTS_TextHelper::addFontlist(vector<string>& font_list){
+    vector<string> availableList=this->availableFonts_;
 
     // loop through fonts in availableFonts_ to check if the system 
     // contains every font in the font_list
@@ -103,7 +109,7 @@ MTS_TextHelper::addFontlist(std::vector<string>& font_list){
 
 void
 MTS_TextHelper::addFontlist(string font_file){
-    std::vector<string> fonts = helper->readLines(font_file);
+    vector<string> fonts = helper->readLines(font_file);
     addFontlist(fonts);
 }
 
@@ -114,7 +120,7 @@ MTS_TextHelper::addCaptionlist(vector<string>& words) {
 
 void
 MTS_TextHelper::addCaptionlist(string caption_file){
-    std::vector<string> captions = helper->readLines(caption_file);
+    vector<string> captions = helper->readLines(caption_file);
     addCaptionlist(captions);
 }
 
@@ -337,7 +343,7 @@ MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,cairo_path_t
     //cout << "curved text width " << width << endl;
 
     //set the points for the path
-    std::vector<coords> points= helper->make_points_wave(width+8*height, height, num_points, y_var_min_ratio, y_var_max_ratio);
+    vector<coords> points= helper->make_points_wave(width+8*height, height, num_points, y_var_min_ratio, y_var_max_ratio);
 
     helper->points_to_path(cr, points, c_min,c_max,d_min,d_max, true); //draw path shape
 
@@ -429,7 +435,7 @@ MTS_TextHelper::create_curved_text_deformed(cairo_t *cr,
     cairo_save(cr);
 
     //set the points for the path
-    std::vector<coords> points= helper->make_points_wave(width, height, num_points, y_var_min_ratio, y_var_max_ratio);
+    vector<coords> points= helper->make_points_wave(width, height, num_points, y_var_min_ratio, y_var_max_ratio);
 
     helper->points_to_path(cr, points, c_min,c_max,d_min,d_max, true); //draw path shape
 

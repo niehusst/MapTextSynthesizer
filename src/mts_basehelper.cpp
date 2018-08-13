@@ -11,7 +11,12 @@
 
 #include "mts_basehelper.hpp"
 
-using namespace std;
+using std::string;
+using std::vector;
+using std::cerr;
+using std::endl;
+using std::shared_ptr;
+
 using boost::random::mt19937;
 
 
@@ -80,7 +85,7 @@ MTS_BaseHelper::strip(string str) {
 vector<string>
 MTS_BaseHelper::readLines(string filename) {
     vector<string> lines;
-    ifstream infile(filename);
+    std::ifstream infile(filename);
     if (! infile.is_open()) {
         cerr << "cannot open " << filename << endl;
         exit(1);
@@ -562,7 +567,7 @@ MTS_BaseHelper::four_point_to_cp(coords start,
 
 
 void 
-MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double cmin, double cmax, double dmin, double dmax, bool text) {
+MTS_BaseHelper::points_to_path(cairo_t *cr, vector<coords> points, double cmin, double cmax, double dmin, double dmax, bool text) {
 
     unsigned int count = points.size();
 
@@ -756,11 +761,11 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points, double c
 }
 
 
-std::vector<coords>
+vector<coords>
 MTS_BaseHelper::make_points_wave(double length, double height, 
         int num_points, double y_var_min, double y_var_max) {
 
-    std::vector<coords> points;
+    vector<coords> points;
 
     if (num_points < 2) num_points = 2; //verify preconditions
 

@@ -4,14 +4,11 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 
-using namespace std;
-using namespace cv;
-
 /*
  * Class that renders synthetic text images for training a CNN 
  * on word recognition in historical maps
  */
-class CV_EXPORTS_W MapTextSynthesizer{
+class MapTextSynthesizer{
 
     protected:
         /*
@@ -28,16 +25,15 @@ class CV_EXPORTS_W MapTextSynthesizer{
          * caption - the label of the image. 
          * sample - the resulting text sample.
          */
-        CV_WRAP virtual void 
-            generateSample (CV_OUT string &caption, CV_OUT Mat &sample, CV_OUT int &actual_height) = 0;
+        virtual void 
+            generateSample (std::string &caption, cv::Mat &sample, int &actual_height) = 0;
 
         /*
          * A wrapper for the protected MapTextSynthesizer constructor.
          * Use this method to create a MTS object.
          */
-        CV_WRAP static Ptr<MapTextSynthesizer> 
-        //CV_WRAP static MapTextSynthesizer* 
-            create(string config_file);
+        static cv::Ptr<MapTextSynthesizer> 
+            create(std::string config_file);
 
         /*
          * The destructor for the MapTextSynthesizer class 

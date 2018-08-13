@@ -11,8 +11,10 @@
 #include "mts_basehelper.hpp"
 #include "mts_config.hpp"
 
-using namespace std;
-using namespace cv;
+using std::string;
+using std::vector;
+using std::shared_ptr;
+
 using boost::random::beta_distribution;
 using boost::random::gamma_distribution;
 using boost::random::variate_generator;
@@ -31,16 +33,16 @@ class MTS_TextHelper {
          * Base of this method from Ben K. Bullock at
          * url: https://www.lemoda.net/pango/list-fonts/index.html
          */
-        void updateFontNameList(std::vector<string>& font_list);
+        void updateFontNameList(vector<string>& font_list);
 
 
         /* Adds a list of fonts to fonts*/
-        void addFontlist(std::vector<string>& font_list);
+        void addFontlist(vector<string>& font_list);
         void addFontlist(string font_file);
 
 
         /* Adds a list of captions to captions*/
-        void addCaptionlist(std::vector<string>& words);
+        void addCaptionlist(vector<string>& words);
         void addCaptionlist(string caption_file);
 
 
@@ -201,13 +203,12 @@ class MTS_TextHelper {
          * distract - whether to draw distracting text or not
          */
         void
-            generateTextPatch(cairo_surface_t *&text_surface, std::string caption,int height,int &width, int text_color, bool distract);
+            generateTextPatch(cairo_surface_t *&text_surface, string caption,int height,int &width, int text_color, bool distract);
 
 
     public:// --------------------- PUBLIC METHODS -------------------------------
 
         /* The base helper */
-        //shared_ptr<MTS_BaseHelper> helper;
         MTS_BaseHelper* helper;
 
         MTSConfig* config;
@@ -231,7 +232,7 @@ class MTS_TextHelper {
          * distract - flag that dictates whether distractor text will be present
          */
         void 
-            generateTextSample(std::string &caption, cairo_surface_t *&text_surface, int height, int &width, int text_color, bool distract);
+            generateTextSample(string &caption, cairo_surface_t *&text_surface, int height, int &width, int text_color, bool distract);
 
 };
 

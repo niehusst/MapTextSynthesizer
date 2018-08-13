@@ -17,8 +17,9 @@
 #include "mts_texthelper.hpp"
 #include "mts_bghelper.hpp"
 
-using namespace std;
-using namespace cv;
+using std::string;
+using std::shared_ptr;
+using cv::Mat;
 using boost::random::mt19937;
 using boost::random::gamma_distribution;
 using boost::random::variate_generator;
@@ -74,7 +75,7 @@ class MTSImplementation: public MapTextSynthesizer{
         /* Destructor */
         ~MTSImplementation();
 
-        void generateSample(CV_OUT string &caption, CV_OUT Mat &sample, CV_OUT int &actual_height);
+        void generateSample(string &caption, Mat &sample, int &actual_height);
 };
 
 #endif

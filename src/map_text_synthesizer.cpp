@@ -1,12 +1,13 @@
 #include <fstream>
 #include <string>
-#include <vector>
 #include <iostream>
 
 #include "mtsynth/map_text_synthesizer.hpp"
 #include "mts_implementation.hpp"
 
-using namespace std;
+using std::string;
+using cv::Mat;
+using cv::Ptr;
 
 MapTextSynthesizer::MapTextSynthesizer(){}
 

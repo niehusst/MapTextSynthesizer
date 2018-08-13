@@ -24,8 +24,14 @@
 
 #include "mts_implementation.hpp"
 
-using namespace std;
-using namespace cv;
+using std::string;
+using std::vector;
+using std::cerr;
+using std::endl;
+using std::make_shared;
+
+using cv::Mat;
+
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
 
@@ -55,8 +61,8 @@ void MTSImplementation::addGaussianNoise(Mat& out) {
 
     // add noise to each channel
     out+=noise;
-    threshold(out,out,1.0,1.0,THRESH_TRUNC);
-    threshold(out,out,0,1.0,THRESH_TOZERO);
+    threshold(out,out,1.0,1.0,cv::THRESH_TRUNC);
+    threshold(out,out,0,1.0,cv::THRESH_TOZERO);
 }
 
 void MTSImplementation::addGaussianBlur(Mat& out) {
@@ -65,7 +71,7 @@ void MTSImplementation::addGaussianBlur(Mat& out) {
     int size_max = config->getParamInt("blur_kernel_size_max") / 2;
     int ker_size = (helper->rndBetween(size_min,size_max)) * 2 + 1;
 
-    GaussianBlur(out,out,Size(ker_size,ker_size),0,0,BORDER_REFLECT_101);
+    GaussianBlur(out,out,cv::Size(ker_size,ker_size),0,0,cv::BORDER_REFLECT_101);
 }
 
 void MTSImplementation::addCompressionArtifacts(Mat& out){
@@ -79,8 +85,8 @@ void MTSImplementation::addCompressionArtifacts(Mat& out){
         parameters.push_back(quality);
         Mat ucharImg;
         out.convertTo(ucharImg,CV_8UC1,255);
-        imencode(".jpg",ucharImg,buffer,parameters);
-        ucharImg=imdecode(buffer,CV_LOAD_IMAGE_GRAYSCALE);
+        cv::imencode(".jpg",ucharImg,buffer,parameters);
+        ucharImg=cv::imdecode(buffer,CV_LOAD_IMAGE_GRAYSCALE);
         ucharImg.convertTo(out,CV_32FC1,1.0/255);
     }
 }
@@ -108,7 +114,7 @@ MTSImplementation::~MTSImplementation() {
 void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sample, CV_OUT int &actual_height){
 
     //cout << "start generate sample" << endl;
-    std::vector<BGFeature> bg_features;
+    vector<BGFeature> bg_features;
     bh.generateBgFeatures(bg_features);
 
     // set bg and text color (brightness) based on user configured parameters
@@ -169,8 +175,8 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
         cairo_paint(cr); // dont blend
     }
 
-    Mat sample_uchar = Mat(height,width,CV_8UC1,Scalar_<uchar>(0,0,0));
-    Mat sample_float = Mat(height,width,CV_32FC1,Scalar_<float>(0,0,0));
+    Mat sample_uchar = Mat(height,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
+    Mat sample_float = Mat(height,width,CV_32FC1,cv::Scalar_<float>(0,0,0));
 
     // convert cairo image to openCV Mat object
     cairoToMat(bg_surface, sample_uchar);
@@ -192,14 +198,14 @@ void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sampl
     if (config->getParamDouble("zero_padding")==0) zero_padding = false;
 
     if (!zero_padding) {
-        sample = Mat(height,width,CV_8UC1,Scalar_<uchar>(0,0,0));
+        sample = Mat(height,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
     } else {
         int height_max = int(config->getParamDouble("height_max"));
-        sample = Mat(height_max,width,CV_8UC1,Scalar_<uchar>(0,0,0));
+        sample = Mat(height_max,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
     }
 
     sample_float.convertTo(sample_uchar, CV_8UC1, 255.0);
 
-    Mat sample_roi = sample(Rect(0, 0, width, height));
+    Mat sample_roi = sample(cv::Rect(0, 0, width, height));
     sample_uchar.copyTo(sample_roi);
 }

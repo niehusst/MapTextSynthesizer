@@ -12,8 +12,12 @@
 
 #include "mts_config.hpp"
 
-using namespace std;
-using namespace cv;
+using std::string;
+using std::vector;
+using std::shared_ptr;
+
+using cv::RNG;
+
 using boost::random::mt19937;
 
 // All possible features that can be incorporated into a background
@@ -150,7 +154,7 @@ class MTS_BaseHelper {
          * points - a vector of x,y coordinate pairs 
          *          (precondition: must contain at least 2 elements)
          */
-        void points_to_path(cairo_t *cr, std::vector<coords> points, double c_min=-2, double c_max=2, double d_min=-2, double d_max=2, bool text = false);
+        void points_to_path(cairo_t *cr, vector<coords> points, double c_min=-2, double c_max=2, double d_min=-2, double d_max=2, bool text = false);
 
         /*
          * Makes and returns a vector of x,y coordinate points for
@@ -165,7 +169,7 @@ class MTS_BaseHelper {
          * y_var_min - the minimum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
          * y_var_max - the maximum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
          */
-        std::vector<coords> make_points_wave(double length, double height, int num_points, double y_var_min, double y_var_max);
+        vector<coords> make_points_wave(double length, double height, int num_points, double y_var_min, double y_var_max);
 
 
         //Another RNG for beta, gamma, normal distributions

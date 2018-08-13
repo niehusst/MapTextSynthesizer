@@ -9,7 +9,14 @@
 
 #include "mts_bghelper.hpp"
 
-using namespace std;
+using std::string;
+using std::vector;
+using std::min;
+using std::max;
+using std::cerr;
+using std::endl;
+using std::shared_ptr;
+
 using boost::random::beta_distribution;
 using boost::random::normal_distribution;
 using boost::random::gamma_distribution;
@@ -151,7 +158,7 @@ void
 MTS_BackgroundHelper::generate_curve(cairo_t *cr, int width, 
         int height,  double c_min, double c_max, double d_min, double d_max, bool river) {
 
-    std::vector<coords> points;
+    vector<coords> points;
     int num_min = config->getParamInt("bg_curve_num_points_min");
     int num_max = config->getParamInt("bg_curve_num_points_max");
 
@@ -188,7 +195,7 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
     double ratio_min = config->getParamDouble("line_width_scale_min");
     double ratio_max = config->getParamDouble("line_width_scale_max");
     magic_line_ratio = helper->rndBetween(ratio_min,ratio_max); 
-    line_width = std::min(width, height) * magic_line_ratio;
+    line_width = min(width, height) * magic_line_ratio;
     cairo_set_line_width(cr, line_width);
 
     int length = (int)(pow(pow(width,2)+pow(height,2),0.5));
@@ -382,7 +389,7 @@ MTS_BackgroundHelper::draw_texture(cairo_t *cr, int texture, double brightness, 
 
     // a vector of texture drawing function pointers
     void (*texture_func)(cairo_t*, int, int, int, int, int, int, int);
-    std::vector<void (*)(cairo_t*, int, int, int, int, int, int, int)> texture_vec;
+    vector<void (*)(cairo_t*, int, int, int, int, int, int, int)> texture_vec;
 
     // populate vector with all texture drawing functions
     texture_vec.push_back(&diagonal_lines);
@@ -434,7 +441,7 @@ MTS_BackgroundHelper::addTexture(cairo_t *cr, bool curved, double brightness, in
     cairo_save(cr);
 
     // set adequate spacing between lines in texture
-    int spacing = std::max(4, width/100);
+    int spacing = max(4, width/100);
     spacing = spacing + helper->rng() % (2*spacing);  
 
     // linewidth range (1/10)width - (1/2)width
@@ -544,7 +551,7 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
     double ratio_min = config->getParamDouble("line_width_scale_min");
     double ratio_max = config->getParamDouble("line_width_scale_max");
     magic_line_ratio = helper->rndBetween(ratio_min,ratio_max);
-    line_width = std::min(width, height) * magic_line_ratio;
+    line_width = min(width, height) * magic_line_ratio;
     cairo_set_line_width(cr, line_width);
 
     //randomly choose number of lines 
@@ -563,7 +570,7 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
     //cout << "line nums " << num << endl;
 
     //length of lines
-    double length = std::max(width, height)*pow(2,0.5);
+    double length = max(width, height)*pow(2,0.5);
 
     //average spacing
     double spacing = length / num;
@@ -577,7 +584,7 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
     cairo_translate(cr, -width/2.0, -height/2.0); // translate back
 
     //initialize the vector of lines stored as xy coordinates
-    std::vector<std::vector<coords> > lines;
+    vector<vector<coords> > lines;
 
     double left_x = -(length - width) / 2;
     double right_x = width + (length - width) / 2;
@@ -589,10 +596,10 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
     double increase = (spacing-init_spacing)*2/num;
 
     // to store the real points of every line
-    std::vector<coords> points;
+    vector<coords> points;
 
     // to store the curve pattern
-    std::vector<coords> curve_points;
+    vector<coords> curve_points;
 
     if (curved) {
         double y_var_min = config->getParamDouble("bg_curve_y_variance_min");
@@ -778,7 +785,7 @@ MTS_BackgroundHelper::cityPoint(cairo_t *cr, int width, int height, bool hollow)
         double ratio_min = config->getParamDouble("line_width_scale_min");
         double ratio_max = config->getParamDouble("line_width_scale_max");
         magic_line_ratio = helper->rndBetween(ratio_min,ratio_max); 
-        line_width = std::min(width, height) * magic_line_ratio;
+        line_width = min(width, height) * magic_line_ratio;
         cairo_set_line_width(cr, line_width);
         cairo_stroke(cr);
     } else {
@@ -788,7 +795,7 @@ MTS_BackgroundHelper::cityPoint(cairo_t *cr, int width, int height, bool hollow)
 
 
 void
-MTS_BackgroundHelper::generateBgFeatures(std::vector<BGFeature> &bg_features){
+MTS_BackgroundHelper::generateBgFeatures(vector<BGFeature> &bg_features){
 
     // get probabilities of all features
     int maxnum=config->getParamDouble("max_num_features");
@@ -807,7 +814,7 @@ MTS_BackgroundHelper::generateBgFeatures(std::vector<BGFeature> &bg_features){
         config->getParamDouble("river_prob"),
     };
 
-    std::vector<BGFeature> all_features={Colordiff, Distracttext, Boundary, Colorblob, Straight, Grid, Citypoint, Parallel, Vparallel, Texture, Railroad, Riverline};
+    vector<BGFeature> all_features={Colordiff, Distracttext, Boundary, Colorblob, Straight, Grid, Citypoint, Parallel, Vparallel, Texture, Railroad, Riverline};
     int j, cur_index, count = 0;
     bool flag;
     BGFeature cur;
@@ -843,7 +850,7 @@ MTS_BackgroundHelper::generateBgFeatures(std::vector<BGFeature> &bg_features){
 
 
 void 
-MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector<BGFeature> &features, int height, int width, int bg_color, int contrast){
+MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, vector<BGFeature> &features, int height, int width, int bg_color, int contrast){
 
     //cout << "bg color " << bg_color << endl;
     //cout << "constrast " << contrast << endl;

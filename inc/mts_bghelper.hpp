@@ -9,8 +9,10 @@
 #include "mts_basehelper.hpp"
 #include "mts_config.hpp"
 
-using namespace std;
-using namespace cv;
+using std::string;
+using std::vector;
+using std::shared_ptr;
+
 using boost::random::normal_distribution;
 using boost::random::gamma_distribution;
 using boost::random::beta_distribution;
@@ -378,7 +380,7 @@ class MTS_BackgroundHelper {
          * contrast - the contrast level
          */
         void
-            generateBgSample(cairo_surface_t *&bg_surface, std::vector<BGFeature>&features, int height, int width, int bg_color, int contrast);
+            generateBgSample(cairo_surface_t *&bg_surface, vector<BGFeature>&features, int height, int width, int bg_color, int contrast);
 };
 
 #endif
