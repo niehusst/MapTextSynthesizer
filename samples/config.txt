@@ -1,8 +1,9 @@
 //FILE PATHS
-// The files to fetch font names from
+
+// Files to fetch font names from (e.g. blocky.txt, regular.txt, cursive.txt)
 fonts = fonts.txt
-//blocky.txt, regular.txt, cursive.txt
-// The files to fetch captions from
+
+// The files to sample image captions from
 captions = IA_placenames/Civil.txt, IA_placenames/Pillar.txt
 
 
@@ -10,14 +11,14 @@ captions = IA_placenames/Civil.txt, IA_placenames/Pillar.txt
 
 // Stretching of Characters (beta probability density distribution)
 stretch_alpha=1               // Set probability distribution shape with alpha  
-stretch_beta=2                // and beta, then get value bounds with scale and
+stretch_beta=2                // and beta, then set value bounds with scale and
 stretch_scale=3               // shift. For more info on beta distribution see:
 stretch_shift=0.5             // https://en.wikipedia.org/wiki/Beta_distribution
 
 
 // Spacing between Characters (beta probability density distribution)
 spacing_alpha=1               // Set probability distribution shape with alpha 
-spacing_beta=3                // and beta, then get value bounds with scale and
+spacing_beta=3                // and beta, then set value bounds with scale and
 spacing_scale=20              // shift. For more info on beta distribution see:
 spacing_shift=-1              // https://en.wikipedia.org/wiki/Beta_distribution
 
@@ -33,12 +34,13 @@ curve_num_points_min=3        // Range of how many points of inflection to set
 curve_num_points_max=5        // in a curved line. More means many low amplitude
                               // curves, less means fewer, but high amplitude,
                               // curves in the overall line.
-                              
-curve_c_min=-2                // Curved line cubic function coefficient ranges. 
-curve_c_max=2                 // Increasing either b, c, or d will increase
-curve_d_min=-2                // the amplitude of produced curves.
-curve_d_max=2                 // f(x) = a + bx + cx^2 + dx^3
-curve_b_abs_max=50
+
+curve_b_abs_max=50            // Curved line cubic function coefficient ranges.
+curve_c_min=-2                // Increasing either b, c, or d will increase
+curve_c_max=2                 // the amplitude of produced curves.
+curve_d_min=-2                // f(x) = a + bx + cx^2 + dx^3
+curve_d_max=2                 
+
 
 curve_cd_sum_max=3            //prevent huge curvature at the beginning of curve
 
@@ -155,8 +157,8 @@ boundary_color_diff_min=.25   // Range of difference between the two line colors
 boundary_color_diff_max=.35   // (Scale 0.0 - 1.0, where 0 is black and 1 white)
 
 boundary_curve_c_min=-2       // Curved line cubic function coefficient ranges.
-boundary_curve_c_max=2        // c does..
-boundary_curve_d_min=-2       // d does...
+boundary_curve_c_max=2        // Increasing either c or d will increase
+boundary_curve_d_min=-2       // the amplitude of produced curves.
 boundary_curve_d_max=2        // f(x) = a + bx + cx^2 + dx^3
 
 
@@ -212,8 +214,8 @@ para_num_min=10               // Range of number of lines drawn in parallel.
 para_num_max=20
 
 para_curve_c_min=-2           // Curved line cubic function coefficient ranges.
-para_curve_c_max=2            // c does.. 
-para_curve_d_min=-2           // d does...
+para_curve_c_max=2            // Increasing c or d will increase the 
+para_curve_d_min=-2           // amplitude of produced curves.
 para_curve_d_max=2            // f(x) = a + bx + cx^2 + dx^3
 
 
@@ -226,8 +228,8 @@ vpara_num_min=10              // Range of number of lines drawn in parallel.
 vpara_num_max=20
 
 vpara_curve_c_min=-2          // Curved line cubic function coefficient ranges.
-vpara_curve_c_max=2           // c does.. 
-vpara_curve_d_min=-2          // d does... 
+vpara_curve_c_max=2           // Increasing c or d will increase the 
+vpara_curve_d_min=-2          // amplitude of produced curves. 
 vpara_curve_d_max=2           // f(x) = a + bx + cx^2 + dx^3
 
 
@@ -241,8 +243,8 @@ texture_width_alpha=2         // Set beta probability distribution
 texture_width_beta=2          // shape with alpha and beta. For more info see:
                               // https://en.wikipedia.org/wiki/Beta_distribution
 texture_curve_c_min=-2        // Curved line cubic function coefficient ranges.
-texture_curve_c_max=2         // c does.. 
-texture_curve_d_min=-2        // d does... 
+texture_curve_c_max=2         // Increasing c or d will increase the
+texture_curve_d_min=-2        // amplitude of produced curves. 
 texture_curve_d_max=2         // f(x) = a + bx + cx^2 + dx^3
 
 
@@ -262,8 +264,8 @@ railroad_distance_between_crosses_min=1   // Range of distance in multiples of
 railroad_distance_between_crosses_max=3   // the base line width.
 
 railroad_curve_c_min=-2       // Curved line cubic function coefficient ranges.
-railroad_curve_c_max=2        // c does.. 
-railroad_curve_d_min=-2       // d does... 
+railroad_curve_c_max=2        // Increasing c or d will increase the
+railroad_curve_d_min=-2       // amplitude of produced curves.
 railroad_curve_d_max=2        // f(x) = a + bx + cx^2 + dx^3
 
 
@@ -281,8 +283,8 @@ river_num_lines_max=5
 river_double_line_prob=.5     // Probability of drawing a second line parallel 
                               // to the original line.
 river_curve_c_min=-2          // Curved line cubic function coefficient ranges.
-river_curve_c_max=2           // c does.. 
-river_curve_d_min=-2          // d does... 
+river_curve_c_max=2           // Increasing c or d increases the 
+river_curve_d_min=-2          // amplitude of produced curves.
 river_curve_d_max=2           // f(x) = a + bx + cx^2 + dx^3
 
 river_curve_num_points_scale=5   // Ratio for increasing control points in a
@@ -300,11 +302,12 @@ bias_vert_num_max=7           // results in many color fluctuations over a
 //horizontal range is just (width - height) times num in vertical direction
 
 bias_std_alpha=2              // Set probability distribution shape with alpha 
-bias_std_beta=1               // and beta, then get value bounds with scale and
+bias_std_beta=1               // and beta, then set value bounds with scale and
 bias_std_scale=50             // shift. For more info on Gaussian-inverse-gamma
 bias_std_shift=0              // distribution see:
-bias_mean=0                   // https://en.wikipedia.org/wiki/Normal-inverse-gamma_distribution
-
+                              // https://en.wikipedia.org/wiki/Normal-inverse-gamma_distribution
+bias_mean=0                   // Mean of the Gaussian bias and the background
+                              // colors. Larger numbers mean brighter bias field
 
 // Base Line Width
 line_width_scale_min=0.0125   // Range of ratio of line width with respect to
@@ -369,7 +372,7 @@ seed=0                        // RNG seed. 0 sets seed to time(NULL)
 
 //Gaussian Noise for Final Image
 noise_sigma_alpha=2           // Set probability distribution shape with alpha 
-noise_sigma_beta=1            // and beta, then get value bounds with scale and
+noise_sigma_beta=1            // and beta, then set value bounds with scale and
 noise_sigma_scale=0.05        // shift. For more info on Gaussian-inverse-gamma 
 noise_sigma_shift=0           // distribution see:
                               // https://en.wikipedia.org/wiki/Normal-inverse-gamma_distribution
