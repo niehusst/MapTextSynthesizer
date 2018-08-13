@@ -1,6 +1,6 @@
 /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * mts_basehelper.cpp holds definitions for methods of the                    *
- * mts_basehelper class.                                                      *
+ * MTS_BaseHelper class.                                                      *
  *                                                                            *
  * Copyright (C) 2018                                                         *
  *                                                                            *

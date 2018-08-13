@@ -1,6 +1,6 @@
 /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * mts_bghelper.cpp holds definitions for methods of the                      *
- * mts_bghelper class.                                                        *
+ * MTS_BgHelper class.                                                        *
  *                                                                            *
  * Copyright (C) 2018                                                         *
  *                                                                            *

@@ -1,6 +1,6 @@
 /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * mts_config.cpp holds definitions for methods of the                        *
- * mts_config class.                                                          *
+ * MTSConfig class.                                                           *
  *                                                                            *
  * Copyright (C) 2018                                                         *
  *                                                                            *

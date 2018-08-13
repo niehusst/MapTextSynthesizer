@@ -1,6 +1,6 @@
 /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * mts_texthelper.cpp holds definitions for methods of the                    *
- * mts_texthelper class.                                                      *
+ * MTS_TextHelper class.                                                      *
  *                                                                            *
  * Copyright (C) 2018                                                         *
  *                                                                            *

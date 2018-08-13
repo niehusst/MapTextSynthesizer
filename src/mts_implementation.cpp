@@ -1,6 +1,6 @@
 /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * mts_implementation.cpp holds definitions for methods of the                *
- * mts_implementation class.                                                  *
+ * MTSImplementation class.                                                   *
  *                                                                            *
  * Copyright (C) 2018                                                         *
  *                                                                            *
