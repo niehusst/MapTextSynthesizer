@@ -119,7 +119,6 @@ MTS_BackgroundHelper::set_dash_pattern(cairo_t *cr) {
     int pat_len_max = config->getParamInt("dash_pattern_len_max");
     int pattern_len = helper->rndBetween(pat_len_min,pat_len_max); 
     double dash_pattern[pattern_len];
-    double dash;
 
     double len_min = config->getParamDouble("dash_len_min");
     double len_max = config->getParamDouble("dash_len_max");
@@ -871,7 +870,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, std::vector
     }
 
     //add background bias field
-    //addBgBias(cr, width, height, bg_color);
+    addBgBias(cr, width, height, bg_color);
 
     if (find(features.begin(), features.end(), Colorblob)!= features.end()) {
         int num_min= config->getParamInt("blob_num_min");

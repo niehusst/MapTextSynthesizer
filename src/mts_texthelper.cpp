@@ -682,12 +682,10 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     // apply arbitrary padding and scaling
     cairo_save(cr_n);
-    /*
     cairo_translate (cr_n, x_pad, y_pad);
     cairo_translate (cr_n, patch_width/2, height/2);
     cairo_scale(cr_n, scale, scale);
     cairo_translate (cr_n, -patch_width/2, -height/2);
-    */
     if (path != NULL && helper->rndProbUnder(config->getParamDouble("curve_line_prob"))) {
         cairo_save(cr_n);
         cairo_append_path(cr_n,path);
@@ -724,8 +722,8 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         int num_max = config->getParamInt("distract_num_max");
         int dis_num = helper->rndBetween(num_min,num_max); 
 
-        double shrink_min=100*config->getParamDouble("distract_size_min");
-        double shrink_max=100*config->getParamDouble("distract_size_max");
+        double shrink_min=config->getParamDouble("distract_size_min");
+        double shrink_max=config->getParamDouble("distract_size_max");
         double shrink = helper->rndBetween(shrink_min,shrink_max); 
         //cout << "shrink " << shrink << endl;
 

@@ -50,6 +50,13 @@ class MTSImplementation: public MapTextSynthesizer{
          */
         void addGaussianBlur(Mat& out);
 
+        /* Adds jpeg compression artifacts to img
+         *
+         * out - the input and output image
+         * Adapted from Anguelos's code: https://github.com/anguelos/opencv_contrib/blob/gsoc_final_submission/modules/text/src/text_synthesizer.cpp
+         */
+        void addCompressionArtifacts(Mat& out);
+
         shared_ptr<MTSConfig> config;
         shared_ptr<MTS_BaseHelper> helper;
         MTS_TextHelper th;
