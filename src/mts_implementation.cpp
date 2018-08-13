@@ -111,7 +111,7 @@ MTSImplementation::~MTSImplementation() {
     //cout << "impl destructed" << endl;
 }
 
-void MTSImplementation::generateSample(CV_OUT string &caption, CV_OUT Mat &sample, CV_OUT int &actual_height){
+void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual_height){
 
     //cout << "start generate sample" << endl;
     vector<BGFeature> bg_features;
