@@ -69,15 +69,15 @@ Using the same tried-and-true parameters for the synthesizer as we have is guara
 There are over 100 user configurable parameters that change the effects and probabilities of features, all changeable in a plain text file for readability and ease of use. The parameter text file can be found from the base directory at samples/config.txt. 
 Simply change any desired values in the text file (values should all be doubles), save them, and then recompile and run a sample. Some changes may result in only miniscule differences.
 #### Fonts
-Available fonts can also be altered. If the google fonts repository we use isn’t desirable, fonts can be added or removed by simply adding or removing the target font name to/from one of the three font files: blocky.txt, regular.txt, and cursive.txt. The font population is divided between these files to control the representation of each category in our images.
+Available fonts can also be altered through the config file. Simply change the value of the "fonts" parameter, which takes in a comma-separated list of file names. Each font file should contain one font family per line.
 
-Or, you can dynamically set available fonts by using the ```MapTextSynthesizer``` methods ```setBlockyFonts()```,```setCursiveFonts()``` and ```setRegularFonts()```. Set your desired font names with these methods by passing in either the filename of a plain text file containing a list of font names, or a vector of font names. 
+If the google fonts repository we use isn’t desirable, fonts can be added or removed by simply adding or removing the target font name to/from one of the three font files: blocky.txt, regular.txt, and cursive.txt. The font population is divided between these files to control the representation of each category in our images.
 
 When adding font names, be sure that you have the fonts installed on your machine; if the synthesizer encounters a font that isn’t on your machine while processing the available fonts, it will exit the process with an terminal message.
 Fonts must be downloaded into a .fonts folder in home directory to be visible.
 
 #### Words 
-The population of words that are displayed in the synthesized images is also configurable. We have included a directory containing files of Iowa place-names for generating realistic map samples, but this does not have to be the source. To set your own list of captions, do
+The population of words that are displayed in the synthesized images is also configurable through config file. The "captions" parameter also takes in a comma-separated list of filenames. Each caption file should contain one caption per line. We have included a directory containing files of Iowa place-names for generating realistic map samples, but this does not have to be the source. To set your own list of captions, do
 
 If no captions are found/supplied, the synthesizer will generate its own captions of random characters and length. 
 
