@@ -353,6 +353,7 @@ class MTS_BackgroundHelper {
         //shared_ptr<MTS_BaseHelper> helper;
         MTS_BaseHelper* helper;
 
+        /* An MTSConfig instance to get parameters from. */
         MTSConfig* config;
 
         //Constructor

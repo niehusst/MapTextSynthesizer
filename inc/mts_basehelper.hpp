@@ -131,6 +131,7 @@ class MTS_BaseHelper {
 
     public://----------------------- PUBLIC METHODS --------------------------
 
+        /* An MTSConfig instance to fetch parameters from. */
         MTSConfig* config;
 
         /* Projects the current path of cr onto the provided path. */
