@@ -57,9 +57,9 @@ def get_mts_interface_lib():
     lib.get_img_data.argtypes = [c.c_void_p]
     lib.get_img_data.restype = c.c_void_p
 
-    # in: string: config_path, lexicon_path,
+    # in: string: config_path
     # out: void* to the MTS_Buff object
-    lib.mts_init.argtypes = [c.c_char_p, c.c_char_p] 
+    lib.mts_init.argtypes = [c.c_char_p] 
     lib.mts_init.restype = c.c_void_p
 
     # in: void* to MTS_Buff, out: void
@@ -96,10 +96,10 @@ def format_sample(lib, ptr):
     return (caption, img_shaped)
 
 
-def data_generator(config_file, lexicon_file):
+def data_generator(config_file):
     """ Generator to be used in tensorflow """
     mtsi_lib = get_mts_interface_lib()
-    mts_buff = mtsi_lib.mts_init(config_file, lexicon_file)
+    mts_buff = mtsi_lib.mts_init(config_file)
     
     while True:
         ptr = c.c_void_p(mtsi_lib.get_sample(mts_buff))
@@ -113,10 +113,9 @@ def test_generator(num_values=10, show_images=False,
     """ For testing purposes only """
     iter = None
     config_file = "config.txt"
-    lexicon_file = "../data/lexicon.txt"
     
     if not buffered:
-        iter = data_generator(config_file, lexicon_file)
+        iter = data_generator(config_file)
     else:
         pass # Kept for future IPC stuff
         

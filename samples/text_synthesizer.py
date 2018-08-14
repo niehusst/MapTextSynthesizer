@@ -25,12 +25,12 @@ sys.path.insert(0, '../tensorflow/generator/') #insert path to find data_synth
 from data_synth import data_generator as data_generator
 
 # Global Variable definition
-mts = data_generator("config.txt", "IA_placenames/civil.txt")
+mts = data_generator("config.txt")
 pause=200 #starting miliseconds between images
 
 
 
-### GUI Callsback functions
+### GUI Callback functions
 
 def updateTime(x):
     global pause
@@ -64,6 +64,9 @@ def guiLoop():
     while ord('q')!=k:
         if pause<500:
             # generate sample and store data
+            data = next(mts)
+            print(len(data))
+            print(data)
             [caption, [h,w,img_data], actual_h] = next( mts )
             img = np.reshape(np.fromiter(img_data, np.uint8),(h,w))
             # print sample information
@@ -77,8 +80,8 @@ def guiLoop():
         
 # main; run the gui
 if __name__=='__main__':
-    # init MTS and gui window info
+    # init gui window info
     initWindows()
     updateTrackbars()
-    # show images
+    # generate and show MTS images
     guiLoop()
