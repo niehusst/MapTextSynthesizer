@@ -1,7 +1,6 @@
 //FILE PATHS
 fonts = fonts/simple.txt
-//captions = IA/Civil.txt, IA/Pillar.txt, IA/Bar.txt
-captions = long.txt
+captions = IA/Civil.txt, IA/Pillar.txt, IA/Bar.txt
 
 
 //TEXT PARAMS
