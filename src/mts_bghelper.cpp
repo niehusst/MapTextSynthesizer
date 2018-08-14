@@ -557,10 +557,11 @@ MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
         cairo_pattern_add_color_stop_rgb(pattern_horizontal, i*offset_horizontal, dcolor,dcolor,dcolor);
     }
 
+    double alpha = config->getParamDouble("bias_alpha");
     cairo_set_source(cr, pattern_horizontal);
-    cairo_paint_with_alpha(cr,0.3);
+    cairo_paint_with_alpha(cr,alpha);
     cairo_set_source(cr, pattern_vertical);
-    cairo_paint_with_alpha(cr,0.3);
+    cairo_paint_with_alpha(cr,alpha);
     //cout << "finished bias" << endl;
 
 }

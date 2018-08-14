@@ -206,6 +206,7 @@ bias_std_beta=1
 bias_std_scale=50
 bias_std_shift=0
 bias_mean=0
+bias_alpha=0.3                     //transparency of bias (the linear pattern)
 
 
 //bg line width (applied to all bg features)
