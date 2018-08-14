@@ -11,11 +11,11 @@ MapTextSynthesizer is a program to dynamically generate grey-scale, synthetic im
 
 ### Prerequisites/Dependencies
 
-* **Pango**, a text formatting library. It comes preinstalled on many Linux machines. See their [website](https://www.pango.org/) for more information.
-* **Cairo**, a vector graphics library. It comes preinstalled on many Linux machines. See their [website](https://cairographics.org/) for more information.
-* **OpenCV**, a computer vision repository. It can be found on [github](https://github.com/opencv).
-* **Boost**, a collection C++ source libraries. See their [website](https://www.boost.org/) for more information.
-* **Google Fonts**, a collection of open-source fonts. This isn't necessary for the synthesizer to function, but it is highly recommended for training robust models. Find it on [github](https://github.com/google/fonts/).
+* **Pango**, a text rendering library. See [pango.org](https://www.pango.org/) for more information.
+* **Cairo**, a vector graphics library. See [cairographics.org](https://cairographics.org/) for more information.
+* **OpenCV**, a computer vision repository. Find it on github at [opencv/opencv](https://github.com/opencv/opencv).
+* **Boost**, a collection C++ source libraries. See [boost.org](https://www.boost.org/) for more information.
+* **Google Fonts**, a collection of open-source fonts. This isn't necessary for the synthesizer to function, but it is highly recommended for training robust models. Find it on github at [google/fonts](https://github.com/google/fonts/).
 
 ##### Installing dependencies on MacOS and Linux
 
