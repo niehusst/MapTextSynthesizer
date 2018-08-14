@@ -37,6 +37,7 @@ using std::vector;
 using std::cerr;
 using std::endl;
 using std::min;
+using std::max;
 using std::shared_ptr;
 
 using boost::random::beta_distribution;
@@ -704,7 +705,8 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     cairo_surface_t *surface_n;
     cairo_t *cr_n;
 
-    surface_n = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, patch_width, height);
+    int width_min = config->getParamInt("width_min");
+    surface_n = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, max(width_min,patch_width), height);
     cr_n = cairo_create (surface_n);
 
     // apply arbitrary padding and scaling
@@ -775,7 +777,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     //pass back values
     text_surface=surface_n;
-    width=patch_width;
+    width=max(width_min,patch_width);
 }
 
 void 

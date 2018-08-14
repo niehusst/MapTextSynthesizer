@@ -1,6 +1,7 @@
 //FILE PATHS
 fonts = fonts/simple.txt
-captions = IA/Civil.txt, IA/Pillar.txt, IA/Bar.txt
+//captions = IA/Civil.txt, IA/Pillar.txt, IA/Bar.txt
+captions = long.txt
 
 
 //TEXT PARAMS
@@ -240,6 +241,8 @@ zero_padding=0                   //0 for false, and other value for true
 
 height_min=50
 height_max=50
+
+width_min=50
 
 //Max number of features in bg
 max_num_features=6
