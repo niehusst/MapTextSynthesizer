@@ -390,8 +390,6 @@ MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,cairo_path_t
     strcpy(caption, pango_layout_get_text(layout));
     int caption_len = strlen(caption);
 
-    int path_point_num = (path->num_data)/2;
-    //cout << "num of point flat: " << path_point_num << endl;
     double spacing = width / (caption_len-1);
 
     // Loop through the text
