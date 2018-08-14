@@ -35,11 +35,11 @@ libmtsynth.a: ${SOURCES}
 
 # Compile a cpp example
 cpp_sample: text_synthesizer.cpp
-	${CXX} $^ ${PKG-CONFIG} ${SAMPLE_FLAGS}
+	${CXX} $^ ${PKG-CONFIG} ${SAMPLE_FLAGS} -o mts_sample
 
 # Compile a cpp example with static library
 cpp_sample_static: text_synthesizer.cpp ${BINDIR}libmtsynth.a
-	${CXX} $^ ${PKG-CONFIG} ${STATIC_SAMPLE_FLAGS}
+	${CXX} $^ ${PKG-CONFIG} ${STATIC_SAMPLE_FLAGS} -o mts_sample_static
 
 clean:
 	rm -f a.out *.o *~
