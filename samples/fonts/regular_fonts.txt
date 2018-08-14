@@ -1,3 +1,0 @@
-jsMath-cmmi10
-Sans
-Serif

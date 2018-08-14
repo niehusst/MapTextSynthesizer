@@ -1,5 +1,5 @@
 //FILE PATHS
-fonts = fonts/blocky_fonts.txt, fonts/regular_fonts.txt, fonts/cursive_fonts.txt
+fonts = fonts/simple.txt
 captions = IA/Civil.txt, IA/Pillar.txt, IA/Bar.txt
 
 
