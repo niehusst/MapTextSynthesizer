@@ -109,8 +109,8 @@ class MTS_TextHelper {
          *
          * rotate_angle - the angle to rotate
          * curved - whether to curve or not
-         * spacing- the spacing between characters (in point)
          * stretch_deg - the horizontal text scaling factor
+         * spacing- the spacing between characters (in point)
          * x_pad - padding in x-direction
          * y_pad - padding in y-direction
          * scale - scaling factor of the entire text
@@ -211,6 +211,7 @@ class MTS_TextHelper {
         /* The base helper */
         MTS_BaseHelper* helper;
 
+        /* An MTSConfig instance to get parameters from. */
         MTSConfig* config;
 
         /* Constructor */

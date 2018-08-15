@@ -206,6 +206,7 @@ bias_std_beta=1
 bias_std_scale=50
 bias_std_shift=0
 bias_mean=0
+bias_alpha=0.3                     //transparency of bias (the linear pattern)
 
 
 //bg line width (applied to all bg features)
@@ -240,6 +241,8 @@ zero_padding=0                   //0 for false, and other value for true
 
 height_min=50
 height_max=50
+
+width_min=50
 
 //Max number of features in bg
 max_num_features=6

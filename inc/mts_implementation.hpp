@@ -75,6 +75,12 @@ class MTSImplementation: public MapTextSynthesizer{
         /* Destructor */
         ~MTSImplementation();
 
+        /* Generate one image sample with ground truth label
+         *
+         * caption - the generated label
+         * sample - the generated image 
+         * actual_height - the actaul height of generated image 
+         */
         void generateSample(string &caption, Mat &sample, int &actual_height);
 };
 

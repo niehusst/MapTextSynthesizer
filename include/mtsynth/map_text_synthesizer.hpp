@@ -24,6 +24,7 @@ class MapTextSynthesizer{
          *
          * caption - the label of the image. 
          * sample - the resulting text sample.
+         * actual_height - the actual height of sample.
          */
         virtual void 
             generateSample (std::string &caption, cv::Mat &sample, int &actual_height) = 0;
