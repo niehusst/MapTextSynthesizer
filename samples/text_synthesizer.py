@@ -19,6 +19,7 @@ import cv2
 import sys
 import os
 import numpy as np
+import time
 
 # for Ctypes usage, see tensorflow/generator/data_synth.py
 sys.path.insert(0, '../tensorflow/generator/') #insert path to find data_synth
@@ -64,7 +65,6 @@ def guiLoop():
     while ord('q')!=k:
         if pause<500:
             # generate sample and store data
-            data = next(mts)
             caption,image = next( mts )
             
             # print sample information
@@ -76,6 +76,26 @@ def guiLoop():
         k=cv2.waitKey(pause+1)
 
 
+def benchmark(num_iters):
+    global mts
+    k=0
+    print "Running benchmark",
+    sys.stdout.flush()
+    start = time.time()
+    #run the benchmark for num_iters images
+    while k < num_iters:
+        k += 1
+        # generate sample and store data
+        caption,image = next( mts )
+        if num_iters/10 % k == 0:
+            print ".",
+            sys.stdout.flush()
+    end = time.time()
+    print "."
+    runtime = end-start
+    print "Total Runtime: {} seconds".format(runtime)
+    print "Images Generated: {}".format(num_iters)
+    print "Production Rate: {} Hz".format(num_iters/runtime) 
         
 # main; run the gui
 if __name__=='__main__':
@@ -83,4 +103,8 @@ if __name__=='__main__':
     initWindows()
     updateTrackbars()
     # generate and show MTS images
-    guiLoop()
+    if len(sys.argv) > 1 and sys.argv[1] == "benchmark":
+        num_iters = 10000
+        benchmark(10000)
+    else:
+        guiLoop()
