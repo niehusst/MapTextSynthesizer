@@ -8,9 +8,9 @@
 #include <pango/pangocairo.h>
 
 // opencv includes
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/mat.hpp> //cv::Mat
 
-// our method includes
+// local files
 #include "mtsynth/map_text_synthesizer.hpp"
 #include "mts_basehelper.hpp"
 #include "mts_config.hpp"
@@ -26,7 +26,7 @@ using boost::random::variate_generator;
 
 class MTSImplementation: public MapTextSynthesizer{
 
-    protected:
+protected://-------------PROTECTED METHODS AND FIELDS------------------------
 
         /* Converts cairo surface to mat object in opencv
          *
@@ -39,12 +39,14 @@ class MTSImplementation: public MapTextSynthesizer{
          */
         static void cairoToMat(cairo_surface_t *surface,Mat &mat);
 
+  
         /* Adds Gaussian noise to out
          *
          * out - the input and output image
          */
         void addGaussianNoise(Mat& out);
 
+  
         /* Adds Gaussian blur to out
          *
          * out - the input and output image
@@ -67,7 +69,7 @@ class MTSImplementation: public MapTextSynthesizer{
         gamma_distribution<> noise_dist;
         variate_generator<mt19937, gamma_distribution<> > noise_gen;
 
-    public:
+public://-----------------PUBLIC METHODS AND FIELDS------------------------
 
         /* Constructor */
         MTSImplementation(string config_file);
@@ -75,13 +77,16 @@ class MTSImplementation: public MapTextSynthesizer{
         /* Destructor */
         ~MTSImplementation();
 
-        /* Generate one image sample with ground truth label
+        /*
+         * Generate a sample image
          *
-         * caption - the generated label
-         * sample - the generated image 
-         * actual_height - the actaul height of generated image 
+         * caption - the text displayed in the image
+         * sample - the opencv matrix that actually contains the image data
+         * actual_height - the actual height of sample in pixels. 
          */
-        void generateSample(string &caption, Mat &sample, int &actual_height);
+        void generateSample(string &caption, Mat &sample,
+                            int &actual_height);
+
 };
 
 #endif

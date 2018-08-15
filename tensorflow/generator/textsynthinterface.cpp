@@ -33,15 +33,14 @@ typedef struct sample {
 
 struct MTS_Buffer {
   cv::Ptr<MapTextSynthesizer> mts;
-  MTS_Buffer(const char* config_path, const char* lexicon_path);
+  MTS_Buffer(const char* config_path);//, const char* lexicon_path);
   void cleanup(void);
 };
 
-void prepare_synthesis(cv::Ptr<MapTextSynthesizer> s,
-		       const char* lexicon_path);
-MTS_Buffer::MTS_Buffer(const char* config_path, const char* lexicon_path) {
+//void prepare_synthesis(cv::Ptr<MapTextSynthesizer> s, const char* lexicon_path);
+MTS_Buffer::MTS_Buffer(const char* config_path/*, const char* lexicon_path*/) {
   this->mts = MapTextSynthesizer::create(config_path);
-  prepare_synthesis(this->mts, lexicon_path);
+  //  prepare_synthesis(this->mts, lexicon_path);
 }
 
 void MTS_Buffer::cleanup() {
@@ -54,7 +53,7 @@ extern "C" {
   size_t get_height(void* spl);
   size_t get_width(void* spl);
   char* get_caption(void* spl);
-  void* mts_init(const char* config_path, const char* lexicon_path);
+  void* mts_init(const char* config_path);//, const char* lexicon_path);
   void* get_sample(void* mts_buff);
   void free_sample(void* spl);
   void mts_cleanup(void* mts_buff);
@@ -80,28 +79,28 @@ char* get_caption(void* ptr) {
   return ((sample_t*)ptr)->caption;
 }
 
-/* Prepare synthesizer object for synthesis w/ params */
+/* Prepare synthesizer object for synthesis w/ params 
 void prepare_synthesis(cv::Ptr<MapTextSynthesizer> s,
 		       const char* lexicon_path) {
-  vector<String> caps;
+  
   // NOTE/TODO: Use system fonts instead
-  vector<string> blocky;
+  std::vector<std::string> blocky;
   blocky.push_back("Sans");
   blocky.push_back("Serif");
 
-  vector<string> regular;
+  std::vector<std::string> regular;
   //regular.push_back("cmmi10");
   regular.push_back("Sans");
   regular.push_back("Serif");
 
-  vector<string> cursive;
+  std::vector<std::string> cursive;
   cursive.push_back("Sans");
 
   s->setSampleCaptions(lexicon_path);
   s->setBlockyFonts(blocky);
   s->setRegularFonts(regular);
   s->setCursiveFonts(cursive);
-}
+}*/
 
 /* Get a sample */
 void* get_sample(void* mts_buff_arg) {
@@ -109,8 +108,8 @@ void* get_sample(void* mts_buff_arg) {
   auto mts_buff = (MTS_Buffer*)mts_buff_arg;
   auto mts = mts_buff->mts;
   
-  string label;
-  Mat image;
+  std::string label;
+  cv::Mat image;
   int height;
 
   // Fill in label, image
@@ -145,8 +144,8 @@ void* get_sample(void* mts_buff_arg) {
 }
 
 /* Called before using python generator function */
-void* mts_init(const char* config_path, const char* lexicon_path) {
-  return new MTS_Buffer(config_path, lexicon_path);
+void* mts_init(const char* config_path/*, const char* lexicon_path*/) {
+  return new MTS_Buffer(config_path);//, lexicon_path);
 }
 
 /* Called after using python generator function */

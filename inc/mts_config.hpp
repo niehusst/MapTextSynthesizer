@@ -18,23 +18,54 @@ class MTSConfig {
          *
          * filename - the name of the file to parse for values
          */
-        unordered_map<string,string> parseConfig(string filename);
+        std::unordered_map<std::string,std::string>
+        parseConfig(std::string filename);
 
-        unordered_map<string, string> params;
-        unordered_map<string, int> paramsInt;
-        unordered_map<string, double> paramsDouble;
+        std::unordered_map<std::string, std::string> params;
+        std::unordered_map<std::string, int> paramsInt;
+        std::unordered_map<std::string, double> paramsDouble;
 
     public://----------------------- PUBLIC METHODS --------------------------
 
-        MTSConfig(string filename);
+  /*
+   * Constructor for this class. Takes the file name to read user 
+   * configured parameters from.
+   *
+   * filename - the name of the file from which to parse parameters from
+   */
+        MTSConfig(std::string filename);
 
-        bool findParam(string key);
+  /*
+   * Finds if the user configured parameter is in the params map.
+   * Returns true if it is, otherwise false.
+   *
+   * key - the string name of the parameter to find
+   */
+        bool findParam(std::string key);
 
-        string getParam(string key);
+  /*
+   * Get a parameter from the params map that is named by key. Returns
+   * the pair value of the key.
+   *
+   * key - the string name of a parameter in params map
+   */
+        std::string getParam(std::string key);
 
-        int getParamInt(string key);
+  /*
+   * Get a parameter from the paramsInt map that is named by key. Returns
+   * the pair value of the key.
+   *
+   * key - the string name of a parameter in paramsInt map
+   */
+        int getParamInt(std::string key);
 
-        double getParamDouble(string key);
+  /*
+   * Get a parameter from the paramsDouble map that is named by key. Returns
+   * the pair value of the key.
+   *
+   * key - the string name of a parameter in paramsDouble map
+   */
+        double getParamDouble(std::string key);
 };
 
 #endif

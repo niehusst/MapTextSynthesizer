@@ -8,7 +8,7 @@
 #include <boost/random.hpp>
 
 #include <pango/pangocairo.h>
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp> // cv::RNG
 
 #include "mts_config.hpp"
 
@@ -20,21 +20,23 @@ using cv::RNG;
 
 using boost::random::mt19937;
 
+
 // All possible features that can be incorporated into a background
 enum BGFeature {Colordiff=0, Distracttext, Boundary, Colorblob, 
-    Straight, Grid, Citypoint, Parallel, 
-    Vparallel, Texture, Railroad, Riverline};
+                Straight, Grid, Citypoint, Parallel, 
+                Vparallel, Texture, Railroad, Riverline};
 
 // rename pair of doubles for readability as coordinates (x,y)
 typedef std::pair<double, double> coords;
+
 
 ////////////// from Behdad's cairotwisted.c (required functions) /////////////
 typedef double parametrization_t;  
 
 /* Simple struct to hold a path and its parametrization */
 typedef struct {
-    cairo_path_t *path;
-    parametrization_t *parametrization;
+  cairo_path_t *path;
+  parametrization_t *parametrization;
 } parametrized_path_t;
 
 // path transforming function pointer
@@ -47,10 +49,10 @@ typedef void (*transform_point_func_t) (void *closure, double *x, double *y);
  * functions for different purposes.
  */
 class MTS_BaseHelper {
-    private://----------------------- PRIVATE METHODS --------------------------
+private://----------------------- PRIVATE METHODS --------------------------
 
-        ////////////// from Behdad's cairotwisted.c (required functions) /////////////
-
+  
+////////////// from Behdad's cairotwisted.c (required functions) /////////////
 
         /* Returns Euclidean distance between two points */
         double
@@ -80,12 +82,13 @@ class MTS_BaseHelper {
          * Bezier control points) is passed to the function for transformation.
          */
         void
-            transform_path (cairo_path_t *path, transform_point_func_t f, void *closure);
+            transform_path (cairo_path_t *path, transform_point_func_t f,
+                            void *closure);
 
         /* Project a point X,Y onto a parameterized path.  The final point is
-         * where you get if you walk on the path forward from the beginning for X
-         * units, then stop there and walk another Y units perpendicular to the
-         * path at that point.  In more detail:
+         * where you get if you walk on the path forward from the beginning for
+         * X units, then stop there and walk another Y units perpendicular to 
+         * the path at that point.  In more detail:
          *
          * There's three pieces of math involved:
          *
@@ -98,17 +101,18 @@ class MTS_BaseHelper {
          *   - The Gradient (aka multi-dimensional derivative) of the above
          *     http://en.wikipedia.org/wiki/Gradient
          *
-         * The parametric forms are used to answer the question of "where will I be
-         * if I walk a distance of X on this path".  The Gradient is used to answer
-         * the question of "where will I be if then I stop, rotate left for 90
-         * degrees and walk straight for a distance of Y".
+         * The parametric forms are used to answer the question of "where will I
+         * be if I walk a distance of X on this path".  The Gradient is used to
+         * answer the question of "where will I be if then I stop, rotate left 
+         * for 90 degrees and walk straight for a distance of Y".
          */
         static void
             point_on_path (parametrized_path_t *param, double *x, double *y);
 
-        ///////////https://github.com/phuang/pango/blob/master/examples/cairotwisted.c
+///////////https://github.com/phuang/pango/blob/master/examples/cairotwisted.c
 
 
+  
         /*
          * Takes four x,y coordinate points and returns two control points
          *
@@ -127,9 +131,10 @@ class MTS_BaseHelper {
                     coords *cp1,
                     coords *cp2);
 
-        RNG rng_;
+        //the random number generator
+        cv::RNG rng_;
 
-    public://----------------------- PUBLIC METHODS --------------------------
+public://----------------------- PUBLIC METHODS --------------------------
 
         /* An MTSConfig instance to fetch parameters from. */
         MTSConfig* config;
@@ -138,24 +143,29 @@ class MTS_BaseHelper {
         /* from https://github.com/phuang/pango/blob/master/examples/cairotwisted.c */
         void
             map_path_onto (cairo_t *cr, cairo_path_t *path);
+  
         /* 
          * Draws a path shape from points using (semi-)cubic interpolation.  
-         * uses coords from points vec to determine where to draw curves to and from.
-         * draws curves point by point from vector.
+         * uses coords from points vec to determine where to draw curves to and
+         * from. Draws curves point by point from vector.
          *
          * cr - cairo context
-         * c_min - the min range value for squared variable in the first cubic 
-         *        curving equation
-         * c_max - the max range value for squared variable in the first cubic 
-         *        curving equation
-         * d_min - the min range value for cubed variable in the first cubic 
-         *        curving equation
-         * d_max - the max range value for cubed variable in the first cubic 
-         *        curving equation
          * points - a vector of x,y coordinate pairs 
          *          (precondition: must contain at least 2 elements)
+         * c_min - the min range value for squared variable in the first cubic 
+         *        curving equation (optional)
+         * c_max - the max range value for squared variable in the first cubic 
+         *        curving equation (optional)
+         * d_min - the min range value for cubed variable in the first cubic 
+         *        curving equation (optional)
+         * d_max - the max range value for cubed variable in the first cubic 
+         *        curving equation (optional)
+         * text - Boolean flag say whether this function is being called to 
+         *        draw a path for text or a line. (optional)
          */
-        void points_to_path(cairo_t *cr, vector<coords> points, double c_min=-2, double c_max=2, double d_min=-2, double d_max=2, bool text = false);
+        void points_to_path(cairo_t *cr, vector<coords> points,
+                            double c_min=-2, double c_max=2, double d_min=-2,
+                            double d_max=2, bool text = false);
 
         /*
          * Makes and returns a vector of x,y coordinate points for
@@ -167,20 +177,23 @@ class MTS_BaseHelper {
          * height - surface height in pixels
          * num_points - the number of points to push onto the vector 
          *              (minimum 3) (range 3-5 for least text distortion)
-         * y_var_min - the minimum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
-         * y_var_max - the maximum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
+         * y_var_min - the minimum fluctuation of the fixing points of the 
+         *             curve in y-direction w.r.t. the height of image
+         * y_var_max - the maximum fluctuation of the fixing points of the 
+         *             curve in y-direction w.r.t. the height of image
          */
-        vector<coords> make_points_wave(double length, double height, int num_points, double y_var_min, double y_var_max);
+        vector<coords> make_points_wave(double length, double height,
+                           int num_points, double y_var_min, double y_var_max);
 
 
-        //Another RNG for beta, gamma, normal distributions
+        //Another RNG for beta, gamma, and normal distributions
         mt19937 rng2_;
 
-        //Constructor
+        //Constructors
         MTS_BaseHelper(shared_ptr<MTSConfig> c);
 
         //Destructor
-        ~MTS_BaseHelper();
+        ~MTS_BaseHelper(); 
 
         /*
          * Returns true or false based on a randomly generated probability under
@@ -238,7 +251,9 @@ class MTS_BaseHelper {
          * color_min - if not trans, then the min color of the holes
          * color_max - if not trans, then the max color of the holes
          */
-        void addSpots(cairo_surface_t *surface, int num_min, int num_max, double size_min, double size_max, double diminish_rate, bool transparent, int color_min=0, int color_max=0);
+        void addSpots(cairo_surface_t *surface, int num_min, int num_max,
+                      double size_min, double size_max, double diminish_rate,
+                      bool transparent, int color_min=0, int color_max=0);
 
 };
 

@@ -1,10 +1,9 @@
 #ifndef MTS_BACKGROUND_HELPER_HPP
 #define MTS_BACKGROUND_HELPER_HPP
 
-#include <pango/pangocairo.h>
-#include <opencv2/opencv.hpp>
-
 #include <vector>
+
+#include <pango/pangocairo.h>
 
 #include "mts_basehelper.hpp"
 #include "mts_config.hpp"
@@ -22,6 +21,7 @@ using boost::random::variate_generator;
  * A class to handle the synthetic generation of all background features
  */
 class MTS_BackgroundHelper {
+
     private://---------------------- PRIVATE METHODS --------------------------
 
         /* Generator for variance in bg bias */
@@ -32,27 +32,31 @@ class MTS_BackgroundHelper {
         beta_distribution<> texture_distribution;
         variate_generator<mt19937, beta_distribution<> > texture_distrib_gen;
 
+  
         /*
-         * Makes a thicker line behind the original that is a different gray-scale hue
+         * Makes a thicker line behind the original that is a different 
+         * gray-scale hue
          *
          * cr - cairo context
-         * linewidth - the width of the original line (used in scaling for new line)
+         * linewidth - the width of the original line (used in scaling for line)
          * og_col - the color of the original line
          */
         void
             draw_boundary(cairo_t *cr, double linewidth, double og_col);
 
+  
         /*
-         * Draws the main line (thin) and then another line (thick) with a specific
-         * dash pattern over it such that it looks as if the 2nd line is actually 
-         * small perpendicular lines
+         * Draws the main line (thin) and then another line (thick) with a 
+         * specific dash pattern over it such that it looks as if the 2nd line
+         * is actually small perpendicular lines.
          *
          * cr - cairo context
-         * linewidth - the width of the original line (used in scaling for new line)
+         * linewidth - the width of the original line (used in scaling for line)
          */
         void
             draw_hatched(cairo_t *cr, double linewidth);
 
+  
         /*
          * Sets an arbitrary dash pattern to the path stored by cr
          *
@@ -69,17 +73,19 @@ class MTS_BackgroundHelper {
          * width - surface width
          * height - surface height
          * c_min - the min range value for squared variable in the first cubic 
-         *        curving equation
+         *         curving equation
          * c_max - the max range value for squared variable in the first cubic 
-         *        curving equation
+         *         curving equation
          * d_min - the min range value for cubed variable in the first cubic 
-         *        curving equation
+         *         curving equation
          * d_max - the max range value for cubed variable in the first cubic 
-         *        curving equation
-         * river - whether the curve is for a river line or not
+         *         curving equation
+         * river - whether the curve is for a river line or not (optional)
          */
         void
-            generate_curve(cairo_t *cr, int width, int height, double c_min, double c_max, double d_min, double d_max, bool river = false);
+            generate_curve(cairo_t *cr, int width, int height, double c_min,
+                           double c_max, double d_min, double d_max,
+                           bool river=false);
 
 
         /*
@@ -92,7 +98,8 @@ class MTS_BackgroundHelper {
          * height - surface height
          */
         void
-            orient_path(cairo_t *cr, bool curved, int length, int width, int height);
+            orient_path(cairo_t *cr, bool curved, int length,
+                        int width, int height);
 
 
         /*
@@ -109,7 +116,8 @@ class MTS_BackgroundHelper {
          * height - surface height in pixels
          */
         static void
-            diagonal_lines(cairo_t *cr, int x1, int y1, int x2, int y2, int spacing, int width, int height);
+            diagonal_lines(cairo_t *cr, int x1, int y1, int x2, int y2,
+                           int spacing, int width, int height);
 
         /*
          * Draws a perpendicular, crossed lines texture using recursion.
@@ -124,7 +132,8 @@ class MTS_BackgroundHelper {
          * height - surface height in pixels
          */
         static void
-            crossed_lines(cairo_t *cr, int x1, int y1, int x2, int y2, int spacing, int width, int height);
+            crossed_lines(cairo_t *cr, int x1, int y1, int x2, int y2,
+                          int spacing, int width, int height);
 
 
         /*
@@ -150,7 +159,8 @@ class MTS_BackgroundHelper {
          * counter - a counter to keep track of how many sides have been drawn
          */
         static void
-            shape_helper(cairo_t *cr, double x, double y, double angle, double edge_len, int num_sides, int counter);
+            shape_helper(cairo_t *cr, double x, double y, double angle,
+                         double edge_len, int num_sides, int counter);
 
 
         /*
@@ -159,7 +169,8 @@ class MTS_BackgroundHelper {
          * cr - cairo context
          * x - x start coordinate
          * y - y start coordinate
-         * num_sides - the number of sides to draw on a shape. if < 2, draws a circle
+         * num_sides - the number of sides to draw on a shape. 
+         *             (if num_sides < 2, draws a circle)
          * radius - half the width of the shape
          */
         static void 
@@ -172,7 +183,8 @@ class MTS_BackgroundHelper {
          * cr - cairo context
          * origin_x - x coordinate for shape
          * origin_y - y coordinate for shape
-         * num_sides - the number of sides to draw on a shape. if < 2, draws a circle
+         * num_sides - the number of sides to draw on a shape. 
+         *             (if num_sides < 2, draws a circle)
          * distance - the distance to put between shapes
          * even - helps the recursive function stagger the rows
          * radius - half the width of the shape
@@ -180,7 +192,9 @@ class MTS_BackgroundHelper {
          * height - height of the surface
          */
         static void
-            shape_texture_helper(cairo_t *cr, int origin_x, int origin_y, int num_sides, int distance, bool even, int radius, int width, int height);
+            shape_texture_helper(cairo_t *cr, int origin_x, int origin_y,
+                                 int num_sides, int distance, bool even,
+                                 int radius, int width, int height);
 
 
         /*
@@ -196,7 +210,8 @@ class MTS_BackgroundHelper {
          * height - surface height in pixels
          */
         static void
-            make_shape_texture(cairo_t *cr, int x, int y, int diameter, int num_sides, int spacing, int width, int height);
+            make_shape_texture(cairo_t *cr, int x, int y, int diameter,
+                               int num_sides,int spacing,int width,int height);
 
 
         /*
@@ -204,12 +219,13 @@ class MTS_BackgroundHelper {
          * onto the surface stored in cr.
          *
          * cr - cairo context
-         * texture - the index choice for the background texture (must be between 0 and 2 inclusive)
+         * texture - the index choice for the background texture
+         *           (must be between 0 and 2 inclusive)
          *           ( 0 - diagonal lines )
          *           ( 1 - crossed lines  )
          *           ( 2 - shapes         )
          * brightness - the grayscale brightness level to make the texture
-         * linewidth - width of the lines drawn (if it is a shape texture, this is unused)
+         * linewidth - width of the lines drawn (unused for shape texture)
          * diameter - the diameter of each shape 
          *            (if texture != 2, then this parameter is set to 0)
          * num_sides - the number of sides of each shape 
@@ -219,7 +235,9 @@ class MTS_BackgroundHelper {
          * height - surface height in pixels
          */
         void
-            draw_texture(cairo_t *cr, int texture, double brightness, double linewidth, int diameter, int num_sides, int spacing, int width, int height);
+            draw_texture(cairo_t *cr, int texture, double brightness,
+                         double linewidth, int diameter, int num_sides,
+                         int spacing, int width, int height);
 
 
         /*
@@ -227,19 +245,21 @@ class MTS_BackgroundHelper {
          * parameter.
          *
          * cr - cairo context
-         * texture - the index choice for the background texture (must be between 0 and 2 inclusive)
+         * texture - the index choice for the background texture 
+         *           (must be between 0 and 2 inclusive)
          *           ( 0 - diagonal lines )
          *           ( 1 - crossed lines  )
          *           ( 2 - shapes         )
          * brightness - the grayscale brightness level to make the texture
-         * linewidth - width of the lines drawn (if it is a shape texture, this is unused)
+         * linewidth - width of the lines drawn (unused if texture is shapes)
          * spacing - the spacing between lines or dots in the texture 
-         *           (if texture == 2, spacing must be at least equal to diameter) 
+         *           (if texture == 2, spacing must >= to diameter) 
          * width - surface width in pixels
          * height - surface height in pixels
          */
         void
-            set_texture_source(cairo_t *cr, int texture, double brightness, double linewidth, int spacing, int width, int height);
+            set_texture_source(cairo_t *cr, int texture, double brightness,
+                          double linewidth, int spacing, int width, int height);
 
 
         /*
@@ -258,11 +278,11 @@ class MTS_BackgroundHelper {
          *        curving equation
          * d_max - the max range value for cubed variable in the first cubic 
          *        curving equation
-
          */
         void
             addTexture(cairo_t *cr, bool curved,  double brightness, 
-                    int width, int height, double c_min, double c_max, double d_min, double d_max);
+                    int width, int height, double c_min, double c_max,
+                       double d_min, double d_max);
 
 
         /* 
@@ -279,14 +299,15 @@ class MTS_BackgroundHelper {
          * width - the width of the layout in pixels
          * height - the height of the layout in pixels
          * c_min - the min range value for squared variable in the first cubic 
-         *        curving equation
+         *        curving equation (optional)
          * c_max - the max range value for squared variable in the first cubic 
-         *        curving equation
+         *        curving equation (optional) 
          * d_min - the min range value for cubed variable in the first cubic 
-         *        curving equation
+         *        curving equation (optional)
          * d_max - the max range value for cubed variable in the first cubic 
-         *        curving equation
-         * color - color of the line to be drawn (already set, should only be used for boundary)
+         *        curving equation (optional)
+         * color - color of the line to be drawn 
+         *         (already set, should only be used for boundary)
          */
         void
             addLines(cairo_t *cr, bool boundary, bool hatched, bool dashed, 
@@ -308,7 +329,7 @@ class MTS_BackgroundHelper {
             addBgBias(cairo_t *cr, int width, int height, int color);
 
         /* 
-         * Add bg patters to the cr like even-spaced straight line, uneven-spaced
+         * Add bg patters like even-spaced straight line, uneven-spaced
          * straight line, grid, etc.
          *
          * cr - cairo context
@@ -332,7 +353,8 @@ class MTS_BackgroundHelper {
          * color_max - brightest color
          */
         void
-            colorDiff(cairo_t *cr, int width, int height, double color_min, double color_max); 
+            colorDiff(cairo_t *cr, int width, int height, double color_min,
+                      double color_max); 
 
 
         /*
@@ -350,14 +372,14 @@ class MTS_BackgroundHelper {
     public://------------------------ PUBLIC METHODS ---------------------------
 
         // a helper class memeber that holds important functions
-        //shared_ptr<MTS_BaseHelper> helper;
         MTS_BaseHelper* helper;
 
         /* An MTSConfig instance to get parameters from. */
         MTSConfig* config;
 
         //Constructor
-        MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h, shared_ptr<MTSConfig> c);
+        MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h,
+                             shared_ptr<MTSConfig> c);
 
         //Destructor
         ~MTS_BackgroundHelper();
@@ -381,7 +403,9 @@ class MTS_BackgroundHelper {
          * contrast - the contrast level
          */
         void
-            generateBgSample(cairo_surface_t *&bg_surface, vector<BGFeature>&features, int height, int width, int bg_color, int contrast);
+            generateBgSample(cairo_surface_t *&bg_surface,
+                             vector<BGFeature>&features, int height,
+                             int width, int bg_color, int contrast);
 };
 
 #endif

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-PATH_TO_MTS=/home/chenziwe/MapTextSynthesizer
+PATH_TO_MTS=/home/.../MapTextSynthesizer
 BUILD_FOLDER=build
-PATH_TO_VENV=/home/chenziwe/virtualenv/test4/local
+PATH_TO_VENV=/home/.../local
 
 #start to configure cmake
 

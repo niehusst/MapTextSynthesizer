@@ -1,76 +1,87 @@
+'''
+   Python sample program that uses MapTextSynthesizer through Ctypes.
+   Copyright (C) 2018 Liam Niehus-Staab, Ziwen Chen, Benjamin Gafford
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
 import cv2
-import mtsynth
 import sys
+import os
 import numpy as np
 
+# for Ctypes usage, see tensorflow/generator/data_synth.py
+sys.path.insert(0, '../tensorflow/generator/') #insert path to find data_synth
+from data_synth import data_generator as data_generator
+
 # Global Variable definition
+mts = data_generator("config.txt")
+pause=200 #starting miliseconds between images
 
-s = mtsynth.MapTextSynthesizer()
-pause=200
 
-# GUI Callsback functions
+
+### GUI Callback functions
 
 def updateTime(x):
     global pause
     pause=x
 
-'''
-def read_words(words_file):
-    open_file = open(words_file, 'r')
-    words_list =[]
-    contents = open_file.readlines()
-    for i in range(len(contents)):
-       words_list.append(contents[i].strip('\n'))
-    return words_list    
-    open_file.close()
-'''
 
-def initialiseSynthesizers():
-    global s
-
-    s.setSampleCaptions("IA/Civil.txt")
-    #s.setSampleCaptions("latin_extended_additional.txt")
-
-    s.setBlockyFonts("blocky.txt")
-    s.setRegularFonts("regular.txt")
-    s.setCursiveFonts("cursive.txt")
-
-# Other functions
+    
+### GUI window functions
 
 def initWindows():
-    global s
+    global mts
     global pause
+    # create window to visualize the images
     cv2.namedWindow('Text Synthesizer Demo',cv2.WINDOW_NORMAL)
     cv2.resizeWindow('Text Synthesizer Demo',1000,500)
     cv2.moveWindow('Text Synthesizer Demo',100,100)
-    cv2.createTrackbar('Pause ms','Text Synthesizer Demo',int(pause),500,updateTime)
+    
+    # create trackbar so the pause time can be dynamically adjuseted
+    cv2.createTrackbar('Pause ms','Text Synthesizer Demo',int(pause),
+                       500,updateTime)
 
 def updateTrackbars():
-    global s
     global pause
     cv2.setTrackbarPos('Pause ms','Text Synthesizer Demo',int(pause))
 
 def guiLoop():
-    global s
+    global mts
     global pause
     k=''
+    #run the gui image show loop until user presses 'q'
     while ord('q')!=k:
         if pause<500:
-            [caption, [h,w,img_data], actual_h] = s.generateSample()
+            # generate sample and store data
+            data = next(mts)
+            print(len(data))
+            print(data)
+            [caption, [h,w,img_data], actual_h] = next( mts )
             img = np.reshape(np.fromiter(img_data, np.uint8),(h,w))
-            cv2.imshow('Text Synthesizer Demo',img)
+            # print sample information
             print caption
-            print "actual: ", actual_h
+            print "Image height: ", actual_h
+            # show the sample image
+            cv2.imshow('Text Synthesizer Demo',img)
         k=cv2.waitKey(pause+1)
 
-# Main Programm
 
+        
+# main; run the gui
 if __name__=='__main__':
-    #colorImg=cv2.imread('1000_color_clusters.png',cv2.IMREAD_COLOR)
-    #1000_color_clusters.png has the 3 most dominant color clusters 
-    #from the first 1000 samples of MSCOCO-text trainset
-    #print helpStr
-    initialiseSynthesizers()
+    # init gui window info
     initWindows()
     updateTrackbars()
+    # generate and show MTS images
     guiLoop()

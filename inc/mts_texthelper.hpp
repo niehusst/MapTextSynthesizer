@@ -1,12 +1,11 @@
 #ifndef MTS_TEXTHELPER_HPP
 #define MTS_TEXTHELPER_HPP
 
-#include <pango/pangocairo.h>
-#include <opencv2/opencv.hpp>
-
 #include <vector>
 #include <string>
 #include <memory>
+
+#include <pango/pangocairo.h>
 
 #include "mts_basehelper.hpp"
 #include "mts_config.hpp"
@@ -24,9 +23,9 @@ using boost::random::variate_generator;
  * text rendering 
  */ 
 class MTS_TextHelper {
-    private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
+private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
 
-         /* Updates the list of available system fonts by
+        /* Updates the list of available system fonts by
          * clearing and reloading font_list
          *
          * font_list - the output
@@ -48,9 +47,6 @@ class MTS_TextHelper {
 
         /* The list of available system font names. */
         vector<string> availableFonts_ = vector<string>();
-
-        /* A list of lists of fonts */
-        //vector<vector<string> > fontlists_;
 
         /* A list of fonts */
         vector<string> fonts_;
@@ -119,13 +115,14 @@ class MTS_TextHelper {
          */
         void
             generateFeatures(double &rotated_angle, bool &curved, 
-                    double &spacing_deg, double &spacing, 
-                    double &stretch_deg, int &x_pad, 
-                    int &y_pad, double &scale, PangoFontDescription *&desc,
-                    int height);
+                             double &spacing_deg, double &spacing, 
+                             double &stretch_deg, int &x_pad, int &y_pad,
+                             double &scale, PangoFontDescription *&desc,
+                             int height);
 
         /*
-         * Creates a curved text whose shape will not be deformed according to the curvature
+         * Creates a curved text whose shape will not be deformed according
+         * to the curvature
          *
          * cr - cairo context
          * layout - the PangoLayout used for the desired text
@@ -142,17 +139,22 @@ class MTS_TextHelper {
          *        curving equation
          * d_max - the max range value for cubed variable in the first cubic
          * stretch_deg - the horizontal stretch degree
-         * y_var_min_ratio - the minimum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
-         * y_var_max_ratio - the maximum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
+         * y_var_min_ratio - the minimum fluctuation of the fixing points of
+         *                   the curve in y-direction w.r.t. the height of image
+         * y_var_max_ratio - the maximum fluctuation of the fixing points of
+         *                   the curve in y-direction w.r.t. the height of image
          */
         void
-            create_curved_text(cairo_t *cr, PangoLayout *layout, cairo_path_t *&path,
+        create_curved_text(cairo_t *cr,PangoLayout *layout, cairo_path_t *&path,
                     double width, double height, int num_points, double c_min,
                     double c_max, double d_min, double d_max,double stretch_deg,
                     double y_var_min_ratio, double y_var_max_ratio);
 
+
+  
         /*
-         * Creates a curved text whose shape will be deformed according to the curvature
+         * Creates a curved text whose shape will be deformed according to
+         * the curvature
          *
          * cr - cairo context
          * layout - the PangoLayout used for the desired text
@@ -169,17 +171,19 @@ class MTS_TextHelper {
          *        curving equation
          * d_max - the max range value for cubed variable in the first cubic
          * stretch_deg - the horizontal stretch degree
-         * y_var_min_ratio - the minimum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
-         * y_var_max_ratio - the maximum fluctuation of the fixing points of the curve in y-direction w.r.t. the height of image
+         * y_var_min_ratio - The minimum fluctuation of the fixing points of 
+         *                   the curve in y-direction w.r.t. the height of image
+         * y_var_max_ratio - The maximum fluctuation of the fixing points of
+         *                   the curve in y-direction w.r.t. the height of image
          */
-        void create_curved_text_deformed(cairo_t *cr, 
-                PangoLayout *layout, cairo_path_t *&path, double width, double height,
+        void create_curved_text_deformed(cairo_t *cr, PangoLayout *layout,
+                cairo_path_t *&path, double width, double height,
                 int num_points, double c_min, double c_max, double d_min,
                 double d_max, double stretch_deg, 
                 double y_var_min_ratio, double y_var_max_ratio);
 
         /*
-         * Get the extents of a text ink
+         * Get the extents of a text 'ink'
          *
          * layout - the pango layout
          * desc - the pango font description
@@ -190,7 +194,8 @@ class MTS_TextHelper {
          * size - the size of the text
          */
         void
-            getTextExtents(PangoLayout *layout, PangoFontDescription *desc, int &x, int &y, int &w, int &h, int &size);
+            getTextExtents(PangoLayout *layout, PangoFontDescription *desc,
+                           int &x, int &y, int &w, int &h, int &size);
 
         /*
          * Generates a text image without background
@@ -203,10 +208,12 @@ class MTS_TextHelper {
          * distract - whether to draw distracting text or not
          */
         void
-            generateTextPatch(cairo_surface_t *&text_surface, string caption,int height,int &width, int text_color, bool distract);
+            generateTextPatch(cairo_surface_t *&text_surface,
+                              string caption,int height,int &width,
+                              int text_color, bool distract);
 
 
-    public:// --------------------- PUBLIC METHODS -------------------------------
+public:// --------------------- PUBLIC METHODS -------------------------------
 
         /* The base helper */
         MTS_BaseHelper* helper;
@@ -225,15 +232,17 @@ class MTS_TextHelper {
          * Provides the randomly rendered text 
          *
          * caption - the string which will be rendered. 
-         * text_surface - an out variable containing a 32FC3 matrix with the rendered 
-         *          text including border and shadow.
+         * text_surface - an out variable containing a 32FC3 matrix with the 
+         *                rendered text including border and shadow.
          * height - height of the surface
          * width - width of the surface that will be determined
          * text_color - the grayscale color value for the text
          * distract - flag that dictates whether distractor text will be present
          */
         void 
-            generateTextSample(string &caption, cairo_surface_t *&text_surface, int height, int &width, int text_color, bool distract);
+            generateTextSample(string &caption,
+                               cairo_surface_t *&text_surface, int height,
+                               int &width, int text_color, bool distract);
 
 };
 

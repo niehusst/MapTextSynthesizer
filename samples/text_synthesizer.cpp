@@ -26,6 +26,8 @@
 #include <string>
 #include <mtsynth/map_text_synthesizer.hpp>
 
+#include <opencv2/opencv.hpp>
+
 using namespace std;
 using namespace cv;
 

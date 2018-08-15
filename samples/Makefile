@@ -6,16 +6,18 @@ BINDIR=../bin/
 
 # Compiler, flags, and packages
 CXX=g++
-FLAGS=-std=c++11 -Wall
+FLAGS=-std=c++11
 SOFLAGS=-I. -I$(IDIR) -I$(LIBDIR) -shared -fPIC ${FLAGS}
 OFLAGS=-c -I. -I$(IDIR) -I$(LIBDIR) ${FLAGS}
 SAMPLE_FLAGS=-I. -I$(IDIR) -L${BINDIR} -lmtsynth ${FLAGS}
 STATIC_SAMPLE_FLAGS=-I. -I$(IDIR) ${FLAGS}
 
 # Link libraries
-LIBS := opencv_ml opencv_calib3d opencv_features2d opencv_highgui \
+LINKS := opencv_ml opencv_calib3d opencv_features2d opencv_highgui mtsynth \
 		opencv_imgproc opencv_flann opencv_imgcodecs opencv_core png tiff jpeg
-LDLIBS := -L$(LIBDIR) $(addprefix -l, $(LIBS)) 
+LIBS := $(addprefix -l, $(LINKS))
+#use LDLIBS for compiling w/ shared object
+LDLIBS := -L$(BINDIR) $(LIBS)
 PKG-CONFIG := `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
 
 # Source files
@@ -33,7 +35,8 @@ libmtsynth.a: ${SOURCES}
 	ar rsc ${BINDIR}$@ ./*.o 
 	rm ./*.o
 
-# Compile a cpp example
+# Compile a cpp example from shared library
+# NOTE: Must set environment variable LD_LIBRARY_PATH=/path/to/bin/
 cpp_sample: text_synthesizer.cpp
 	${CXX} $^ ${PKG-CONFIG} ${SAMPLE_FLAGS} -o mts_sample
 
@@ -41,5 +44,10 @@ cpp_sample: text_synthesizer.cpp
 cpp_sample_static: text_synthesizer.cpp ${BINDIR}libmtsynth.a
 	${CXX} $^ ${PKG-CONFIG} ${STATIC_SAMPLE_FLAGS} -o mts_sample_static
 
+# Compile program to list fonts available on the system
+list_fonts: list_available_fonts.cpp
+	${CXX} -o list $^ ${PKG-CONFIG}
+
 clean:
-	rm -f a.out *.o *~
+	rm -f core* *.o *~ \#*# *.exe
+

@@ -50,14 +50,15 @@ MTSConfig::parseConfig(string filename) {
     // open file
     std::ifstream infile(filename);
     if (! infile.is_open()) {
-        cerr << "config file cannot be openned!" << endl;
+        cerr << "The input config file could not be opened!" << endl;
         exit(1);
     }
 
     string line, key, value;
-
+    int line_number;
     // parse file line by line
     while (getline(infile, line)) {
+        line_number++;
         // if line is empty or is a comment, erase it
         size_t com_pos = line.find("//");
         if (com_pos != line.npos) {
@@ -68,7 +69,8 @@ MTSConfig::parseConfig(string filename) {
         }
         size_t pos = line.find(delimiter);
         if (pos == line.npos) {
-cerr << "A line does not contain delimiter in config file!" << endl;
+            cerr << "Line " << line_number
+                      << " in config file does not contain delimiter!\n";
             exit(1);
         }
 
@@ -100,7 +102,8 @@ MTSConfig::getParam(string key) {
     if (params.find(key) != params.end()) {
         return params.find(key)->second;
     } else {
-        cerr << "key " << key << " does not exist in config file!" << endl;
+        cerr << "Parameter " << key
+                  << " does not exist in config file!" << endl;
         exit(1);
     }
 }
@@ -114,7 +117,8 @@ MTSConfig::getParamInt(string key) {
         char *endptr;
         int val = strtol(value.c_str(), &endptr, 10);
         if (endptr[0] != '\0') {
-            cerr << key << " must be an integer!" << endl;
+            cerr << "Config file parameter " << key
+                      << " must be an integer!" << endl;
             exit(1);
         }
         paramsInt.insert(pair<string, int>(key, val));
@@ -131,7 +135,8 @@ MTSConfig::getParamDouble(string key) {
         char *endptr;
         double val = strtod(value.c_str(), &endptr);
         if (endptr[0] != '\0') {
-            cerr << key << " must be a double!" << endl;
+            cerr << "Config file parameter " << key << " must be a double!"
+                      << endl;
             exit(1);
         }
         paramsDouble.insert(pair<string, double>(key, val));

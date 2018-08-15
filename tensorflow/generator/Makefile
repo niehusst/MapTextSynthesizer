@@ -1,14 +1,15 @@
 # File paths 
-IDIR=../../include/
-LIBDIR=../../inc/
+IDIR=../../include/mtsynth
+IDIR_COMPATIBILITY=../../include
+LIBDIR=../../inc
 SRCDIR=../../src/
 BINDIR=../../bin/
 
 # Compiler, flags, and packages
 CXX=g++
-FLAGS=-std=c++11 -Wall
-SOFLAGS=-I. -I$(IDIR) -I$(LIBDIR) -shared -fPIC ${FLAGS}
-OFLAGS=-c -I. -I$(IDIR) -I$(LIBDIR) ${FLAGS}  \
+FLAGS=-std=c++11
+SOFLAGS=-I. -I$(IDIR) -I$(IDIR_COMPATIBILITY) -I$(LIBDIR) -shared -fPIC ${FLAGS}
+OFLAGS=-c -I. -I$(IDIR) -I$(IDIR_COMPATIBILITY) -I$(LIBDIR) ${FLAGS}  \
         `pkg-config --cflags pangocairo glib-2.0 opencv`
 SOURCES=${SRCDIR}*.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
@@ -24,6 +25,9 @@ PKG-CONFIG := `pkg-config --libs pangocairo glib-2.0 opencv`
 # Source files
 SOURCES := $(wildcard ${SRCDIR}*.cpp)
 
+# Make shared object and then compile sample
+lib: objects libmtsi.so
+
 # Compile the object file
 objects : ${SOURCES}
 	${CXX} ${OFLAGS} $^ -fPIC -shared
@@ -32,9 +36,6 @@ objects : ${SOURCES}
 libmtsi.so : textsynthinterface.cpp
 	${CXX} ./*.o textsynthinterface.cpp ${SOFLAGS} ${PKG-CONFIG} -o libmtsi.so
 
-lib: objects libmtsi.so
 
 clean :
-	rm -f ./*.pyc
-	rm -f ./*~
-	rm -f ./*.o
+	rm -f *.pyc *~ *.o *.so

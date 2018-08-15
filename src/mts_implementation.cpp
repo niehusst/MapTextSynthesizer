@@ -1,6 +1,7 @@
 /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * mts_implementation.cpp holds definitions for methods of the                *
- * MTSImplementation class.                                                   *
+ * mts_implementation.cpp contains the class method definitions for the       *
+ * MTSImplementation class, which handles the integration of the background   *
+ * and text into one synthetic image.                                         *
  *                                                                            *
  * Copyright (C) 2018                                                         *
  *                                                                            *
@@ -21,7 +22,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 
-
+// standard includes
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -37,10 +38,16 @@
 #include <algorithm>
 #include <iosfwd>
 #include <memory>
-#include <string>
 #include <utility>
 #include <vector>
 #include <unordered_map>
+
+// opencv includes
+#include <opencv2/highgui.hpp>
+#include <opencv2/calib3d.hpp>
+#include <opencv2/imgproc.hpp> //cv::GaussianBlur
+#include <opencv2/core.hpp>
+#include <opencv2/core/mat.hpp>   // cv::Mat
 
 // Pango/cairo includes
 #include <glib.h>
@@ -48,6 +55,7 @@
 
 #include "mts_implementation.hpp"
 
+using std::cout;
 using std::string;
 using std::vector;
 using std::cerr;
@@ -59,15 +67,21 @@ using cv::Mat;
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
 
-void MTSImplementation::cairoToMat(cairo_surface_t *surface,Mat &mat) {
+// SEE mts_implementation.hpp FOR ALL DOCUMENTATION
+
+void
+MTSImplementation::cairoToMat(cairo_surface_t *surface,Mat &mat) {
+  
     // make a 4 channel opencv matrix
-    Mat mat4 = Mat(cairo_image_surface_get_height(surface),cairo_image_surface_get_width(surface),CV_8UC4,cairo_image_surface_get_data(surface));
+    Mat mat4 = Mat(cairo_image_surface_get_height(surface),
+                           cairo_image_surface_get_width(surface),CV_8UC4,
+                           cairo_image_surface_get_data(surface));
 
     vector<Mat> channels;
 
     cv::split(mat4,channels);
 
-    //iterate through all channels
+    //truncate the unnecessary channells (it's going to 1 channel grey-scale)
     mat = channels[0];
 }
 
@@ -75,7 +89,8 @@ void MTSImplementation::addGaussianNoise(Mat& out) {
     // get and use user config parameters to set sigma
     double scale = config->getParamDouble("noise_sigma_scale");
     double shift = config->getParamDouble("noise_sigma_shift");
-    double sigma = round((pow(1/(noise_gen() + 0.1), 0.5) * scale + shift) * 100) / 100;
+    double sigma = round((pow(1/(noise_gen() + 0.1),0.5) * scale + shift) * 100)
+                   / 100;
 
     // create noise matrix
     Mat noise = Mat(out.rows, out.cols, CV_32F);
@@ -85,8 +100,8 @@ void MTSImplementation::addGaussianNoise(Mat& out) {
 
     // add noise to each channel
     out+=noise;
-    threshold(out,out,1.0,1.0,cv::THRESH_TRUNC);
-    threshold(out,out,0,1.0,cv::THRESH_TOZERO);
+    cv::threshold(out,out,1.0,1.0,cv::THRESH_TRUNC);
+    cv::threshold(out,out,0,1.0,cv::THRESH_TOZERO);
 }
 
 void MTSImplementation::addGaussianBlur(Mat& out) {
@@ -132,7 +147,6 @@ MTSImplementation::MTSImplementation(string config_file)
 }
 
 MTSImplementation::~MTSImplementation() {
-    //cout << "impl destructed" << endl;
 }
 
 void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual_height){
@@ -145,6 +159,7 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
     int bgcolor_min = config->getParamInt("bg_color_min");
     int textcolor_max = config->getParamInt("text_color_max");
     // assert colors are valid values
+
     if (bgcolor_min > 255 || textcolor_max < 0 || bgcolor_min<=textcolor_max) {
         cerr << "Invalid color input!" << endl;
         exit(1);
@@ -166,23 +181,27 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
     } else {
         height = helper->rndBetween(height_min,height_max); 
     }
+
     actual_height = height;
 
+    //cout << "text" << endl;
     // use TextHelper instance to generate synthetic text
-    if (find(bg_features.begin(), bg_features.end(), Distracttext)!= bg_features.end()) {
-        // do generate distractor text
-        th.generateTextSample(caption,text_surface,height,width,text_color,true);
+    if (std::find(bg_features.begin(), bg_features.end(), Distracttext)!=
+        bg_features.end()) {
+        // generate distractor text
+        th.generateTextSample(caption,text_surface,height,
+                              width,text_color,true);
     } else {
         // dont generate distractor text
-        th.generateTextSample(caption,text_surface,height,width,text_color,false);
+        th.generateTextSample(caption,text_surface,height,
+                              width,text_color,false);
     }
 
-    //cout << "generating bg sample" << endl;
-    //cout << "bg feature num " << bg_features.size() << endl; 
-
+    //cout << "bg" << endl;
     // use BackgroundHelper to generate the background image
     cairo_surface_t *bg_surface;
-    bh.generateBgSample(bg_surface, bg_features, height, width, bg_brightness, contrast);
+    bh.generateBgSample(bg_surface, bg_features, height, width,
+                        bg_brightness, contrast);
     cairo_t *cr = cairo_create(bg_surface);
     cairo_set_source_surface(cr, text_surface, 0, 0);
 
@@ -195,8 +214,8 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
     // blend with alpha or not based on user set probability
     if(helper->rndProbUnder(config->getParamDouble("blend_prob"))){
         cairo_paint_with_alpha(cr, blend_alpha);
-    } else {
-        cairo_paint(cr); // dont blend
+    } else { // dont blend
+        cairo_paint(cr);
     }
 
     Mat sample_uchar = Mat(height,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
@@ -207,6 +226,7 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
 
     sample_uchar.convertTo(sample_float, CV_32FC1, 1.0/255.0);
 
+    //cout << "noise" << endl;
     // clean up cairo objects
     cairo_destroy(cr);
     cairo_surface_destroy(text_surface);

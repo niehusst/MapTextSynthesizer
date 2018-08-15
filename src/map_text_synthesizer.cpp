@@ -21,20 +21,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 
-#include <fstream>
 #include <string>
-#include <iostream>
+#include <memory>
+
+#include <opencv2/core/cvstd.hpp>
 
 #include "mtsynth/map_text_synthesizer.hpp"
 #include "mts_implementation.hpp"
 
+//SEE map_text_synthesizer.hpp FOR ALL DOCUMENTATION
 using std::string;
 using cv::Mat;
 using cv::Ptr;
 
 MapTextSynthesizer::MapTextSynthesizer(){}
 
-Ptr<MapTextSynthesizer> MapTextSynthesizer::create(string config_file){
+Ptr<MapTextSynthesizer> MapTextSynthesizer::create(std::string config_file){
     Ptr<MapTextSynthesizer> mts(new MTSImplementation(config_file));
     return mts;
 }

@@ -3,9 +3,9 @@
 MapTextSynthesizer is a program to dynamically generate grey-scale, synthetic images containing text, which appear to be from historical maps. The purpose of the produced images is to serve as training data for a Convolutional Neural Network that recognizes text in scanned images of historical maps. 
 (Data not intended for training a text detection model!)
 
-![MTS produced image, Grundy](samples/imgs/Grundy.png)
-![MTS produced image, Otter](samples/imgs/Otter.png)
-
+![MTS produced image, caption: Shambaugh](samples/images/Shambaugh.png)
+![MTS produced image, caption: Maynard](samples/images/Maynard.png)
+![MTS produced image, caption: Emerson](samples/images/Emerson.png)
 
 ## Getting Started
 
@@ -62,7 +62,6 @@ Now that MapTextSynthesizer is installed on your machine, you can easily compile
 (if using virtual env,) `` export LD_LIBRARY_PATH="[install_prefix]/lib" ``
 
 ``g++ syntheziser_sample.cpp `pkg-config --cflags --libs mtsynth`; ./a.out``
-
 
 ### For More in-depth Information
 

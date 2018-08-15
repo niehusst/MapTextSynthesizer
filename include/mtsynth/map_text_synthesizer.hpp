@@ -2,7 +2,8 @@
 #define MAP_TEXT_SYNTHESIZER_HPP
 
 #include <string>
-#include <opencv2/opencv.hpp>
+#include <memory>
+#include <opencv2/core/mat.hpp> //cv::Mat
 
 /*
  * Class that renders synthetic text images for training a CNN 
@@ -10,13 +11,13 @@
  */
 class MapTextSynthesizer{
 
-    protected:
+    protected://--------------------PROTECTED---------------------------
         /*
-         * Constructor. 
+         * Constructor
          */
         MapTextSynthesizer();
 
-    public:
+    public://------------------------PUBLIC---------------------------
 
         /*
          * Generates a random bounded map-like text sample given a string
@@ -27,7 +28,8 @@ class MapTextSynthesizer{
          * actual_height - the actual height of sample.
          */
         virtual void 
-            generateSample (std::string &caption, cv::Mat &sample, int &actual_height) = 0;
+            generateSample (std::string &caption, cv::Mat &sample, 
+                    int &actual_height) = 0;
 
         /*
          * A wrapper for the protected MapTextSynthesizer constructor.
