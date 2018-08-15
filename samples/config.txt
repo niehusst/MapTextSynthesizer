@@ -362,6 +362,7 @@ blur_kernel_size_max=5        // kernel size can only be odd integer. More info:
                               // https://en.wikipedia.org/wiki/Kernel_(image_processing)
 
 //Jpeg artifacts
-jpeg_prob=0.1
-jpeg_quality_min=5
-jpeg_quality_max=100
+jpeg_prob=0.1                 // Probability of this feature appearing.
+
+jpeg_quality_min=5            // Range of simulated JPEG compression artifacts.
+jpeg_quality_max=100          // Higher quality means fewer/smaller artifacts.
