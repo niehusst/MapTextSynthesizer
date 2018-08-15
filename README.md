@@ -44,11 +44,11 @@ To compile a Ctypes Python sample that uses a shared library, call ```make pytho
 
 C++ sample file: ```samples/text_synthesizer.cpp```
 
-To compile a C++ sample from a shared library, call ```make shared``` from the base directory to create the shared library file in a bin subdirectory of MapTextSynthesizer, followed by ```make cpp_sample``` to make the executable. To run the resulting executable (shared_sample) found in the samples directory, set an environment variable that allows your executable to find the shared library to your specific path to the shared library file: ```export LD_LIBRARY_PATH=/directory/path/to/bin/``` and then run the executable from the samples directory with ```./mts_sample```.
+To compile the C++ sample from a shared library, call ```make shared``` from the base directory to create the shared library file in a bin subdirectory of MapTextSynthesizer, followed by ```make cpp_sample``` to make the executable. To run the resulting executable (shared_sample) found in the samples directory, set an environment variable that allows your executable to find the shared library to your specific path to the shared library file: ```export LD_LIBRARY_PATH=/directory/path/to/bin/``` and then run the executable from the samples directory with ```./mts_sample_shared```.
 
 To compile using a static library, ```make static``` followed by ```make cpp_sample_static```. To run the resulting executable (static_sample) located in the samples directory, call ```./mts_sample_static``` in the samples directory.
 
-To toggle whether to display the images generated or to save the images generated, comment or uncomment ```#define SHOW_IMG``` and ```#define SAVE_IMG``` in text_synthesizer.cpp.
+The C++ sample is capable of running a benchmark test of the production rate, showing and saving, or just showing the generated images. All of this can be determined by giving the executable one of either command line argument 'benchmark' or 'save'.
 
 ### Compiling samples with CMake:
 
@@ -70,7 +70,7 @@ If you want still more information about the nitty-gritty of how this program wo
 ### Future Work
 
 Future work for this project that we hypothesize would lead to a more robustly trained model may include:  
-* Generating punctuation in text (in valid positions
+* Generating punctuation in text (in valid positions)
 * Generating characters with accent marks
 * A more map-realistic way to simulate mountains than the existing textures
 * Adding glyph/symbol patterns to textures (this could be useful for swamp simulation)

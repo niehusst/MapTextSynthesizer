@@ -38,7 +38,7 @@ libmtsynth.a: ${SOURCES}
 # Compile a cpp example from shared library
 # NOTE: Must set environment variable LD_LIBRARY_PATH=/path/to/bin/
 cpp_sample: text_synthesizer.cpp
-	${CXX} $^ ${PKG-CONFIG} ${SAMPLE_FLAGS} -o mts_sample
+	${CXX} $^ ${PKG-CONFIG} ${SAMPLE_FLAGS} -o mts_sample_shared
 
 # Compile a cpp example with static library
 cpp_sample_static: text_synthesizer.cpp ${BINDIR}libmtsynth.a
@@ -48,6 +48,9 @@ cpp_sample_static: text_synthesizer.cpp ${BINDIR}libmtsynth.a
 list_fonts: list_available_fonts.cpp
 	${CXX} -o list $^ ${PKG-CONFIG}
 
+# Clean up executables and any object files
 clean:
-	rm -f core* *.o *~ \#*# *.exe
-
+	rm -f core* *.o *~ \#*#
+	if [ -f mts_sample_shared ];then rm mts_sample_shared;fi
+	if [ -f mts_sample_static ];then rm mts_sample_static;fi
+	if [ -f list ];then rm list;fi

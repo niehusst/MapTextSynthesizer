@@ -65,15 +65,14 @@ def guiLoop():
         if pause<500:
             # generate sample and store data
             data = next(mts)
-            print(len(data))
-            print(data)
-            [caption, [h,w,img_data], actual_h] = next( mts )
-            img = np.reshape(np.fromiter(img_data, np.uint8),(h,w))
+            caption,image = next( mts )
+            
             # print sample information
             print caption
-            print "Image height: ", actual_h
+            
             # show the sample image
-            cv2.imshow('Text Synthesizer Demo',img)
+            cv2.imshow('Text Synthesizer Demo',image)
+            
         k=cv2.waitKey(pause+1)
 
 

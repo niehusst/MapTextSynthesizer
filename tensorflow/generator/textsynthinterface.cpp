@@ -1,6 +1,8 @@
 /* 
-   CNN-LSTM-CTC-OCR
-   Copyright (C) 2018 Benjamin Gafford, Ziwen Chen
+   CNN-LSTM-CTC-OCR       
+   C code wrapper for MTS C++ code
+
+   Copyright (C) 2018 Benjamin Gafford, Ziwen Chen, Liam Niehus-Staab
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,14 +35,13 @@ typedef struct sample {
 
 struct MTS_Buffer {
   cv::Ptr<MapTextSynthesizer> mts;
-  MTS_Buffer(const char* config_path);//, const char* lexicon_path);
+  MTS_Buffer(const char* config_path);
   void cleanup(void);
 };
 
-//void prepare_synthesis(cv::Ptr<MapTextSynthesizer> s, const char* lexicon_path);
-MTS_Buffer::MTS_Buffer(const char* config_path/*, const char* lexicon_path*/) {
+
+MTS_Buffer::MTS_Buffer(const char* config_path) {
   this->mts = MapTextSynthesizer::create(config_path);
-  //  prepare_synthesis(this->mts, lexicon_path);
 }
 
 void MTS_Buffer::cleanup() {
@@ -53,7 +54,7 @@ extern "C" {
   size_t get_height(void* spl);
   size_t get_width(void* spl);
   char* get_caption(void* spl);
-  void* mts_init(const char* config_path);//, const char* lexicon_path);
+  void* mts_init(const char* config_path);
   void* get_sample(void* mts_buff);
   void free_sample(void* spl);
   void mts_cleanup(void* mts_buff);
@@ -79,28 +80,6 @@ char* get_caption(void* ptr) {
   return ((sample_t*)ptr)->caption;
 }
 
-/* Prepare synthesizer object for synthesis w/ params 
-void prepare_synthesis(cv::Ptr<MapTextSynthesizer> s,
-		       const char* lexicon_path) {
-  
-  // NOTE/TODO: Use system fonts instead
-  std::vector<std::string> blocky;
-  blocky.push_back("Sans");
-  blocky.push_back("Serif");
-
-  std::vector<std::string> regular;
-  //regular.push_back("cmmi10");
-  regular.push_back("Sans");
-  regular.push_back("Serif");
-
-  std::vector<std::string> cursive;
-  cursive.push_back("Sans");
-
-  s->setSampleCaptions(lexicon_path);
-  s->setBlockyFonts(blocky);
-  s->setRegularFonts(regular);
-  s->setCursiveFonts(cursive);
-}*/
 
 /* Get a sample */
 void* get_sample(void* mts_buff_arg) {
@@ -144,8 +123,8 @@ void* get_sample(void* mts_buff_arg) {
 }
 
 /* Called before using python generator function */
-void* mts_init(const char* config_path/*, const char* lexicon_path*/) {
-  return new MTS_Buffer(config_path);//, lexicon_path);
+void* mts_init(const char* config_path) {
+  return new MTS_Buffer(config_path);
 }
 
 /* Called after using python generator function */
