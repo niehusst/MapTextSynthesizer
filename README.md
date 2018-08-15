@@ -39,7 +39,12 @@ After installing the dependencies, you should be able to jump right into compili
 
 #### Python Samples
 
+Python sample file: ```samples/text_synthesizer.py```
+
 To compile a Ctypes Python sample that uses a shared library, call ```make python_ctypes``` from the base directory to compile a shared object file and the C code wrapper for the MTS C++ code. Then navigate to the samples directory and run the code from your terminal; ```python text_synthesizer.py```.
+Unlike the C++ samples, the Python sample uses a GUI that allows you to dynamically adjust the pause time between displayed images.
+
+A benchmark test can also be run by passing the command line argument 'benchmark' when you run the sample; ```python text_synthesizer.py benchmark```.
 
 #### C++ Samples
 
@@ -49,7 +54,7 @@ To compile the C++ sample from a shared library, call ```make shared``` from the
 
 To compile using a static library, ```make static``` followed by ```make cpp_sample_static```. To run the resulting executable (static_sample) located in the samples directory, call ```./mts_sample_static``` in the samples directory.
 
-The C++ sample is capable of running a benchmark test of the production rate, showing and saving, or just showing the generated images. All of this can be determined by giving the executable one of either command line argument 'benchmark' or 'save'.
+The C++ sample is capable of running a benchmark test of the production rate, showing and saving, or just showing the generated images. All of this can be determined by giving the executable one of either command line argument 'benchmark' or 'save'. For example: ```./mts_sample_shared benchmark```
 
 ### Compiling samples with CMake:
 
