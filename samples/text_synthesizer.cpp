@@ -1,11 +1,9 @@
 /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * map_text_synthesizer.cpp holds definitions for non-virtual methods of the  *
- * MapTextSynthesizer class.                                                  *
+ * A cpp example for mtsynth.                                                 *
  *                                                                            *
  * Copyright (C) 2018                                                         *
  *                                                                            *
  * Written by Ziwen Chen <chenziwe@grinnell.edu>                              * 
- * and Liam Niehus-Staab <niehusst@grinnell.edu>                              *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -21,22 +19,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 
-#include <string>
+#include <vector>
+#include <iostream>
+#include <fstream>
 #include <memory>
+#include <string>
+#include <mtsynth/map_text_synthesizer.hpp>
 
-#include <opencv2/core/cvstd.hpp>
+#include <opencv2/opencv.hpp>
 
-#include "mtsynth/map_text_synthesizer.hpp"
-#include "mts_implementation.hpp"
+using namespace std;
+using namespace cv;
 
-//SEE map_text_synthesizer.hpp FOR ALL DOCUMENTATION
-using std::string;
-using cv::Mat;
-using cv::Ptr;
+#define ROUNDS 10000
+#define SHOW_IMG
+#define SAVE_IMG
 
-MapTextSynthesizer::MapTextSynthesizer(){}
+int main() {
+    auto s = MapTextSynthesizer::create("config.txt");
 
-Ptr<MapTextSynthesizer> MapTextSynthesizer::create(std::string config_file){
-    Ptr<MapTextSynthesizer> mts(new MTSImplementation(config_file));
-    return mts;
+    int k=0;
+    string label;
+    Mat image;
+    int height;
+
+#ifdef SHOW_IMG
+        cout << "Press any key to view the next image." << endl;
+#endif
+
+    int start = time(NULL);
+    while (k<ROUNDS) {
+        s->generateSample(label, image, height);
+#ifdef SHOW_IMG
+        imshow("Sample image", image);
+        waitKey(0);
+        cout << label << endl;
+#endif
+#ifdef SAVE_IMG
+        imwrite("imgs/"+label+".png", image);
+#endif
+        k++;
+    }
+    int end = time(NULL);
+    cout << "images generated: " << ROUNDS << endl;
+    cout << "time elapsed (seconds): " << end-start << endl;
+    cout << "generation speed (Hz): " << ROUNDS/double(end-start) << endl;
+
+    return 0;
 }

@@ -1,3 +1,25 @@
+/** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * mts_config.cpp holds definitions for methods of the                        *
+ * MTSConfig class.                                                           *
+ *                                                                            *
+ * Copyright (C) 2018                                                         *
+ *                                                                            *
+ * Written by Ziwen Chen <chenziwe@grinnell.edu>                              * 
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ * (at your option) any later version.                                        * 
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful,            *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+ * GNU General Public License for more details.                               *
+ *                                                                            *
+ * You should have received a copy of the GNU General Public License          *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
+
 #include <vector>
 #include <stdlib.h>
 #include <iostream> 
@@ -8,25 +30,31 @@
 #include "mts_config.hpp"
 #include "mts_basehelper.hpp"
 
+using std::string;
+using std::vector;
+using std::unordered_map;
+using std::pair;
+using std::cerr;
+using std::endl;
 
 // SEE mts_config.hpp FOR ALL DOCUMENTATION
 
 
-std::unordered_map<std::string,std::string> 
-MTSConfig::parseConfig(std::string filename) {
+unordered_map<string,string> 
+MTSConfig::parseConfig(string filename) {
 
-    std::unordered_map<std::string, std::string> params = std::unordered_map<std::string, std::string>();
+    unordered_map<string, string> params = unordered_map<string, string>();
 
-    std::string delimiter = "=";
+    string delimiter = "=";
 
     // open file
-    ifstream infile(filename);
+    std::ifstream infile(filename);
     if (! infile.is_open()) {
-        std::cerr << "The input config file could not be opened!" << std::endl;
+        cerr << "The input config file could not be opened!" << endl;
         exit(1);
     }
 
-    std::string line, key, value;
+    string line, key, value;
     int line_number;
     // parse file line by line
     while (getline(infile, line)) {
@@ -41,7 +69,7 @@ MTSConfig::parseConfig(std::string filename) {
         }
         size_t pos = line.find(delimiter);
         if (pos == line.npos) {
-            std::cerr << "Line " << line_number
+            cerr << "Line " << line_number
                       << " in config file does not contain delimiter!\n";
             exit(1);
         }
@@ -49,7 +77,7 @@ MTSConfig::parseConfig(std::string filename) {
         key = MTS_BaseHelper::strip(line.substr(0, pos));
         value = MTS_BaseHelper::strip(line.substr(pos+1, line.npos-pos));
 
-        params.insert(std::pair<std::string, std::string>(key, value));
+        params.insert(pair<string, string>(key, value));
     }
     // close file
     infile.close();
@@ -58,60 +86,60 @@ MTSConfig::parseConfig(std::string filename) {
 }
 
 
-MTSConfig::MTSConfig(std::string filename){
+MTSConfig::MTSConfig(string filename){
     params = parseConfig(filename);
-    paramsInt = std::unordered_map<std::string, int>();
-    paramsDouble = std::unordered_map<std::string, double>();
+    paramsInt = unordered_map<string, int>();
+    paramsDouble = unordered_map<string, double>();
 }
 
 bool
-MTSConfig::findParam(std::string key) {
+MTSConfig::findParam(string key) {
     return params.find(key) != params.end();
 }
 
-std::string
-MTSConfig::getParam(std::string key) {
+string
+MTSConfig::getParam(string key) {
     if (params.find(key) != params.end()) {
         return params.find(key)->second;
     } else {
-        std::cerr << "Parameter " << key
-                  << " does not exist in config file!" << std::endl;
+        cerr << "Parameter " << key
+                  << " does not exist in config file!" << endl;
         exit(1);
     }
 }
 
 int
-MTSConfig::getParamInt(std::string key) {
+MTSConfig::getParamInt(string key) {
     if (paramsInt.find(key) != paramsInt.end()) {
         return paramsInt.find(key)->second;
     } else {
-        std::string value = getParam(key);
+        string value = getParam(key);
         char *endptr;
         int val = strtol(value.c_str(), &endptr, 10);
         if (endptr[0] != '\0') {
-            std::cerr << "Config file parameter " << key
-                      << " must be an integer!" << std::endl;
+            cerr << "Config file parameter " << key
+                      << " must be an integer!" << endl;
             exit(1);
         }
-        paramsInt.insert(std::pair<std::string, int>(key, val));
+        paramsInt.insert(pair<string, int>(key, val));
         return val;
     }
 }
 
 double
-MTSConfig::getParamDouble(std::string key) {
+MTSConfig::getParamDouble(string key) {
     if (paramsDouble.find(key) != paramsDouble.end()) {
         return paramsDouble.find(key)->second;
     } else {
-        std::string value = getParam(key);
+        string value = getParam(key);
         char *endptr;
         double val = strtod(value.c_str(), &endptr);
         if (endptr[0] != '\0') {
-            std::cerr << "Config file parameter " << key << " must be a double!"
-                      << std::endl;
+            cerr << "Config file parameter " << key << " must be a double!"
+                      << endl;
             exit(1);
         }
-        paramsDouble.insert(std::pair<std::string, double>(key, val));
+        paramsDouble.insert(pair<string, double>(key, val));
         return val;
     }
 }

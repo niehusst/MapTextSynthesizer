@@ -1,13 +1,12 @@
 # A recursive makefile that calls make rules in samples/makefile
 
+# Compile the shared library
+shared:
+	$(MAKE) -C samples libmtsynth.so
 
 # Compile the static library
 static:
 	$(MAKE) -C samples libmtsynth.a
-
-# Compile the shared library
-shared:
-	$(MAKE) -C samples libmtsynth.so
 
 # Compile a sample C++ synthesizer program 
 cpp_sample:

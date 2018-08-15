@@ -1,7 +1,11 @@
 /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * mts_bghelper.cpp contains the class method definitions for the             *
  * MTS_BackgroundHelper class, which handles background synthesization.       *
- * Copyright (C) 2018, Liam Niehus-Staab and Ziwen Chen                       *
+ *                                                                            *
+ * Copyright (C) 2018                                                         *
+ *                                                                            *
+ * Written by Ziwen Chen <chenziwe@grinnell.edu>                              * 
+ * and Liam Niehus-Staab <niehusst@grinnell.edu>                              *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -28,6 +32,14 @@
 
 #include "mts_bghelper.hpp"
 
+using std::string;
+using std::vector;
+using std::min;
+using std::max;
+using std::cerr;
+using std::endl;
+using std::shared_ptr;
+
 using boost::random::beta_distribution;
 using boost::random::normal_distribution;
 using boost::random::gamma_distribution;
@@ -37,8 +49,8 @@ using boost::random::variate_generator;
 // SEE mts_bghelper.hpp FOR ALL DOCUMENTATION
 
 
-MTS_BackgroundHelper::MTS_BackgroundHelper(std::shared_ptr<MTS_BaseHelper> h,
-                                           std::shared_ptr<MTSConfig> c)
+MTS_BackgroundHelper::MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h,
+                                           shared_ptr<MTSConfig> c)
     :helper(&(*h)),  // initialize fields
     config(&(*c)),  
     bias_var_dist(c->getParamDouble("bias_std_alpha"),
@@ -50,8 +62,8 @@ MTS_BackgroundHelper::MTS_BackgroundHelper(std::shared_ptr<MTS_BaseHelper> h,
 {}
 
 
-MTS_BackgroundHelper::~MTS_BackgroundHelper(){}
-
+MTS_BackgroundHelper::~MTS_BackgroundHelper(){
+}
 
 void
 MTS_BackgroundHelper::draw_boundary(cairo_t *cr, double linewidth,
@@ -141,7 +153,6 @@ MTS_BackgroundHelper::set_dash_pattern(cairo_t *cr) {
     int pat_len_max = config->getParamInt("dash_pattern_len_max");
     int pattern_len = helper->rndBetween(pat_len_min,pat_len_max); 
     double dash_pattern[pattern_len];
-    double dash;
 
     double len_min = config->getParamDouble("dash_len_min");
     double len_max = config->getParamDouble("dash_len_max");
@@ -175,7 +186,7 @@ MTS_BackgroundHelper::generate_curve(cairo_t *cr, int width, int height,
                                      double c_min, double c_max, double d_min,
                                      double d_max, bool river) {
 
-    std::vector<coords> points;
+    vector<coords> points;
     int num_min = config->getParamInt("bg_curve_num_points_min");
     int num_max = config->getParamInt("bg_curve_num_points_max");
 
@@ -215,7 +226,7 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
     double ratio_min = config->getParamDouble("line_width_scale_min");
     double ratio_max = config->getParamDouble("line_width_scale_max");
     magic_line_ratio = helper->rndBetween(ratio_min,ratio_max); 
-    line_width = std::min(width, height) * magic_line_ratio;
+    line_width = min(width, height) * magic_line_ratio;
     cairo_set_line_width(cr, line_width);
 
     int length = (int)(pow(pow(width,2)+pow(height,2),0.5));
@@ -406,31 +417,31 @@ MTS_BackgroundHelper::make_shape_texture(cairo_t *cr,int x, int y, int diameter,
 
 
 void
-MTS_BackgroundHelper::draw_texture(cairo_t *cr, int texture, double brightness,
-                                   double linewidth, int diameter,int num_sides,
-                                   int spacing, int width, int height) {
-  //verify preconditions
-  if (spacing < 1) spacing = 1;
-  if (texture != 2) diameter = 0, num_sides = 0;
+MTS_BackgroundHelper::draw_texture(cairo_t *cr, int texture, double brightness, double linewidth,
+        int diameter, int num_sides, int spacing, int width, int height) {
 
-  //set drawing source color and line width of texture
-  cairo_set_source_rgb(cr, brightness,brightness,brightness);        
-  cairo_set_line_width(cr, linewidth);                 
+    //verify preconditions
+    if (spacing < 1) spacing = 1;
+    if (texture != 2) diameter = 0, num_sides = 0;
 
-  // a vector of texture drawing function pointers
-  void (*texture_func)(cairo_t*, int, int, int, int, int, int, int);
-  std::vector<void (*)(cairo_t*, int, int, int, int, int, int, int)>texture_vec;
+    //set drawing source color and line width of texture
+    cairo_set_source_rgb(cr, brightness,brightness,brightness);        
+    cairo_set_line_width(cr, linewidth);                 
 
-  // populate vector with all texture drawing functions
-  texture_vec.push_back(&diagonal_lines);
-  texture_vec.push_back(&crossed_lines);
-  texture_vec.push_back(&make_shape_texture);
+    // a vector of texture drawing function pointers
+    void (*texture_func)(cairo_t*, int, int, int, int, int, int, int);
+    vector<void (*)(cairo_t*, int, int, int, int, int, int, int)> texture_vec;
 
-  // draw texture 
-  (*texture_vec[texture])(cr, 0,0, diameter, num_sides, spacing, width, height);
+    // populate vector with all texture drawing functions
+    texture_vec.push_back(&diagonal_lines);
+    texture_vec.push_back(&crossed_lines);
+    texture_vec.push_back(&make_shape_texture);
 
-  // apply texture to surface 
-  cairo_stroke(cr);
+    // draw texture 
+    (*texture_vec[texture])(cr, 0, 0, diameter, num_sides, spacing, width, height);
+
+    // apply texture to surface 
+    cairo_stroke(cr);
 }
 
 
@@ -476,7 +487,7 @@ MTS_BackgroundHelper::addTexture(cairo_t *cr, bool curved, double brightness,
     cairo_save(cr);
 
     // set adequate spacing between lines in texture
-    int spacing = std::max(4, width/100);
+    int spacing = max(4, width/100);
     spacing = spacing + helper->rng() % (2*spacing);  
 
     // linewidth range (1/10)width - (1/2)width
@@ -514,11 +525,11 @@ MTS_BackgroundHelper::addTexture(cairo_t *cr, bool curved, double brightness,
 
 void
 MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
-
-    cairo_pattern_t *pattern_vertical = cairo_pattern_create_linear(
-                           helper->rng()%width, 0, helper->rng()%width, height);
-    cairo_pattern_t *pattern_horizontal = cairo_pattern_create_linear(0,
-                           helper->rng()%height, width, helper->rng()%height);
+    //cout << "start adding bias" << endl;
+    cairo_pattern_t *pattern_vertical = cairo_pattern_create_linear(helper->rng()%width, 0,
+            helper->rng()%width, height);
+    cairo_pattern_t *pattern_horizontal = cairo_pattern_create_linear(0, helper->rng()%height,
+            width, helper->rng()%height);
 
     // set the number of points
     int points_min = config->getParamInt("bias_vert_num_min");
@@ -575,10 +586,12 @@ MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
                                          dcolor,dcolor,dcolor);
     }
 
+    double alpha = config->getParamDouble("bias_alpha");
     cairo_set_source(cr, pattern_horizontal);
-    cairo_paint_with_alpha(cr,0.3);
+    cairo_paint_with_alpha(cr,alpha);
     cairo_set_source(cr, pattern_vertical);
-    cairo_paint_with_alpha(cr,0.3);
+    cairo_paint_with_alpha(cr,alpha);
+    //cout << "finished bias" << endl;
 }
 
 
@@ -591,7 +604,7 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
     double ratio_min = config->getParamDouble("line_width_scale_min");
     double ratio_max = config->getParamDouble("line_width_scale_max");
     magic_line_ratio = helper->rndBetween(ratio_min,ratio_max);
-    line_width = std::min(width, height) * magic_line_ratio;
+    line_width = min(width, height) * magic_line_ratio;
     cairo_set_line_width(cr, line_width);
 
     //randomly choose number of lines 
@@ -609,7 +622,7 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
     int num = helper->rndBetween(lines_min,lines_max); 
 
     //length of lines
-    double length = std::max(width, height)*pow(2,0.5);
+    double length = max(width, height)*pow(2,0.5);
 
     //average spacing
     double spacing = length / num;
@@ -623,7 +636,7 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
     cairo_translate(cr, -width/2.0, -height/2.0); // translate back
 
     //initialize the vector of lines stored as xy coordinates
-    std::vector<std::vector<coords> > lines;
+    vector<vector<coords> > lines;
 
     double left_x = -(length - width) / 2;
     double right_x = width + (length - width) / 2;
@@ -635,10 +648,10 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
     double increase = (spacing-init_spacing) * 2 / num;
 
     // to store the real points of every line
-    std::vector<coords> points;
+    vector<coords> points;
 
     // to store the curve pattern
-    std::vector<coords> curve_points;
+    vector<coords> curve_points;
 
     // get curved line user config params if curved line is to be drawn
     if (curved) {
@@ -846,9 +859,7 @@ MTS_BackgroundHelper::cityPoint(cairo_t *cr, int width, int height, bool hollow)
         double ratio_min = config->getParamDouble("line_width_scale_min");
         double ratio_max = config->getParamDouble("line_width_scale_max");
         magic_line_ratio = helper->rndBetween(ratio_min,ratio_max); 
-        line_width = std::min(width, height) * magic_line_ratio;
-
-        // draw line
+        line_width = min(width, height) * magic_line_ratio;
         cairo_set_line_width(cr, line_width);
         cairo_stroke(cr);
     } else { // fill in the circle
@@ -858,7 +869,7 @@ MTS_BackgroundHelper::cityPoint(cairo_t *cr, int width, int height, bool hollow)
 
 
 void
-MTS_BackgroundHelper::generateBgFeatures(std::vector<BGFeature> &bg_features){
+MTS_BackgroundHelper::generateBgFeatures(vector<BGFeature> &bg_features){
 
     // get probabilities of all bg features
     int maxnum=config->getParamDouble("max_num_features");
@@ -878,7 +889,7 @@ MTS_BackgroundHelper::generateBgFeatures(std::vector<BGFeature> &bg_features){
     };
 
     // init the vector of all possible features to sample from
-    std::vector<BGFeature> all_features={Colordiff, Distracttext, Boundary,
+    vector<BGFeature> all_features={Colordiff, Distracttext, Boundary,
             Colorblob, Straight, Grid, Citypoint, Parallel, Vparallel, Texture,
             Railroad, Riverline};
     int j, cur_index, count = 0;
@@ -921,13 +932,15 @@ MTS_BackgroundHelper::generateBgFeatures(std::vector<BGFeature> &bg_features){
 
 
 void 
-MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
-                 std::vector<BGFeature> &features, int height, int width,
-                 int bg_color, int contrast){
+MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface, 
+        vector<BGFeature> &features, int height, int width, int bg_color, int contrast){
+
+    //cout << "bg color " << bg_color << endl;
+    //cout << "constrast " << contrast << endl;
 
     double c_min, c_max, d_min, d_max, curve_prob;
     int num_lines;
- 
+    //cout << "generating bg sample" << endl;
     // initialize the cairo image variables for background
     cairo_surface_t *surface;
     cairo_t *cr;
@@ -1064,7 +1077,9 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
     // add rivers by probability
     if (find(features.begin(), features.end(), Riverline)!= features.end()) {
         int river_min = config->getParamInt("river_num_lines_min");
-        int river_max= config->getParamInt("river_num_lines_max")+1 - river_min;
+        int river_max = config->getParamInt("river_num_lines_max");
+
+        double double_prob = config->getParamDouble("river_double_line_prob");
 
         num_lines = helper->rndBetween(river_min,river_max); 
         c_min = config->getParamDouble("river_curve_c_min");
@@ -1074,7 +1089,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
 
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
-            addLines(cr, false, false, false, true, helper->rng()%2, true, 
+            addLines(cr, false, false, false, true, helper->rndProbUnder(double_prob), true, 
                     width, height, c_min, c_max, d_min, d_max);
         }
     }

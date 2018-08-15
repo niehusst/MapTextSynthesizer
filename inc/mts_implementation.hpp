@@ -11,12 +11,15 @@
 #include <opencv2/core/mat.hpp> //cv::Mat
 
 // local files
-#include "map_text_synthesizer.hpp"
+#include "mtsynth/map_text_synthesizer.hpp"
 #include "mts_basehelper.hpp"
 #include "mts_config.hpp"
 #include "mts_texthelper.hpp"
 #include "mts_bghelper.hpp"
 
+using std::string;
+using std::shared_ptr;
+using cv::Mat;
 using boost::random::mt19937;
 using boost::random::gamma_distribution;
 using boost::random::variate_generator;
@@ -34,25 +37,31 @@ protected://-------------PROTECTED METHODS AND FIELDS------------------------
          * Original code for this method is from Andrey Smorodov
          * url: https://stackoverflow.com/questions/19948319/how-to-convert-cairo-image-surface-to-opencv-mat-in-c
          */
-        static void cairoToMat(cairo_surface_t *surface,cv::Mat &mat);
+        static void cairoToMat(cairo_surface_t *surface,Mat &mat);
 
   
         /* Adds Gaussian noise to out
          *
          * out - the input and output image
          */
-        void addGaussianNoise(cv::Mat& out);
+        void addGaussianNoise(Mat& out);
 
   
         /* Adds Gaussian blur to out
          *
          * out - the input and output image
          */
-        void addGaussianBlur(cv::Mat& out);
+        void addGaussianBlur(Mat& out);
 
-  
-        std::shared_ptr<MTSConfig> config;
-        std::shared_ptr<MTS_BaseHelper> helper;
+        /* Adds jpeg compression artifacts to img
+         *
+         * out - the input and output image
+         * Adapted from Anguelos's code: https://github.com/anguelos/opencv_contrib/blob/gsoc_final_submission/modules/text/src/text_synthesizer.cpp
+         */
+        void addCompressionArtifacts(Mat& out);
+
+        shared_ptr<MTSConfig> config;
+        shared_ptr<MTS_BaseHelper> helper;
         MTS_TextHelper th;
         MTS_BackgroundHelper bh;
 
@@ -63,11 +72,10 @@ protected://-------------PROTECTED METHODS AND FIELDS------------------------
 public://-----------------PUBLIC METHODS AND FIELDS------------------------
 
         /* Constructor */
-        MTSImplementation(std::string config_file);
+        MTSImplementation(string config_file);
 
         /* Destructor */
         ~MTSImplementation();
-
 
         /*
          * Generate a sample image
@@ -76,8 +84,8 @@ public://-----------------PUBLIC METHODS AND FIELDS------------------------
          * sample - the opencv matrix that actually contains the image data
          * actual_height - the actual height of sample in pixels. 
          */
-        void generateSample(CV_OUT std::string &caption, CV_OUT cv::Mat &sample,
-                            CV_OUT int &actual_height);
+        void generateSample(string &caption, Mat &sample,
+                            int &actual_height);
 
 };
 

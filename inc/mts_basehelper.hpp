@@ -12,6 +12,12 @@
 
 #include "mts_config.hpp"
 
+using std::string;
+using std::vector;
+using std::shared_ptr;
+
+using cv::RNG;
+
 using boost::random::mt19937;
 
 
@@ -130,6 +136,7 @@ private://----------------------- PRIVATE METHODS --------------------------
 
 public://----------------------- PUBLIC METHODS --------------------------
 
+        /* An MTSConfig instance to fetch parameters from. */
         MTSConfig* config;
 
         /* Projects the current path of cr onto the provided path. */
@@ -156,10 +163,9 @@ public://----------------------- PUBLIC METHODS --------------------------
          * text - Boolean flag say whether this function is being called to 
          *        draw a path for text or a line. (optional)
          */
-        void points_to_path(cairo_t *cr, std::vector<coords> points,
+        void points_to_path(cairo_t *cr, vector<coords> points,
                             double c_min=-2, double c_max=2, double d_min=-2,
                             double d_max=2, bool text = false);
-
 
         /*
          * Makes and returns a vector of x,y coordinate points for
@@ -176,7 +182,7 @@ public://----------------------- PUBLIC METHODS --------------------------
          * y_var_max - the maximum fluctuation of the fixing points of the 
          *             curve in y-direction w.r.t. the height of image
          */
-        std::vector<coords> make_points_wave(double length, double height,
+        vector<coords> make_points_wave(double length, double height,
                            int num_points, double y_var_min, double y_var_max);
 
 
@@ -184,10 +190,10 @@ public://----------------------- PUBLIC METHODS --------------------------
         mt19937 rng2_;
 
         //Constructors
-        MTS_BaseHelper(std::shared_ptr<MTSConfig> c);
+        MTS_BaseHelper(shared_ptr<MTSConfig> c);
 
         //Destructor
-        ~MTS_BaseHelper() {}
+        ~MTS_BaseHelper(); 
 
         /*
          * Returns true or false based on a randomly generated probability under
@@ -217,20 +223,20 @@ public://----------------------- PUBLIC METHODS --------------------------
         void setSeed(uint64 rndState);
 
         //strip the spaces in the front and end of the string
-        static std::string
-            strip(std::string str);
+        static string
+            strip(string str);
 
         /*
          * A Helper method to easily read lines from a file
          *
          * filename - the path to the file.
          */
-        std::vector<std::string>
-            readLines(std::string filename);
+        vector<string>
+            readLines(string filename);
 
         // tokenize str according to delim
-        std::vector<std::string>
-            tokenize(std::string str, const char *delim);
+        vector<string>
+            tokenize(string str, const char *delim);
 
         /*
          * Makes a mask that has holes in it to project over background or text

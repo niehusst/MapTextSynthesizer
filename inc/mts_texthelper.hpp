@@ -10,6 +10,10 @@
 #include "mts_basehelper.hpp"
 #include "mts_config.hpp"
 
+using std::string;
+using std::vector;
+using std::shared_ptr;
+
 using boost::random::beta_distribution;
 using boost::random::gamma_distribution;
 using boost::random::variate_generator;
@@ -28,27 +32,27 @@ private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
          * Base of this method from Ben K. Bullock at
          * url: https://www.lemoda.net/pango/list-fonts/index.html
          */
-        void updateFontNameList(std::vector<std::string>& font_list);
+        void updateFontNameList(vector<string>& font_list);
 
 
         /* Adds a list of fonts to fonts*/
-        void addFontlist(std::vector<std::string>& font_list);
-        void addFontlist(std::string font_file);
+        void addFontlist(vector<string>& font_list);
+        void addFontlist(string font_file);
 
 
         /* Adds a list of captions to captions*/
-        void addCaptionlist(std::vector<std::string>& words);
-        void addCaptionlist(std::string caption_file);
+        void addCaptionlist(vector<string>& words);
+        void addCaptionlist(string caption_file);
 
 
         /* The list of available system font names. */
-        std::vector<std::string> availableFonts_ = std::vector<std::string>();
+        vector<string> availableFonts_ = vector<string>();
 
         /* A list of fonts */
-        std::vector<std::string> fonts_;
+        vector<string> fonts_;
 
         /* A list of captions */
-        std::vector<std::string> captions_;
+        vector<string> captions_;
 
         /* Generator for the spacing degree */
         beta_distribution<> spacing_dist;
@@ -101,8 +105,8 @@ private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
          *
          * rotate_angle - the angle to rotate
          * curved - whether to curve or not
-         * spacing- the spacing between characters (in point)
          * stretch_deg - the horizontal text scaling factor
+         * spacing- the spacing between characters (in point)
          * x_pad - padding in x-direction
          * y_pad - padding in y-direction
          * scale - scaling factor of the entire text
@@ -205,7 +209,7 @@ private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
          */
         void
             generateTextPatch(cairo_surface_t *&text_surface,
-                              std::string caption,int height,int &width,
+                              string caption,int height,int &width,
                               int text_color, bool distract);
 
 
@@ -214,6 +218,7 @@ public:// --------------------- PUBLIC METHODS -------------------------------
         /* The base helper */
         MTS_BaseHelper* helper;
 
+        /* An MTSConfig instance to get parameters from. */
         MTSConfig* config;
 
         /* Constructor */
@@ -235,7 +240,7 @@ public:// --------------------- PUBLIC METHODS -------------------------------
          * distract - flag that dictates whether distractor text will be present
          */
         void 
-            generateTextSample(std::string &caption,
+            generateTextSample(string &caption,
                                cairo_surface_t *&text_surface, int height,
                                int &width, int text_color, bool distract);
 

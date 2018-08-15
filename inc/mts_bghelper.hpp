@@ -8,6 +8,10 @@
 #include "mts_basehelper.hpp"
 #include "mts_config.hpp"
 
+using std::string;
+using std::vector;
+using std::shared_ptr;
+
 using boost::random::normal_distribution;
 using boost::random::gamma_distribution;
 using boost::random::beta_distribution;
@@ -370,11 +374,12 @@ class MTS_BackgroundHelper {
         // a helper class memeber that holds important functions
         MTS_BaseHelper* helper;
 
+        /* An MTSConfig instance to get parameters from. */
         MTSConfig* config;
 
         //Constructor
-        MTS_BackgroundHelper(std::shared_ptr<MTS_BaseHelper> h,
-                             std::shared_ptr<MTSConfig> c);
+        MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h,
+                             shared_ptr<MTSConfig> c);
 
         //Destructor
         ~MTS_BackgroundHelper();
@@ -386,7 +391,7 @@ class MTS_BackgroundHelper {
          * bg_features - the ouput array of features
          */
         void
-            generateBgFeatures(std::vector<BGFeature> &bg_features);
+            generateBgFeatures(vector<BGFeature> &bg_features);
 
         /*
          * Generates a map-like background 
@@ -399,7 +404,7 @@ class MTS_BackgroundHelper {
          */
         void
             generateBgSample(cairo_surface_t *&bg_surface,
-                             std::vector<BGFeature>&features, int height,
+                             vector<BGFeature>&features, int height,
                              int width, int bg_color, int contrast);
 };
 

@@ -1,5 +1,5 @@
 # File paths 
-IDIR=../include/mtsynth
+IDIR=../include/
 LIBDIR=../inc/
 SRCDIR=../src/
 BINDIR=../bin/
@@ -37,16 +37,16 @@ libmtsynth.a: ${SOURCES}
 
 # Compile a cpp example from shared library
 # NOTE: Must set environment variable LD_LIBRARY_PATH=/path/to/bin/
-cpp_sample: synthesizer_sample.cpp
-	${CXX} -o shared_sample.exe $^ ${PKG-CONFIG} ${SAMPLE_FLAGS}
+cpp_sample: text_synthesizer.cpp
+	${CXX} $^ ${PKG-CONFIG} ${SAMPLE_FLAGS} -o mts_sample
 
 # Compile a cpp example with static library
-cpp_sample_static: synthesizer_sample.cpp ${BINDIR}libmtsynth.a
-	${CXX} -o static_sample.exe $^ ${PKG-CONFIG} ${STATIC_SAMPLE_FLAGS}
+cpp_sample_static: text_synthesizer.cpp ${BINDIR}libmtsynth.a
+	${CXX} $^ ${PKG-CONFIG} ${STATIC_SAMPLE_FLAGS} -o mts_sample_static
 
 # Compile program to list fonts available on the system
 list_fonts: list_available_fonts.cpp
-	${CXX} -o list.exe $^ ${PKG-CONFIG}
+	${CXX} -o list $^ ${PKG-CONFIG}
 
 clean:
 	rm -f core* *.o *~ \#*# *.exe

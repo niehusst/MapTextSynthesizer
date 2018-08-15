@@ -2,7 +2,11 @@
  * mts_basehelper.cpp contains the class method definitions for the           *
  * MTS_BaseHelper class, which holds general methods that are used in         *
  * generating the background and the text.                                    *
- * Copyright (C) 2018, Liam Niehus-Staab and Ziwen Chen                       *
+ *                                                                            *
+ * Copyright (C) 2018                                                         *
+ *                                                                            *
+ * Written by Ziwen Chen <chenziwe@grinnell.edu>                              * 
+ * and Liam Niehus-Staab <niehusst@grinnell.edu>                              *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -32,13 +36,21 @@
 
 #include "mts_basehelper.hpp"
 
+using std::string;
+using std::vector;
+using std::cerr;
+using std::endl;
+using std::shared_ptr;
+
 using boost::random::mt19937;
 
 
 // SEE mts_basehelper.hpp FOR ALL DOCUMENTATION
 
-MTS_BaseHelper::MTS_BaseHelper(std::shared_ptr<MTSConfig> c) : config(&(*c)) {}
+MTS_BaseHelper::MTS_BaseHelper(shared_ptr<MTSConfig> c) : config(&(*c)) {}
 
+MTS_BaseHelper::~MTS_BaseHelper(){
+}
 
 bool 
 MTS_BaseHelper::rndProbUnder(double probability){
@@ -70,8 +82,8 @@ MTS_BaseHelper::rng(){
 }
 
 //strip the spaces in the front and end of the string
-std::string 
-MTS_BaseHelper::strip(std::string str) {
+string 
+MTS_BaseHelper::strip(string str) {
     int i,j;
     for (i = 0; i < str.length(); i++) {
         if (str[i] != ' '){
@@ -92,34 +104,32 @@ MTS_BaseHelper::strip(std::string str) {
     }
 }
 
-
-std::vector<std::string>
-MTS_BaseHelper::readLines(std::string filename) {
-    std::vector<std::string> lines;
-    std::ifstream infile(filename.c_str());
-    
+vector<string>
+MTS_BaseHelper::readLines(string filename) {
+    vector<string> lines;
+    std::ifstream infile(filename);
     if (! infile.is_open()) {
-        std::cerr << "Could not open " << filename << std::endl;
+        cerr << "Could not open " << filename << endl;
         exit(1);
     }
 
-    std::string line;
+    string line;
     // read config file line by line
     while (std::getline(infile, line)) {
-        lines.push_back(std::string(line));
+        lines.push_back(string(line));
     }
     return lines;
 }
 
-std::vector<std::string>
-MTS_BaseHelper::tokenize(std::string str, const char *delim) {
-    std::vector<std::string> tokens = std::vector<std::string>();
+vector<string>
+MTS_BaseHelper::tokenize(string str, const char *delim) {
+    vector<string> tokens = vector<string>();
     char cstr[str.length() + 1];
     strcpy(cstr, str.c_str());
     char *token = strtok(cstr, delim);
 
     while (token != NULL) {
-        tokens.push_back(strip(std::string(token)));
+        tokens.push_back(strip(string(token)));
         token = strtok(NULL, delim);
     }
     return tokens;
@@ -583,7 +593,7 @@ MTS_BaseHelper::four_point_to_cp(coords start,
 
 
 void 
-MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points,
+MTS_BaseHelper::points_to_path(cairo_t *cr, vector<coords> points,
                                double cmin, double cmax, double dmin,
                                double dmax, bool text) {
 
@@ -610,7 +620,7 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points,
 
        a = (y - dx^3 - cx^2 - (x/u)(w - du^3 - cu^2)) / (1 - x/u)
        b = (y - dx^3 - cx^2 - a) / x
-    */
+     */
 
     double x = start.first / 100, y = start.second,
            u = end.first / 100, w = end.second;
@@ -618,7 +628,21 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points,
     // set coefficients of cubic equation to describe curve
     double a=0, b=100, c=0, d=0;
 
+    int loop_count = 0;
+
     do {
+        //gradually increase the limit for c and d so that they won't stuck here
+        double l = (loop_count/1000)*0.5;
+        //cout << "l " << loop_count << " " << l << endl;
+        cmin-=l;
+        cmax+=l;
+        dmin-=l;
+        dmax+=l;
+
+        //cout << "cminmax dminmax " << cmin << " " << cmax << " " << dmin << " " << dmax << endl;
+
+        //cout << "in loop" << endl;
+        //cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
         do {
             c = rndBetween(cmin,cmax);
             d = rndBetween(dmin,dmax); 
@@ -638,8 +662,8 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points,
 
 
         if (x == u) {// starting x cannot equal ending x position
-            std::cerr << "Cannot draw vertical curve in points_to_path()!"
-                      << std::endl;
+            cerr << "Cannot draw vertical curve in points_to_path()!"
+                      << endl;
             exit(1);
         } else if (x == 0) {
             a = y;
@@ -653,9 +677,13 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points,
             b = (y - d*pow(x,3) - c*pow(x,2) - a) / x;
         }
 
+        loop_count++;
+
     } while (text && abs(b)>(config->getParamDouble("curve_b_abs_max")));
 
     double coeff[4] = {a,b,c,d};
+
+    //cout << "a b c d " << a << " " << b << " " << c << " " << d << endl;
 
     // get two points in the middle to calculate control points
     double x1 = (2.0/3)*x + (1.0/3)*u;
@@ -689,8 +717,8 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points,
         x = start.first / 100, y = start.second;
         u = end.first / 100, w = end.second;
         if (x == u) {
-            std::cerr << "Cannot draw vertical curve in points_to_path()!"
-                      << std::endl;
+            cerr << "Cannot draw vertical curve in points_to_path()!"
+                      << endl;
             exit(1);
         }
         else {
@@ -728,6 +756,8 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points,
             }
             n = (x+u)/2;
             m = (y+w)/2+(w-y)*rndBetween(y_var_min, y_var_max);
+
+            //cout << "x, y, n, m " << x*100 << " " << y << " " << n*100 << " " << m << endl;
 
             double k = (x-u)/(x-n);
             double x_2 = pow(x,2), u_2 = pow(u,2), n_2 = pow(n,2);
@@ -808,11 +838,11 @@ MTS_BaseHelper::points_to_path(cairo_t *cr, std::vector<coords> points,
 }
 
 
-std::vector<coords>
-MTS_BaseHelper::make_points_wave(double length, double height, int num_points,
-                                 double y_var_min, double y_var_max) {
+vector<coords>
+MTS_BaseHelper::make_points_wave(double length, double height, 
+        int num_points, double y_var_min, double y_var_max) {
 
-    std::vector<coords> points;
+    vector<coords> points;
 
     if (num_points < 2) num_points = 2; //verify preconditions
 
