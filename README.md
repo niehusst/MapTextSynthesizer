@@ -6,6 +6,7 @@ MapTextSynthesizer is a program to dynamically generate grey-scale, synthetic im
 ![MTS produced image, caption: Shambaugh](samples/images/Shambaugh.png)
 ![MTS produced image, caption: Maynard](samples/images/Maynard.png)
 ![MTS produced image, caption: Emerson](samples/images/Emerson.png)
+![MTS produced image, caption: Greeley](samples/images/Greeley.png)
 
 ## Getting Started
 
