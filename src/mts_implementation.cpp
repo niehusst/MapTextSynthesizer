@@ -1,10 +1,28 @@
-#include "opencv2/imgproc.hpp"
-#include "opencv2/core.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/calib3d.hpp"
+/** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * mts_implementation.cpp contains the class method definitions for the       *
+ * MTSImplementation class, which handles the integration of the background   *
+ * and text into one synthetic image.                                         *
+ *                                                                            *
+ * Copyright (C) 2018                                                         *
+ *                                                                            *
+ * Written by Ziwen Chen <chenziwe@grinnell.edu>                              * 
+ * and Liam Niehus-Staab <niehusst@grinnell.edu>                              *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ * (at your option) any later version.                                        * 
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful,            *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+ * GNU General Public License for more details.                               *
+ *                                                                            *
+ * You should have received a copy of the GNU General Public License          *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 
-#include "text/mts_implementation.hpp"
-
+// standard includes
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -20,250 +38,218 @@
 #include <algorithm>
 #include <iosfwd>
 #include <memory>
-#include <string>
 #include <utility>
 #include <vector>
+#include <unordered_map>
+
+// opencv includes
+#include <opencv2/highgui.hpp>
+#include <opencv2/calib3d.hpp>
+#include <opencv2/imgproc.hpp> //cv::GaussianBlur
+#include <opencv2/core.hpp>
+#include <opencv2/core/mat.hpp>   // cv::Mat
 
 // Pango/cairo includes
 #include <glib.h>
 #include <pango/pangocairo.h>
 
-//opencv includes
-#include <opencv2/core/cvstd.hpp> // cv::String
-#include <opencv2/core/mat.hpp>   // cv::Mat
- 
-using namespace std;
+#include "mts_implementation.hpp"
+
+using std::cout;
+using std::string;
+using std::vector;
+using std::cerr;
+using std::endl;
+using std::make_shared;
+
+using cv::Mat;
+
 using boost::random::beta_distribution;
 using boost::random::variate_generator;
 
-namespace cv{
-    namespace text{
+// SEE mts_implementation.hpp FOR ALL DOCUMENTATION
 
-        double MTSImplementation::getParam(string key) {
-            double val = helper->getParam(key);
-            return val;
-        }
+void
+MTSImplementation::cairoToMat(cairo_surface_t *surface,Mat &mat) {
+  
+    // make a 4 channel opencv matrix
+    Mat mat4 = Mat(cairo_image_surface_get_height(surface),
+                           cairo_image_surface_get_width(surface),CV_8UC4,
+                           cairo_image_surface_get_data(surface));
 
-        void MTSImplementation::cairoToMat(cairo_surface_t *surface,Mat &mat) {
-          // make a 4 channel opencv matrix
-            Mat mat4 = Mat(cairo_image_surface_get_height(surface),cairo_image_surface_get_width(surface),CV_8UC4,cairo_image_surface_get_data(surface));
+    vector<Mat> channels;
 
-            vector<Mat> channels1;
-            vector<Mat> channels2;
+    cv::split(mat4,channels);
 
-            cv::split(mat,channels2);
-            cv::split(mat4,channels1);
-            
-            //iterate through all channels
-            for (int i = 0; i < 3; i++) {
-              channels2[i] = channels1[i];
-            }
-            cv::merge(channels2,mat);
-        }
+    //truncate the unnecessary channells (it's going to 1 channel grey-scale)
+    mat = channels[0];
+}
 
-        void MTSImplementation::addGaussianNoise(Mat& out) {
-          // get and use user config parameters to set sigma
-            double scale = getParam("noise_sigma_scale");
-            double shift = getParam("noise_sigma_shift");
-            double sigma = round((pow(1/(noise_gen() + 0.1), 0.5) * scale + shift) * 100) / 100;
+void MTSImplementation::addGaussianNoise(Mat& out) {
+    // get and use user config parameters to set sigma
+    double scale = config->getParamDouble("noise_sigma_scale");
+    double shift = config->getParamDouble("noise_sigma_shift");
+    double sigma = round((pow(1/(noise_gen() + 0.1),0.5) * scale + shift) * 100)
+                   / 100;
 
-            // create noise matrix
-            Mat noise = Mat(out.rows, out.cols, CV_32F);
-            
-            // populate noise with random values
-            randn(noise, 0, sigma);
-            vector<Mat> channels;
-            cv::split(out,channels);
+    // create noise matrix
+    Mat noise = Mat(out.rows, out.cols, CV_32F);
 
-            // add noise to each channel
-            for (int i = 0; i < 3; i++) {
-                channels[i]+=noise;
-                threshold(channels[i],channels[i],1.0,1.0,THRESH_TRUNC);
-                threshold(channels[i],channels[i],0,1.0,THRESH_TOZERO);
-            }
-            // merge target image Mat with the new noise Mat
-            merge(channels,out);
-        }
+    // populate noise with random values
+    randn(noise, 0, sigma);
 
-        void MTSImplementation::addGaussianBlur(Mat& out) {
-            // get user config parameters for kernel size
-            int size_min = (int)getParam("blur_kernel_size_min") / 2;
-            int size_max = (int)getParam("blur_kernel_size_max") / 2;
-            int ker_size = (helper->rng() % (size_max-size_min) + size_min) * 2 + 1;
+    // add noise to each channel
+    out+=noise;
+    cv::threshold(out,out,1.0,1.0,cv::THRESH_TRUNC);
+    cv::threshold(out,out,0,1.0,cv::THRESH_TOZERO);
+}
 
-            GaussianBlur(out,out,Size(ker_size,ker_size),0,0,BORDER_REFLECT_101);
-        }
+void MTSImplementation::addGaussianBlur(Mat& out) {
+    // get user config parameters for kernel size
+    int size_min = config->getParamInt("blur_kernel_size_min") / 2;
+    int size_max = config->getParamInt("blur_kernel_size_max") / 2;
+    int ker_size = (helper->rndBetween(size_min,size_max)) * 2 + 1;
 
-        void MTSImplementation::updateFontNameList(std::vector<String>& fntList) {
-          // clear existing fonts for a fresh load of available fonts
-            fntList.clear(); 
+    GaussianBlur(out,out,cv::Size(ker_size,ker_size),0,0,cv::BORDER_REFLECT_101);
+}
 
-            PangoFontFamily ** families;
-            int num_families;
-            PangoFontMap * fontmap;
+void MTSImplementation::addCompressionArtifacts(Mat& out){
+    if(helper->rndProbUnder(config->getParamDouble("jpeg_prob"))){
+        vector<uchar> buffer;
+        vector<int> parameters;
+        parameters.push_back(CV_IMWRITE_JPEG_QUALITY);
+        int quality_min = config->getParamInt("jpeg_quality_min");
+        int quality_max = config->getParamInt("jpeg_quality_max");
+        int quality = helper->rndBetween(quality_min,quality_max);
+        parameters.push_back(quality);
+        Mat ucharImg;
+        out.convertTo(ucharImg,CV_8UC1,255);
+        cv::imencode(".jpg",ucharImg,buffer,parameters);
+        ucharImg=cv::imdecode(buffer,CV_LOAD_IMAGE_GRAYSCALE);
+        ucharImg.convertTo(out,CV_32FC1,1.0/255);
+    }
+}
 
-            fontmap = pango_cairo_font_map_get_default();
-            pango_font_map_list_families (fontmap, &families, &num_families);
 
-            // iterativly add all available fonts to fntList
-            for (int k = 0; k < num_families; k++) {
-                PangoFontFamily * family = families[k];
-                const char * family_name;
-                family_name = pango_font_family_get_name (family);
-                fntList.push_back(String(family_name));
-            }   
-            // clean up
-            g_free (families);
-        }
+MTSImplementation::MTSImplementation(string config_file)
+    : MapTextSynthesizer(),  // initialize class fields
+    config(make_shared<MTSConfig>(MTSConfig(config_file))),
+    helper(make_shared<MTS_BaseHelper>(MTS_BaseHelper(config))),
+    th(helper,config),
+    bh(helper,config),
+    noise_dist(config->getParamDouble("noise_sigma_alpha"),
+            config->getParamDouble("noise_sigma_beta")),
+    noise_gen(helper->rng2_, noise_dist)
+{
+    //initialize rng in BaseHelper
+    uint64 seed = (uint64)config->getParamDouble("seed");
+    helper->setSeed(seed != 0 ? seed : time(NULL));
+}
 
-        MTSImplementation::MTSImplementation()
-            : MapTextSynthesizer(),  // initialize class fields
-            fonts_{std::shared_ptr<std::vector<String> >(&(this->blockyFonts_)),
-                std::shared_ptr<std::vector<String> >(&(this->regularFonts_)),
-                std::shared_ptr<std::vector<String> >(&(this->cursiveFonts_))},
-            utils(),
-            helper(make_shared<MTS_BaseHelper>(MTS_BaseHelper(utils.params))),
-            th(helper),
-            bh(helper),
-            noise_dist(getParam("noise_sigma_alpha"),
-                       getParam("noise_sigma_beta")),
-            noise_gen(helper->rng2_, noise_dist)
-        {
-            namedWindow("__w");
-            waitKey(1);
-            destroyWindow("__w");
-            this->updateFontNameList(this->availableFonts_);
+MTSImplementation::~MTSImplementation() {
+}
 
-            //initialize rng in BaseHelper
-            uint64 seed = (uint64)getParam("seed");
-            helper->setSeed(seed != 0 ? seed : time(NULL));
+void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual_height){
 
-            //set required fields for TextHelper instance (th)
-            th.setFonts(fonts_);
-            th.setSampleCaptions(std::shared_ptr<std::vector<String> >(&(sampleCaptions_)));
-        }
+    //cout << "start generate sample" << endl;
+    vector<BGFeature> bg_features;
+    bh.generateBgFeatures(bg_features);
 
-        void MTSImplementation::setBlockyFonts(std::vector<String>& fntList){
-            std::vector<String> dbList=this->availableFonts_;
-            
-            // loop through fonts in availableFonts_ to check if the system 
-            // contains every font in the fntList
-            for(size_t k = 0; k < fntList.size(); k++){
-                if(std::find(dbList.begin(), dbList.end(), fntList[k]) == dbList.end()){
-                    CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
-                }
-            }
-            this->blockyFonts_=fntList;
-        }
+    // set bg and text color (brightness) based on user configured parameters
+    int bgcolor_min = config->getParamInt("bg_color_min");
+    int textcolor_max = config->getParamInt("text_color_max");
+    // assert colors are valid values
 
-        void MTSImplementation::setRegularFonts(std::vector<String>& fntList){
-            std::vector<String> dbList=this->availableFonts_;
-            
-            // loop through fonts in availableFonts_ to check if the system 
-            // contains every font in the fntList
-            for(size_t k = 0; k < fntList.size(); k++){
-                if(std::find(dbList.begin(), dbList.end(), fntList[k]) == dbList.end()){
-                    CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
-                }
-            }
-            this->regularFonts_=fntList;
-        }
+    if (bgcolor_min > 255 || textcolor_max < 0 || bgcolor_min<=textcolor_max) {
+        cerr << "Invalid color input!" << endl;
+        exit(1);
+    }
 
-        void MTSImplementation::setCursiveFonts(std::vector<String>& fntList){
-            std::vector<String> dbList=this->availableFonts_;
-            
-            // loop through fonts in availableFonts_ to check if the system 
-            // contains every font in the fntList
-            for(size_t k = 0; k < fntList.size(); k++){
-                if(std::find(dbList.begin(), dbList.end(), fntList[k]) == dbList.end()){
-                    CV_Error(Error::StsError,"The font name list must only contain fonts in your system");
-                }
-            }
-            this->cursiveFonts_=fntList;
-        }
+    int bg_brightness = helper->rndBetween(bgcolor_min,255);
+    int text_color = helper->rndBetween(0,textcolor_max);
+    int contrast = bg_brightness - text_color;
 
-        void MTSImplementation::setSampleCaptions (std::vector<String>& words) {
-            this->sampleCaptions_ = words;
-        }
+    cairo_surface_t *text_surface;
+    int height;
+    int width;
 
-        void MTSImplementation::generateSample(CV_OUT String &caption, CV_OUT Mat & sample){
+    // set image height from user configured parameters
+    int height_min = config->getParamInt("height_min");
+    int height_max = config->getParamInt("height_max");
+    if (height_min == height_max) {
+        height = height_min;
+    } else {
+        height = helper->rndBetween(height_min,height_max); 
+    }
 
-          //cout << "start generate sample" << endl;
-            std::vector<BGFeature> bg_features;
-            bh.generateBgFeatures(bg_features);
-            //cout << "after bg feature" << endl;
+    actual_height = height;
 
-            // set bg and text color (brightness) based on user configured parameters
-            int bgcolor_min = (int)getParam("bg_color_min");
-            int textcolor_max = (int)getParam("text_color_max");
-            // assert colors are valid values
-            CV_Assert(bgcolor_min<=255);
-            CV_Assert(textcolor_max>=0);
-            CV_Assert(bgcolor_min>textcolor_max);
+    //cout << "text" << endl;
+    // use TextHelper instance to generate synthetic text
+    if (std::find(bg_features.begin(), bg_features.end(), Distracttext)!=
+        bg_features.end()) {
+        // generate distractor text
+        th.generateTextSample(caption,text_surface,height,
+                              width,text_color,true);
+    } else {
+        // dont generate distractor text
+        th.generateTextSample(caption,text_surface,height,
+                              width,text_color,false);
+    }
 
-            int bg_brightness = helper->rng()%(255-bgcolor_min+1)+bgcolor_min;
-            int text_color = helper->rng()%(textcolor_max+1);
-            int contrast = bg_brightness - text_color;
+    //cout << "bg" << endl;
+    // use BackgroundHelper to generate the background image
+    cairo_surface_t *bg_surface;
+    bh.generateBgSample(bg_surface, bg_features, height, width,
+                        bg_brightness, contrast);
+    cairo_t *cr = cairo_create(bg_surface);
+    cairo_set_source_surface(cr, text_surface, 0, 0);
 
-            cairo_surface_t *text_surface;
-            int height;
-            int width;
+    // set the blend alpha range using user configured parameters
+    double blend_min=config->getParamDouble("blend_alpha_min");
+    double blend_max=config->getParamDouble("blend_alpha_max");
 
-            // set image height from user configured parameters
-            int height_min = (int)getParam("height_min");
-            int height_max = (int)getParam("height_max");
-            height = (helper->rng()%(height_max-height_min+1))+height_min;
+    double blend_alpha=helper->rndBetween(blend_min,blend_max);
 
-            string text;
-            //cout << "generating text sample" << endl;
-            // use TextHelper instance to generate synthetic text
-            if (find(bg_features.begin(), bg_features.end(), Distracttext)!= bg_features.end()) {
-                // do generate distractor text
-                th.generateTextSample(text,text_surface,height,width,text_color,true);
-            } else {
-                // dont generate distractor text
-                th.generateTextSample(text,text_surface,height,width,text_color,false);
-            }
-            caption = String(text);
+    // blend with alpha or not based on user set probability
+    if(helper->rndProbUnder(config->getParamDouble("blend_prob"))){
+        cairo_paint_with_alpha(cr, blend_alpha);
+    } else { // dont blend
+        cairo_paint(cr);
+    }
 
-            //cout << "generating bg sample" << endl;
-            cout << "bg feature num " << bg_features.size() << endl; 
+    Mat sample_uchar = Mat(height,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
+    Mat sample_float = Mat(height,width,CV_32FC1,cv::Scalar_<float>(0,0,0));
 
-            // use BackgroundHelper to generate the background image
-            cairo_surface_t *bg_surface;
-            bh.generateBgSample(bg_surface, bg_features, height, width, bg_brightness, contrast);
-            cairo_t *cr = cairo_create(bg_surface);
-            cairo_set_source_surface(cr, text_surface, 0, 0);
+    // convert cairo image to openCV Mat object
+    cairoToMat(bg_surface, sample_uchar);
 
-            // set the blend alpha range using user configured parameters
-            int blend_min=(int)(100 * getParam("blend_alpha_min"));
-            int blend_max=(int)(100 * getParam("blend_alpha_max"));
+    sample_uchar.convertTo(sample_float, CV_32FC1, 1.0/255.0);
 
-            double blend_alpha=(helper->rng()%(blend_max-blend_min+1)+blend_min)/100.0;
+    //cout << "noise" << endl;
+    // clean up cairo objects
+    cairo_destroy(cr);
+    cairo_surface_destroy(text_surface);
+    cairo_surface_destroy(bg_surface);
 
-            // blend with alpha or not based on user set probability
-            if(helper->rndProbUnder(getParam("blend_prob"))){
-                cairo_paint_with_alpha(cr, blend_alpha);
-            } else {
-                cairo_paint(cr); // dont blend
-            }
+    // add image smoothing using blur and noise
+    addGaussianNoise(sample_float);
+    addGaussianBlur(sample_float);
 
-            Mat sample_uchar = Mat(height,width,CV_8UC3,Scalar_<uchar>(0,0,0));
+    addCompressionArtifacts(sample_float);
 
-            // convert cairo image to openCV Mat object
-            cairoToMat(bg_surface, sample_uchar);
-            sample = Mat(height, width, CV_32FC3);
-            sample_uchar.convertTo(sample, CV_32FC3, 1.0/255.0);
+    bool zero_padding = true;
+    if (config->getParamDouble("zero_padding")==0) zero_padding = false;
 
-            // clean up cairo objects
-            cairo_destroy(cr);
-            cairo_surface_destroy(text_surface);
-            cairo_surface_destroy(bg_surface);
+    if (!zero_padding) {
+        sample = Mat(height,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
+    } else {
+        int height_max = int(config->getParamDouble("height_max"));
+        sample = Mat(height_max,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
+    }
 
-            // add image smoothing using blur and noise
-            addGaussianNoise(sample);
-            addGaussianBlur(sample);
-        }
+    sample_float.convertTo(sample_uchar, CV_8UC1, 255.0);
 
-    }  //namespace text
-}  //namespace cv
+    Mat sample_roi = sample(cv::Rect(0, 0, width, height));
+    sample_uchar.copyTo(sample_roi);
+}
