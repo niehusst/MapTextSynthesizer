@@ -1,3 +1,8 @@
+//FILE PATHS
+fonts = fonts/simple.txt
+captions = IA/Civil.txt, IA/Pillar.txt, IA/Bar.txt
+
+
 //TEXT PARAMS
 
 //Stretch (beta distribution)
@@ -13,37 +18,42 @@ spacing_scale=20
 spacing_shift=-1
 
 //Baseline Curve
-curve_prob=0.3
-curve_min_spacing=10          //min spacing required for the text to be curved
-curve_min_wid_hei_ratio=10    //min width-height ratio for the text to be curved
-curve_num_points_min=3
-curve_num_points_max=5
-curve_c_min=-2                //a+bx+cx^2+dx^3
-curve_c_max=2
-curve_d_min=-2
-curve_d_max=2
+curve_prob=0.1
+curve_min_spacing=-1          //min spacing required for the text to be curved
+curve_min_char_num_per_point=1    //min number of chars required for each point of curve
+curve_num_points_min=2
+curve_num_points_max=3
+curve_c_min=-5                //c is the quadratic coefficient of the first segment of curve
+curve_c_max=5                 //while d is the cubic
+curve_d_min=-5
+curve_d_max=5
+curve_cd_sum_max=3           //prevent huge curvature at the beginning of curve
+curve_b_abs_max=50
+curve_y_variance_min=-0.2      //the fluctuation of the fixing points of the curve in y-direction
+curve_y_variance_max=0.2      //w.r.t. the height of image
+curve_is_deformed_prob=0.5           // probility that curving text is deformed
+curve_line_prob=0.5          //prob of displaying the baseline
+curve_line_width_min=0.0125
+curve_line_width_max=0.1    //with respect to height
+
 
 //Italic
-italic_prob=0.3
+italic_prob=0.05
 
 //Weight
 weight_light_prob=0.3
 weight_normal_prob=0.3        // prob for heavy weight is 1-light-normal
 
-//Font
-font_blocky=0.3
-font_normal=0.3               // prob for cursive font is 1-blocky-normal
-
 //Missing Ink
-missing_prob=0.2
+missing_prob=0.1
 missing_num_min=1
 missing_num_max=5
 missing_size_min=0.0625
-missing_size_max=0.125        //with respect to height
+missing_size_max=0.25        //with respect to height
 missing_diminish_rate=100     //the larger this value, the slower the edge diminishes
 
 //Rotate
-rotate_prob=0.3
+rotate_prob=0.1
 rotate_degree_min=-10
 rotate_degree_max=10
 
@@ -56,7 +66,7 @@ scale_min=0.9
 scale_max=1.1
 
 //Blend
-blend_prob=0.2
+blend_prob=0.1
 blend_alpha_min=0.8
 blend_alpha_max=1
 
@@ -65,31 +75,31 @@ blend_alpha_max=1
 //BG PARAMS
 
 //Colordiff
-diff_prob=0.3
+diff_prob=0.1
 diff_color_distance=50        //min distance bw the text color and this feature color
-diff_num_colors_min=1         //min must be less than max
-diff_num_colors_max=2            
+diff_num_colors_min=3         //min must be less than max
+diff_num_colors_max=5            
 
 //distractor text
-distract_prob=0.3
+distract_prob=0.1
 distract_num_min=1
-distract_num_max=3
+distract_num_max=2
 distract_len_min=1
 distract_len_max=10
-distract_size_min=0.5
-distract_size_max=0.2         //with respect to main text size
+distract_size_min=0.2
+distract_size_max=2         //with respect to height
 
 //boundary
-boundary_prob=0.2
+boundary_prob=0.1
 boundary_dashed_prob=.5
 boundary_num_lines_min=1
-boundary_num_lines_max=2
+boundary_num_lines_max=3
 boundary_linewidth_min=3      //in multiples of thickness of main line
 boundary_linewidth_max=6      
-boundary_distance_min=1
-boundary_distance_max=6
-boundary_color_diff_min=.25   //min difference between padding color and line color
-boundary_color_diff_max=.35         
+boundary_distance_min=4
+boundary_distance_max=9
+boundary_color_diff_min=0   //min difference between padding color and line color
+boundary_color_diff_max=.3         
 boundary_curve_c_min=-2       //a+bx+cx^2+dx^3
 boundary_curve_c_max=2
 boundary_curve_d_min=-2
@@ -97,51 +107,56 @@ boundary_curve_d_max=2
 
 
 //color blob
-blob_prob=0.2
+blob_prob=0.1
 blob_num_min=1
-blob_num_max=1
+blob_num_max=3
 blob_size_min=0.125
 blob_size_max=0.25            //with respect to height
 blob_diminish_rate=100        //the larger this value, the slower the edge diminishes
 
 //straight line
-straight_prob=0.2
-straight_num_lines_min=1
+straight_prob=0.1
+straight_dashed_prob=.5
+straight_num_lines_min=3
 straight_num_lines_max=5
 
 //grid
-grid_prob=0.2
-grid_curve_prob=0.5
-grid_num_min=2
+grid_prob=0.1
+grid_curve_prob=0.3
+grid_num_min=5
 grid_num_max=10
 
 //city point
 point_prob=0.1
-point_radius_min=5
-point_radius_max=20           //if greater than height/2, it's reset to height/2
+point_num_min=1
+point_num_max=3
+point_radius_min=0.1           //w.r.t height
+point_radius_max=0.3           //if greater than 0.5. it's reset to 0.5
+point_hollow_prob=0.5
+
 
 //parallel lines
-para_prob=0.2
+para_prob=0.1
 para_curve_prob=0.5
-para_num_min=2
-para_num_max=10
+para_num_min=10
+para_num_max=20
 para_curve_c_min=-2           //a+bx+cx^2+dx^3
 para_curve_c_max=2
 para_curve_d_min=-2
 para_curve_d_max=2
 
 //varying parallel lines
-vpara_prob=0.2
+vpara_prob=0.1
 vpara_curve_prob=0.5     
-vpara_num_min=2
-vpara_num_max=10
+vpara_num_min=10
+vpara_num_max=20
 vpara_curve_c_min=-2          //a+bx+cx^2+dx^3
 vpara_curve_c_max=2
 vpara_curve_d_min=-2
 vpara_curve_d_max=2
 
 //texture
-texture_prob=0.2
+texture_prob=0.1
 texture_num_lines_min=1
 texture_num_lines_max=2
 texture_width_alpha=2         
@@ -152,27 +167,35 @@ texture_curve_d_min=-2
 texture_curve_d_max=2
 
 //railroad
-railroad_prob=0.2
+railroad_prob=0.1
 railroad_num_lines_min=1
 railroad_num_lines_max=2
-railroad_cross_width_min=2    //in multiples of thickness of main line
+railroad_cross_width_min=7    //width of hatches. in multiples of thickness of main line
 railroad_cross_width_max=10
-railroad_distance_between_crosses_min=3
-railroad_distance_between_crosses_max=15
+railroad_hatch_width_min=2  //width of each hatch. in multiples of thickness of main line
+railroad_hatch_width_max=3
+railroad_distance_between_crosses_min=2  // distance between hatches. in multiples of thickness of main line
+railroad_distance_between_crosses_max=3
 railroad_curve_c_min=-2       //a+bx+cx^2+dx^3
 railroad_curve_c_max=2
 railroad_curve_d_min=-2
 railroad_curve_d_max=2
 
+//double line distance
+double_distance_min=6
+double_distance_max=9
+
 //river line
-river_prob=0.3
+river_prob=0.1
 river_num_lines_min=1
-river_num_lines_max=5
-river_double_line_prob=.5
+river_num_lines_max=2
+river_double_line_prob=0.2
 river_curve_c_min=-2          //a+bx+cx^2+dx^3
 river_curve_c_max=2
 river_curve_d_min=-2
 river_curve_d_max=2
+river_curve_num_points_scale=4   //make the control points on a river line denser
+river_curve_y_var_scale=0.3       //make the fluctuation of a river line less intense
 
 //bias
 bias_vert_num_min=3
@@ -185,15 +208,38 @@ bias_std_shift=0
 bias_mean=0
 
 
-//main line
+//bg line width (applied to all bg features)
 line_width_scale_min=0.0125
-line_width_scale_max=0.025    //with respect to min(width,height)
+line_width_scale_max=0.05    //with respect to min(width,height)
+
+//dash params (applied to all bg features)
+dash_pattern_len_min=2         // number of dashes in one pattern
+dash_pattern_len_max=6
+dash_len_min=1                 // length of each dash (in pixels)
+dash_len_max=10
+
+//bg color distance (from text color) (applied to all bg features except color blob and color diff)
+bg_feature_color_dis_min=0
+bg_feature_color_dis_max=20         // if larger than bg_color-text_color, reset to bg_color-text_color
+
+//bg curve params (to be distinguished from text curve params above) (applied to all bg features)
+bg_curve_y_variance_min=-0.4        //the fluctuation of the fixing points of the curve in y-direction
+bg_curve_y_variance_max=0.4      //w.r.t. the height of image
+bg_curve_num_points_min=3
+bg_curve_num_points_max=15
 
 
 // GENERAL PARAMS
 
-height_min=32
-height_max=70
+digit_prob=0.1
+digit_len_alpha=3
+digit_len_beta=0.2                 //inverse gamma
+digit_len_max=20
+
+zero_padding=0                   //0 for false, and other value for true
+
+height_min=50
+height_max=50
 
 //Max number of features in bg
 max_num_features=6
@@ -214,3 +260,8 @@ noise_sigma_shift=0
 //Gaussian blur
 blur_kernel_size_min=3
 blur_kernel_size_max=5        //kernel size can only be odd integer
+
+//Jpeg artifacts
+jpeg_prob=0.1
+jpeg_quality_min=5
+jpeg_quality_max=100
