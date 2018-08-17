@@ -74,7 +74,7 @@ To compile using a static library, ```make static``` followed by ```make cpp_sam
 
 The C++ sample is capable of running a benchmark test of the production rate, showing and saving, or just showing the generated images. All of this can be determined by giving the executable one of either command line argument 'benchmark' or 'save'. For example: ```./mts_sample_shared benchmark```
 
-### Compiling samples with CMake:
+### Compiling C++ samples with CMake:
 
 To install MapTextSynthesizer in your machine using CMake, open install.sh using a text editor and fill in the necessary environment variables with complete paths to this repository and, if you are using one, to your virtual environment. 
 
@@ -113,4 +113,5 @@ Future work for this project that we hypothesize would lead to a more robustly t
 * [Jerod Weinman](https://github.com/weinman) for his unwavering support as a mentor and guide through this project.
 * [Anguelos Nicolaou](https://github.com/anguelos) for a starting base synthetic image generator in their fork of [opencv_contrib](https://github.com/anguelos/opencv_contrib/blob/gsoc_final_submission/modules/text/samples/text_synthesiser.py). 
 * [Behdad Esfahbod](https://github.com/behdad), a developer of both Pango and cairo, for a number of functions he wrote in [cairotwisted.c](https://github.com/phuang/pango/blob/master/examples/cairotwisted.c) which we use to curve pango text baselines using cairo.
+* [USGS GNIS](https://geonames.usgs.gov/domestic/index.html) for the massive collection of sample Iowa place-name captions freely provided under U.S. Government Work license.
 
