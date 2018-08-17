@@ -26,16 +26,19 @@ PKG-CONFIG := `pkg-config --libs pangocairo glib-2.0 opencv`
 SOURCES := $(wildcard ${SRCDIR}*.cpp)
 
 # Make shared object and then compile sample
-lib: objects libmtsi.so
+lib: objects ipc libmtsi.so
 
 # Compile the object file
 objects : ${SOURCES}
 	${CXX} ${OFLAGS} $^ -fPIC -shared
 
-# Compile the shared library
-libmtsi.so : textsynthinterface.cpp
-	${CXX} ./*.o textsynthinterface.cpp ${SOFLAGS} ${PKG-CONFIG} -o libmtsi.so
+ipc : 
+	cd ./ipc_synth; make all; cd ..;
 
+# Compile the shared library
+libmtsi.so : textsynthinterface.cpp ipc_synth/*
+	${CXX} -g -I./ipc_synth/  ./ipc_synth/prod_cons.o ./ipc_synth/master.o ./ipc_synth/consumer.o textsynthinterface.cpp ./*.o ${SOFLAGS} ${PKG-CONFIG} -o libmtsi.so
 
 clean :
 	rm -f *.pyc *~ *.o *.so
+	cd ipc_synth; make clean; cd ../;

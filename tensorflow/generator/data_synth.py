@@ -59,7 +59,7 @@ def get_mts_interface_lib():
 
     # in: string: config_path
     # out: void* to the MTS_Buff object
-    lib.mts_init.argtypes = [c.c_char_p] 
+    lib.mts_init.argtypes = [c.c_char_p, c.c_int] 
     lib.mts_init.restype = c.c_void_p
 
     # in: void* to MTS_Buff, out: void
@@ -99,17 +99,31 @@ def format_sample(lib, ptr):
 def data_generator(config_file):
     """ Generator to be used in tensorflow """
     mtsi_lib = get_mts_interface_lib()
-    mts_buff = mtsi_lib.mts_init(config_file)
+    config_file_b = config_file.encode('utf-8')
+    config_file_p = c.c_char_p(config_file)
+    mts_buff = mtsi_lib.mts_init(config_file_p, 0)
     
     while True:
         ptr = c.c_void_p(mtsi_lib.get_sample(mts_buff))
         (caption, image) = format_sample(mtsi_lib, ptr)
         yield caption, image
         mtsi_lib.free_sample(ptr)
+        
+def multithreaded_data_generator(config_file, num_producers):
+    """ Generator to be used in tensorflow """
+    mtsi_lib = get_mts_interface_lib()
+    config_file_b = config_file.encode('utf-8')
+    config_file_p = c.create_string_buffer(config_file)
+    mts_buff = mtsi_lib.mts_init(config_file_b, num_producers)
 
+    while True:
+        ptr = c.c_void_p(mtsi_lib.get_sample(mts_buff))
+        (caption, image) = format_sample(mtsi_lib, ptr)
+        yield caption, image
+        mtsi_lib.free_sample(ptr)
 
 def test_generator(num_values=10, show_images=False,
-                   log_time=False, buffered=False):
+                   log_time=False, buffered=False, num_producers=0):
     """ For testing purposes only """
     iter = None
     config_file = "config.txt"
@@ -117,7 +131,7 @@ def test_generator(num_values=10, show_images=False,
     if not buffered:
         iter = data_generator(config_file)
     else:
-        pass # Kept for future IPC stuff
+        iter = multithreaded_data_generator(config_file, num_producers)
         
     if log_time:
         start_time = time.time()
@@ -129,7 +143,7 @@ def test_generator(num_values=10, show_images=False,
             cv2.waitKey(0)
             
     if buffered:
-        pass # Kept for future IPC stuff
+        pass # mtsi_lib.mts_cleanup() 
     
     if log_time:
         end_time = time.time()

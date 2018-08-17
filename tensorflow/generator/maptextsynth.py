@@ -20,7 +20,7 @@
 import os
 import tensorflow as tf
 import numpy as np
-from data_synth import data_generator as data_generator
+from data_synth import multithreaded_data_generator as data_generator
 import pipeline
 import charset
 
@@ -44,8 +44,9 @@ def get_dataset( args=None ):
         """
     
         # Extract args
-        [ config_path, lexicon_path ] = args[0:2]
-        gen = data_generator( config_path, lexicon_path )
+        [ config_path ] = args[0:1]
+        
+        gen = data_generator( config_path, 4 )
 
         while True:
             caption, image = next( gen )
