@@ -9,17 +9,17 @@
 
 void set_key(key_t* key, char uniq) {
   /* make key */
+  /* Note: filename doesn't matter, the recommended way 
+     of creating a unique string */
   if((*key = ftok("/home/gaffordb/IPC_generation/base.c", uniq)) == -1) {
     perror("ftok");
     exit(1);
   }
 }
 
-void* get_shared_buff(int create) {
+int get_shmid(int create) {
   key_t key;
   int shmid;
-  char* data;
-  int mode;
 
   /* Get key */
   set_key(&key, 'B');
@@ -31,7 +31,13 @@ void* get_shared_buff(int create) {
     perror("shmget");
     exit(1);
   }
+  return shmid;
+}
 
+void* get_shared_buff(int create) {
+  char* data;
+
+  int shmid = get_shmid(create);
 
   /* attach to the segment to get a ptr */
   data = shmat(shmid, (void*)0, 0);

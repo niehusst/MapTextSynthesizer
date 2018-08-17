@@ -28,6 +28,7 @@
 
 void* get_shared_buff(int create);
 int get_semaphores(int create);
+int get_shmid(int create);
 void lock_buff(int semid);
 void unlock_buff(int semid);
 

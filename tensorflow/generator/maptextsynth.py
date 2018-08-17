@@ -44,9 +44,9 @@ def get_dataset( args=None ):
         """
     
         # Extract args
-        [ config_path ] = args[0:1]
+        [ config_path, num_producers ] = args[0:2]
         
-        gen = data_generator( config_path, 4 )
+        gen = data_generator( config_path, num_producers*2 )
 
         while True:
             caption, image = next( gen )

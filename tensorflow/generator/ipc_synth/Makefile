@@ -14,6 +14,9 @@ base.o : base.c
 master.o : master.c
 	gcc ${BONUS_FLAGS} -c -fPIC $^
 
+ipc_cleanup.o : ipc_cleanup.c
+	gcc ${BONUS_FLAGS} -c -fPIC $^
+
 producer : producer.o ../../../bin/libmtsynth.a prod_cons.o
 	g++ ${BONUS_FLAGS} $^ -o producer `pkg-config --cflags --libs pangocairo glib-2.0 opencv`
 
@@ -23,8 +26,11 @@ base : prod_cons.o base.o
 master : prod_cons.o consumer.o master.o
 	gcc -c -fPIC ${BONUS_FLAGS} $^ -o master
 
-all : producer.o consumer.o prod_cons.o base.o master.o \
-      producer base
+ipc_cleanup : prod_cons.o ipc_cleanup.o
+	gcc ${BONUS_FLAGS} $^ -o ipc_cleanup
+
+all : producer.o consumer.o prod_cons.o base.o master.o ipc_cleanup.o \
+      producer base ipc_cleanup
 
 clean :
 	rm -f ./*.o
