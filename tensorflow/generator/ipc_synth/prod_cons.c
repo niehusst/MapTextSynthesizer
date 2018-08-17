@@ -5,8 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+
 #include "prod_cons.h"
 
+/* Determine key, given character */
 void set_key(key_t* key, char uniq) {
   /* make key */
   /* Note: filename doesn't matter, the recommended way 
@@ -49,6 +51,7 @@ void* get_shared_buff(int create) {
   return data;
 }
 
+/* Really get semid for semaphores */
 int get_semaphores(int create) {
   key_t key;
   struct semid_ds buf;
@@ -75,6 +78,7 @@ int get_semaphores(int create) {
   return semid;
 }
 
+/* Abstract away some semaphore details to lock */
 void lock_buff(int semid) {
   struct sembuf sop;
   
@@ -91,6 +95,7 @@ void lock_buff(int semid) {
   semop(semid, &sop, 1); 
 }
 
+/* Abstract away some semaphore detail to unlock */
 void unlock_buff(int semid) {
   struct sembuf sop;
   

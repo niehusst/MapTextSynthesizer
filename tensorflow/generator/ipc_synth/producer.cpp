@@ -17,47 +17,23 @@ extern "C" {
 // Necessary for signal handler
 void* g_buff;
 
-/*
-void prepare_synthesis(cv::Ptr<MapTextSynthesizer> s,
-		       const char* lexicon_path) {
-  
-  // NOTE/TODO: Use system fonts instead
-  std::vector<std::string> blocky;
-  blocky.push_back("Sans");
-  blocky.push_back("Serif");
-
-  std::vector<std::string> regular;
-  //regular.push_back("cmmi10");
-  regular.push_back("Sans");
-  regular.push_back("Serif");
-
-  std::vector<std::string> cursive;
-  cursive.push_back("Sans");
-
-  s->setSampleCaptions(lexicon_path);
-  s->setBlockyFonts(blocky);
-  s->setRegularFonts(regular);
-  s->setCursiveFonts(cursive);
-}
-*/
-
 void write_data(intptr_t buff, uint32_t height,
 		const char* label, uint64_t img_sz, unsigned char* img_flat) {
 
   // Mark as consumed until all data is written to force consumer wait (poll)
   uint8_t consumed = 69;
-  uint8_t volatile* start_buff = (uint8_t volatile*)buff;
+  uint8_t* start_buff = (uint8_t*)buff;
   
-  *(uint8_t volatile*)buff = consumed;
+  *(uint8_t*)buff = consumed;
   buff += sizeof(uint8_t);
   
-  *(uint32_t volatile*)buff = height;
+  *(uint32_t*)buff = height;
   buff += sizeof(uint32_t);
 
   strcpy((char*)buff, label);
   buff += (MAX_WORD_LENGTH + 1) * sizeof(char);
 
-  *(uint64_t volatile*)buff = img_sz;
+  *(uint64_t*)buff = img_sz;
   buff += sizeof(uint64_t);
 
   memcpy((unsigned char*)buff, img_flat, img_sz);

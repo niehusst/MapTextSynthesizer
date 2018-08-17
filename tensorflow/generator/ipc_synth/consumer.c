@@ -10,17 +10,6 @@
 #include "prod_cons.h"
 #include "ipc_consumer.h"
 
-//#define PRINT_DEBUG
-
-// Necessary for signal handler
-void* g_buff;
-
-typedef struct chunk {
-  uint64_t height;
-  char label[MAX_WORD_LENGTH + 1];
-  unsigned char img_data[MAX_IMAGE_SIZE]; //TODO change
-} chunk_t;
-
 sample_t* consume(intptr_t buff, uint64_t* consume_offset, int semid, char* have_buff_lock) {
 
   /* For wrapping -- test to see if producer wrapped */
@@ -105,7 +94,9 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset, int semid, char* have
   // Update consume_offset
   *consume_offset = buff - start_buff;
 
-  // NOTE this is new and potentially buggy -- should be trying to prevent race
+  // NOTE this is new and potentially buggy
+  // Trying to prevent producers from wrapping
+  // and producing too close from the back of the consume offset
   if(*((uint64_t*)buff) < *consume_offset
      && *((uint64_t*)buff) + MAX_IMAGE_SIZE*50 >= *consume_offset
      && !*have_buff_lock) {
@@ -118,7 +109,6 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset, int semid, char* have
     *have_buff_lock--;
   } else {
     unlock_buff(semid);
-    SEM_UNLOCK;
   }
   return spl;
   }
@@ -138,63 +128,11 @@ sample_t* ipc_get_sample(void* buff, uint64_t* consume_offset,
 
   return spl;
 }
-/*
-sample_t* ipc_get_sample(void* buff, uint64_t* consume_offset,
-			 int semid, char* have_buff_lock) {
-  return (sample_t*)get_sample(buff, consume_offset, semid, have_buff_lock);
-}
-*/
+
+/* For debugging */
 void print_sample_struct(sample_t* spl) {
   // Contains all of the raw data of a sample
   //printf("Image data: %s\n", spl->img_data); //NOTE this won't be a string later
   printf("Height: %ld\n", spl->height);
   printf("Caption: %s\n", spl->caption);
-}
-
-uint64_t consume_offset = START_BUFF_OFFSET;
-void consumer_free_sample(sample_t* spl) {
-  free(spl->img_data);
-  free(spl->caption);
-  free(spl);
-}
-
-void cleanup(int signo) {
-  /* detach from segment */
-  if(shmdt(g_buff) == -1) {
-    perror("shmdt");
-  }
-  exit(1);
-}
-
-int mainless_consumer(void) {
-  struct sigaction sa;
-  sa.sa_handler = cleanup;
-  sigaction(SIGTERM, NULL, &sa);
-  
-  g_buff = (void*)((intptr_t)get_shared_buff(0));
-  int semid = get_semaphores(0);
-  sample_t* spl;
-  char have_buff_lock = 0;
-  
-  int counter = 0;
-  while((spl = (sample_t*)ipc_get_sample(g_buff, &consume_offset, semid, &have_buff_lock)) || 1) {
-    //#ifdef PRINT_DEBUG
-    //#endif
-    if(spl) {
-      //printf("consume_offset: %ld\n", consume_offset);
-      //print_sample_struct(spl);
-      //printf("%d\n", counter);
-      consumer_free_sample(spl);
-      counter++;
-    }
-  }
-
-  /* detach from segment */
-  if(shmdt(g_buff) == -1) {
-    perror("shmdt");
-    exit(1);
-  }
-  
-  printf("Retrieved %d elements.\n", counter);
-  return 0;
 }
