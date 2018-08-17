@@ -67,7 +67,6 @@ Catamaran
 Caudex
 Caveat
 Century Schoolbook L
-cmr10
 Coda
 Comfortaa
 Copse
@@ -176,23 +175,9 @@ Kurale
 Laila
 Lancelot
 Lateef
-Latin Modern Mono
-Latin Modern Mono Light
-Latin Modern Mono Light Cond
-Latin Modern Mono Prop
-Latin Modern Mono Prop Light
-Latin Modern Mono Slanted
-Latin Modern Roman Dunhill
-Latin Modern Roman Slanted
-Latin Modern Roman Unslanted
-Latin Modern Sans
-Latin Modern Sans Demi Cond
-Latin Modern Sans Quotation
 Ledger
 Lekton
 Lemonada
-Liberation Sans Narrow
-Liberation Serif
 Libre Baskerville
 Libre Caslon Text
 Life Savers
@@ -216,8 +201,6 @@ Marmelad
 Martel
 Marvel
 Mate
-MathJax_Main
-MathJax_Typewriter
 McLaren
 Merienda
 Merriweather
@@ -356,7 +339,6 @@ Titillium Web
 Trirong
 Trocchi
 Trykker
-Ubuntu Mono
 Underdog
 Unna
 URW Bookman L

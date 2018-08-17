@@ -33,6 +33,24 @@ To install both Boost libraries on MacOS using homebrew, run ```brew install boo
 
 After installing the dependencies, you should be able to jump right into compiling sample programs.
 
+##### Installing Google Fonts
+
+If you wish to utilize the wide variaty of fonts available in the Google Fonts repository, simply past the following code into your terminal to download the google/fonts repo, copy all the font .ttf files into a `.fonts` folder in your home directory, and then delete the google/fonts repo.
+
+```
+git clone https://github.com/google/fonts.git
+mkdir ~/.fonts
+cd fonts/ofl
+cp -r */*.ttf ~/.fonts
+cd ../apache
+cp -r */*.ttf ~/.fonts
+cd ../..
+rm -rf fonts
+```
+
+Also be sure to change the fonts parameter in the `config.txt` file so that MTS will actually use the newly available fonts. If you wish to use our selection of google fonts, your fonts parameter should look like this:
+```fonts = fonts/blocky.txt, fonts/regular.txt, fonts/cursive.txt```
+
 ## Compiling Samples
 
 ### Compile samples with Makefile on UNIX  

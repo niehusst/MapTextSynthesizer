@@ -27,14 +27,12 @@ Capriola
 Chicle
 Chivo
 Chonburi
-Chromaletter
 Croissant One
 Diplomata
 Eagle Lake
 Elsie
 Elsie Swash Caps
 Emblema One
-eufm10
 Federant
 Federo
 Fjalla One
@@ -62,12 +60,10 @@ Krona One
 Kumar One
 Lakki Reddy
 Lalezar
-Latin Modern Roman Demi
 Lilita One
 Limelight
 Londrina Solid
 Marko One
-MathJax_Fraktur
 MedievalSharp
 Medula One
 Merienda One
