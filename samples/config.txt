@@ -335,9 +335,10 @@ zero_padding=0                // 0 for false, any other value for true. If true,
                               // bottom to fill out the matrix to max image
                               // height (useful for batching data by height)
 
-height_min=32                 // Image height range. Note that larger
-height_max=70                 // images take longer to draw, slowing generation 
-width_min=50
+height_min=32                 // Image height range in pixels. Note that larger
+height_max=70                 // images take longer to draw, slowing generation.
+
+width_min=50                  // Image minimum width in pixels.
 
 max_num_features=6            // Max number of features in background. Note:
                               // Having many bg features slows generation
@@ -347,7 +348,7 @@ max_num_features=6            // Max number of features in background. Note:
 bg_color_min=156              // Darkest the background shade can be (255 scale)
 text_color_max=49             // Brightest the text shade can be (255 scale)
 
-seed=0                        // RNG seed. 0 sets seed to time(NULL)
+seed=0                        // RNG seed. 0 sets seed to current time
 
 //Gaussian Noise for Final Image
 noise_sigma_alpha=2           // Set probability distribution shape with alpha 
