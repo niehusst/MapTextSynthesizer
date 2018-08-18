@@ -198,12 +198,16 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
     if(helper->rndProbUnder(curvingProb)){
         curved = true;
     }
+
+    // set up text spacing based on user config pparams
+    double spacing_scale = config->getParamDouble("spacing_scale");
+    double spacing_shift = config->getParamDouble("spacing_shift");
     
     // get and set spacing between characters
-    spacing_deg = round((20*spacing_gen()-1)*100)/100;
+    spacing_deg = round((spacing_scale*spacing_gen()-spacing_shift)*100)/100;
     stretch_deg = round((3*stretch_gen()+0.5)*100)/100;
     double fontsize = (double)height;
-    spacing = fontsize / 20 * spacing_deg;
+    spacing = fontsize / spacing_scale * spacing_deg;
     
     // set up text padding based on user config params
     double pad_max = config->getParamDouble("pad_max");
