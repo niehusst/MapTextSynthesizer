@@ -202,12 +202,15 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
     // set up text spacing based on user config pparams
     double spacing_scale = config->getParamDouble("spacing_scale");
     double spacing_shift = config->getParamDouble("spacing_shift");
+    double stretch_scale = config->getParamDouble("stretch_scale");
+    double stretch_shift = config->getParamDouble("stretch_shift");
     
     // get and set spacing between characters
     spacing_deg = round((spacing_scale*spacing_gen()-spacing_shift)*100)/100;
-    stretch_deg = round((3*stretch_gen()+0.5)*100)/100;
-    double fontsize = (double)height;
-    spacing = fontsize / spacing_scale * spacing_deg;
+    stretch_deg = round((stretch_scale*stretch_gen()+stretch_shift)*100)/100;
+    
+    double font_size = (double)height;
+    spacing = font_size / spacing_scale * spacing_deg;
     
     // set up text padding based on user config params
     double pad_max = config->getParamDouble("pad_max");
@@ -221,7 +224,7 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
     double scale_min = config->getParamDouble("scale_min");
     scale = helper->rndBetween(scale_min,scale_max); 
     char font[50];
-    generateFont(font,(int)fontsize);
+    generateFont(font,(int)font_size);
 
     //set font destcription
     desc = pango_font_description_from_string(font);
