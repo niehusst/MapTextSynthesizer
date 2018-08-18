@@ -206,7 +206,7 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
     double stretch_shift = config->getParamDouble("stretch_shift");
     
     // get and set spacing between characters
-    spacing_deg = round((spacing_scale*spacing_gen()-spacing_shift)*100)/100;
+    spacing_deg = round((spacing_scale*spacing_gen()+spacing_shift)*100)/100;
     stretch_deg = round((stretch_scale*stretch_gen()+stretch_shift)*100)/100;
     
     double font_size = (double)height;
