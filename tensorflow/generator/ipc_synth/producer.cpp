@@ -68,7 +68,6 @@ void produce(intptr_t buff, int semid, const char* config_file) {
     
     // If there's no space to fit this image in the current buff
     if(((*(uint64_t*)buff) + BASE_CHUNK_SIZE + image_size) > SHM_SIZE) {
-      printf("Wrapping!\n");
 
       // Write in magic number to tell consumer to reset consume offset
       if(((*(uint64_t*)buff) + sizeof(uint64_t)) > SHM_SIZE) {
@@ -82,14 +81,12 @@ void produce(intptr_t buff, int semid, const char* config_file) {
     }
     
     *((uint64_t*)buff) += (BASE_CHUNK_SIZE + image_size);
-    //printf("Writing to offset: %ld\n", *((uint64_t*)buff));
 
     unlock_buff(semid);
 
     /* Copy data into buff */
     write_data(write_loc, height, label.c_str(),
 	       image_size, image.data);
-    //printf("Label #%d: %s\n", counter, label.c_str());
   }
 }
 

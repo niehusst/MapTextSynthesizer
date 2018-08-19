@@ -16,7 +16,6 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset, int semid, uint32_t* 
   /* For wrapping -- test to see if producer wrapped */
   if(*consume_offset + BASE_CHUNK_SIZE >= SHM_SIZE
      || *(uint64_t*)(buff + *consume_offset) == NO_SPACE_TO_PRODUCE) {
-    //printf("wrappin'\n");
     *consume_offset = START_BUFF_OFFSET;
   }
 
@@ -88,7 +87,7 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset, int semid, uint32_t* 
   if(*((uint64_t*)buff) < *consume_offset
      && (*((uint64_t*)buff) + PRODUCER_LAP_PREVENTION_SIZE >= *consume_offset || 
      && !*have_buff_lock) {
-    //printf("Sleeping producer(s) until %d more images are consumed...\n", PRODUCER_LAP_PREVENTION_NUM);
+    
     //do this once
     lock_buff(semid);
     *have_buff_lock = PRODUCER_LAP_PREVENTION_NUM;
@@ -120,7 +119,6 @@ sample_t* ipc_get_sample(void* buff, uint64_t* consume_offset,
 /* For debugging */
 void print_sample_struct(sample_t* spl) {
   // Contains all of the raw data of a sample
-  //printf("Image data: %s\n", spl->img_data); //NOTE this won't be a string later
   printf("Height: %ld\n", spl->height);
   printf("Caption: %s\n", spl->caption);
 }
