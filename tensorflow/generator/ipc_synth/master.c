@@ -19,7 +19,7 @@
 /* Necessary if we don't want to make another class */
 void* g_buff;
 int  g_semid;
-char  g_have_buff_lock;
+uint32_t  g_have_buff_lock;
 uint64_t  g_consume_offset;
 
 /* Spawn producers */

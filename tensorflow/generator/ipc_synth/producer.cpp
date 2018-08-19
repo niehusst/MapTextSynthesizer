@@ -68,7 +68,7 @@ void produce(intptr_t buff, int semid, const char* config_file) {
     
     // If there's no space to fit this image in the current buff
     if(((*(uint64_t*)buff) + BASE_CHUNK_SIZE + image_size) > SHM_SIZE) {
-      //printf("Wrapping!\n");
+      printf("Wrapping!\n");
 
       // Write in magic number to tell consumer to reset consume offset
       if(((*(uint64_t*)buff) + sizeof(uint64_t)) > SHM_SIZE) {

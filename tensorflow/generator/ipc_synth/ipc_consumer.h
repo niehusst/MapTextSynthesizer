@@ -12,6 +12,6 @@ typedef struct sample {
 } sample_t;
 
 sample_t* ipc_get_sample(void* buff, uint64_t* consume_offset,
-			 int semid, char* have_buff_lock);
+			 int semid, uint32_t* have_buff_lock);
 
 #endif
