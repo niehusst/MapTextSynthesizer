@@ -20,12 +20,11 @@ void* g_buff;
 void write_data(intptr_t buff, uint32_t height,
 		const char* label, uint64_t img_sz, unsigned char* img_flat) {
 
-  // Mark as consumed until all data is written to force consumer wait (poll)
-  uint8_t consumed = 69;
-  uint8_t* start_buff = (uint8_t*)buff;
+  /* Keep track of start to write to later */
+  uint64_t* start_buff = (uint64_t*)buff;
   
-  *(uint8_t*)buff = consumed;
-  buff += sizeof(uint8_t);
+  /* Skip past first 4 bytes (to write to-be-consumed magic num later */
+  buff += sizeof(uint64_t);
   
   *(uint32_t*)buff = height;
   buff += sizeof(uint32_t);
@@ -39,8 +38,8 @@ void write_data(intptr_t buff, uint32_t height,
   memcpy((unsigned char*)buff, img_flat, img_sz);
   buff += img_sz * sizeof(unsigned char);
 
-  // Mark as nonconsumed
-  *start_buff = 0;
+  // Mark as consumable
+  *start_buff = SHOULD_CONSUME;
 }
 
 void produce(intptr_t buff, int semid, const char* config_file) {

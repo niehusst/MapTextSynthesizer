@@ -83,7 +83,6 @@ def format_sample(lib, ptr):
     raw_data = lib.get_img_data(ptr)
     caption = lib.get_caption(ptr)
     width = lib.get_width(ptr)
-    
     raw_data_ptr = c.cast(raw_data, c.POINTER(c.c_ubyte))
     # https://stackoverflow.com/questions/4355524/getting-data-from-ctypes-array-into-numpy
     # Above link used as reference for c array -> numpy conversion

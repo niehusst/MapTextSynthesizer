@@ -16,7 +16,7 @@
 
 // More of a guessed upper limit for a `big` image
 // to determine when producers should sleep
-#define MAX_IMAGE_WIDTH 256
+#define MAX_IMAGE_WIDTH 300
 #define MAX_IMAGE_HEIGHT 32
 #define MAX_IMAGE_SIZE MAX_IMAGE_HEIGHT*MAX_IMAGE_WIDTH
 
@@ -26,8 +26,14 @@
 // Offset into buffer where data chunks are stored
 #define START_BUFF_OFFSET sizeof(uint64_t)
 
+// magic num to specify 'able to consume' ("eatme")
+#define SHOULD_CONSUME (uint64_t)0x6561746d65
+
+// magic num to specify that a chunk has already been consumed ("used")
+#define ALREADY_CONSUMED (uint64_t)0x75736564
+
 // Size of chunk w/o image
-#define BASE_CHUNK_SIZE sizeof(char) + (MAX_WORD_LENGTH + 1)*sizeof(char) \
+#define BASE_CHUNK_SIZE sizeof(SHOULD_CONSUME) + (MAX_WORD_LENGTH + 1)*sizeof(char) \
                         + sizeof(uint32_t) + sizeof(uint64_t)
 
 // Magic number for producers to write to tell consumer to wrap

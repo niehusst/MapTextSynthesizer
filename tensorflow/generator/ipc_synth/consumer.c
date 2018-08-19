@@ -19,37 +19,16 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset, int semid, char* have
     *consume_offset = START_BUFF_OFFSET;
   }
 
-  /* Ensure this data chunk hasn't already been consumed */
-  if(*(unsigned char*)(buff + *consume_offset)) {
-#ifdef PRINT_DEBUG
-    if(*(unsigned char*)(buff + *consume_offset) != 1) {
-      fprintf(stderr, "Likely memory corruption. Offset @ %ld\n",
-	      	      *consume_offset);
-    }
-    printf("Nothing to be consumed.\n");
-#endif
+  /* Nothing available to consume, return NULL */
+  if(*(uint64_t*)(buff + *consume_offset) != SHOULD_CONSUME) {
     return NULL;
   }
   
-  /* Ensure something has been produced (base offset and next 8 bytes are 0 */
-  if(*consume_offset == START_BUFF_OFFSET
-     && !(*(uint64_t*)(buff+*consume_offset + sizeof(char)))) {
-    return NULL;
-  }
-  
-  /* If consumer gets ahead of producer */
-  if(!*(uint64_t*)(buff+*consume_offset)) {
-#ifdef PRINT_DEBUG
-    printf("Nothing to consume.\n");
-#endif
-    return NULL;
-  }
-  
-  // Cache initial buff value
+  /* Cache initial buff value */
   intptr_t start_buff = buff;
   
-  // Jump to the next available element (8 is to skip past `consumed`)
-  buff += *consume_offset + sizeof(uint8_t);
+  /* Jump to the next available element (8 is to skip past `ABLE_TO_CONSUME``) */
+  buff += *consume_offset + sizeof(uint64_t);
   
   sample_t* spl = (sample_t*)malloc(sizeof(sample_t));
   if(spl == NULL) {
@@ -89,7 +68,7 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset, int semid, char* have
   spl->img_data = img_flat;
 
   // Buff is now consumed!
-  *(uint8_t*)(start_buff+*consume_offset) = (uint8_t)1;
+  *(uint64_t*)(start_buff+*consume_offset) = (uint64_t)ALREADY_CONSUMED;
 
   // Update consume_offset
   *consume_offset = buff - start_buff;
