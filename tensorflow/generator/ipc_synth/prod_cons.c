@@ -11,9 +11,13 @@
 /* Determine key, given character */
 void set_key(key_t* key, char uniq) {
   /* make key */
-  /* Note: filename doesn't matter, the recommended way 
-     of creating a unique string */
-  if((*key = ftok("/home/gaffordb/IPC_generation/base.c", uniq)) == -1) {
+  /* Note: get inode + character to hopefully get unique key */
+  char* filename = getenv("MTS_IPC");
+  if(filename == NULL) {
+    fprintf("Missing MTS_IPC environmental variable.\n");
+    exit(1);
+  }
+  if((*key = ftok(filename, uniq)) == -1) {
     perror("ftok");
     exit(1);
   }
