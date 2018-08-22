@@ -211,13 +211,13 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
     stretch_deg = round((stretch_scale*stretch_gen()+stretch_shift)*100)/100;
     
     // get pango's default font map to get the resolution
-    PangoFontMap *fontmap;
-    fontmap = pango_cairo_font_map_get_default();
-
+    PangoCairoFontMap *fontmap;
+    fontmap = (PangoCairoFontMap *)pango_cairo_font_map_get_default();
     //dpi unit : pixel / inch
-    //ppi (point per inch) unit : point / inch
     double dpi = pango_cairo_font_map_get_resolution(fontmap);
-    double ppi = 72;
+
+    //ppi (point per inch) unit : point / inch
+    double ppi = 72.0;
 
     //height unit : pixel
     //font_size unit : point
@@ -263,7 +263,7 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
 void
 MTS_TextHelper::getTextExtents(PangoLayout *layout, PangoFontDescription *desc,
                                int &x, int &y, int &w, int &h, int &size) {
-    PangoRectangle text_rect ;
+    PangoRectangle text_rect;
     PangoRectangle logical_rect;
     pango_layout_get_extents(layout, &text_rect, &logical_rect);
 

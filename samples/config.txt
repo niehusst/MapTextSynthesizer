@@ -17,15 +17,15 @@ stretch_shift=0.5             // https://en.wikipedia.org/wiki/Beta_distribution
 
 
 // Spacing between Characters (beta probability density distribution)
-spacing_alpha=1               // Set probability distribution shape with alpha 
-spacing_beta=3                // and beta, then set value bounds with scale and
-spacing_scale=20              // shift. For more info on beta distribution see:
-spacing_shift=-1              // https://en.wikipedia.org/wiki/Beta_distribution
+spacing_alpha=0.5               // Set probability distribution shape with alpha 
+spacing_beta=5                // and beta, then set value bounds with scale and
+spacing_scale=3              // shift. For more info on beta distribution see:
+spacing_shift=-0.1              // https://en.wikipedia.org/wiki/Beta_distribution
 
 
 // Baseline Curve
 curve_prob=0.3                // The probability that caption text is curved
-curve_min_spacing=10          //min spacing required for the text to be curved
+curve_min_spacing=0          //min spacing required for the text to be curved
 curve_min_char_num_per_point=1    // Min number of characters required for
                                   // each point of curve
 curve_num_points_min=3        // Range of how many points of inflection to set 
