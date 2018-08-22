@@ -85,20 +85,20 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset, int semid, uint32_t* 
   // and producing too close from the back of the consume offset
   // WARNING: Can result in buggy behavior if shm_size is too small
   if(*((uint64_t*)buff) < *consume_offset
-     && (*((uint64_t*)buff) + PRODUCER_LAP_PREVENTION_SIZE >= *consume_offset || 
-     && !*have_buff_lock) {
+     && (*((uint64_t*)buff) + PRODUCER_LAP_PREVENTION_SIZE >= *consume_offset
+     && !*have_buff_lock)) {
     
     //do this once
     lock_buff(semid);
     *have_buff_lock = PRODUCER_LAP_PREVENTION_NUM;
-  } else if(have_buff_lock){
+  } else if(*have_buff_lock){
     //do this only if locked by consumer
-    *have_buff_lock--;
+    (*have_buff_lock)--;
   } else {
     unlock_buff(semid);
   }
   return spl;
-  }
+}
 
   
 sample_t* ipc_get_sample(void* buff, uint64_t* consume_offset,

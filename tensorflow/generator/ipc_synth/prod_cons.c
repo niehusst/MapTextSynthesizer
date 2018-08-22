@@ -14,7 +14,7 @@ void set_key(key_t* key, char uniq) {
   /* Note: get inode + character to hopefully get unique key */
   char* filename = getenv("MTS_IPC");
   if(filename == NULL) {
-    fprintf("Missing MTS_IPC environmental variable.\n");
+    fprintf(stderr,"Missing MTS_IPC environmental variable.\n");
     exit(1);
   }
   if((*key = ftok(filename, uniq)) == -1) {
