@@ -206,11 +206,27 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
     double stretch_shift = config->getParamDouble("stretch_shift");
     
     // get and set spacing between characters
+    // spacing_deg unit : null, pure number factor
     spacing_deg = round((spacing_scale*spacing_gen()+spacing_shift)*100)/100;
     stretch_deg = round((stretch_scale*stretch_gen()+stretch_shift)*100)/100;
     
-    double font_size = (double)height;
-    spacing = font_size / spacing_scale * spacing_deg;
+    // get pango's default font map to get the resolution
+    PangoFontMap *fontmap;
+    fontmap = pango_cairo_font_map_get_default();
+
+    //dpi unit : pixel / inch
+    //ppi (point per inch) unit : point / inch
+    double dpi = pango_cairo_font_map_get_resolution(fontmap);
+    double ppi = 72;
+
+    //height unit : pixel
+    //font_size unit : point
+    //point = pixel / (pixel/inch) * (point/inch)
+    double font_size = (double)height / dpi * ppi;
+
+    //spacing unit : point
+    //point = point * pure number 
+    spacing = font_size * spacing_deg;
     
     // set up text padding based on user config params
     double pad_max = config->getParamDouble("pad_max");
@@ -251,10 +267,11 @@ MTS_TextHelper::getTextExtents(PangoLayout *layout, PangoFontDescription *desc,
     PangoRectangle logical_rect;
     pango_layout_get_extents(layout, &text_rect, &logical_rect);
 
-    x=text_rect.x/1024;
-    y=text_rect.y/1024;
-    w=text_rect.width/1024;
-    h=text_rect.height/1024;
+    //converting from pango units to device units (which is pixel in this case)
+    x=text_rect.x/PANGO_SCALE;
+    y=text_rect.y/PANGO_SCALE;
+    w=text_rect.width/PANGO_SCALE;
+    h=text_rect.height/PANGO_SCALE;
 
     size = pango_font_description_get_size(desc);
 }
@@ -518,6 +535,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     // text attributes
     double rotated_angle;
     bool curved;
+    //units: pure number, point, pure number
     double spacing_deg, spacing, stretch_deg;
     int x_pad, y_pad;
     double scale;
@@ -533,23 +551,26 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     // applying the attributes
     pango_layout_set_font_description (layout, desc);
 
-    // converte spacing to pango's units for text character spacing
-    int spacing_1024 = (int)(1024*spacing);
+    // converte spacing from point to pango's units
+    // unit : PANGO_SCALE * point
+    int spacing_pango= (int)(PANGO_SCALE*spacing);
 
     std::ostringstream stm;
-    stm << spacing_1024;
+    stm << spacing_pango;
     
     // set the markup string and put into pango layout
     string mark = "<span letter_spacing='"+stm.str()+"'>"+caption+"</span>";
-    //cout << "mark " << mark << endl;
 
     pango_layout_set_markup(layout, mark.c_str(), -1);
 
     // get text extents and adjust font size
+    // units : pixel, pixel, pixel, pixel, point 
     int text_x, text_y, text_w, text_h, size; 
 
     getTextExtents(layout, desc, text_x, text_y, text_w, text_h, size);
 
+    //adjust the font size according to image height and text ink height
+    //point = point / pixel * pixel
     size = (int)((double)size/text_h*height);
 
     pango_font_description_set_size(desc, size);
@@ -557,6 +578,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     getTextExtents(layout, desc, text_x, text_y, text_w, text_h, size);
 
+    // pixel = pure number * pixel
     text_w = stretch_deg * (text_w);
 
     int patch_width = (int)text_w;
@@ -579,14 +601,16 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
         // adjust text attributes according to rotate angle
         size = pango_font_description_get_size(desc);
+        // point = point / pixel * pixel
         size = (int)((double)size/text_h*text_height);
         pango_font_description_set_size(desc, size);
         pango_layout_set_font_description (layout, desc);
 
-        spacing_1024 = (int) floor((double)spacing_1024 / text_h * text_height);
+        // point * PANGO_SCALE = point * PANGO_SCALE * pixel / pixel
+        spacing_pango= (int)floor((double)spacing_pango / text_h * text_height);
 
         std::ostringstream stm;
-        stm << spacing_1024;
+        stm << spacing_pango;
         string mark = "<span letter_spacing='"+stm.str()+"'>"+caption+"</span>";
         //cout << "mark " << mark << endl;
 
@@ -886,8 +910,8 @@ MTS_TextHelper::distractText (cairo_t *cr, int width, int height, char *font) {
     pango_layout_get_extents(layout, &text_rect, &logical_rect);
 
     // get the text dimensions from its bounding rectangle
-    int text_width = text_rect.width/1024;
-    int text_height = text_rect.height/1024;
+    int text_width = text_rect.width/PANGO_SCALE;
+    int text_height = text_rect.height/PANGO_SCALE;
 
     // translate to arbitrary point on the canvas
     int x = helper->rng()%width;
