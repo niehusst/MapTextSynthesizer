@@ -1,7 +1,7 @@
 //FILE PATHS
 
 // Files to fetch font names from (e.g. blocky.txt, regular.txt, cursive.txt)
-fonts = fonts/basic_fonts.txt
+fonts = fonts/regular.txt
 
 // The files to sample image captions from
 captions = IA_placenames/Civil.txt, IA_placenames/Pillar.txt
@@ -17,10 +17,10 @@ stretch_shift=0.5             // https://en.wikipedia.org/wiki/Beta_distribution
 
 
 // Spacing between Characters (beta probability density distribution)
-spacing_alpha=0.5               // Set probability distribution shape with alpha 
+spacing_alpha=0.2               // Set probability distribution shape with alpha 
 spacing_beta=5                // and beta, then set value bounds with scale and
-spacing_scale=3              // shift. For more info on beta distribution see:
-spacing_shift=-0.1              // https://en.wikipedia.org/wiki/Beta_distribution
+spacing_scale=2              // shift. For more info on beta distribution see:
+spacing_shift=-0.2              // https://en.wikipedia.org/wiki/Beta_distribution
 
 
 // Baseline Curve
