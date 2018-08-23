@@ -94,19 +94,6 @@ def format_sample(lib, ptr):
     
     return (caption, img_shaped)
 
-
-def data_generator(config_file):
-    """ Generator to be used in tensorflow """
-    mtsi_lib = get_mts_interface_lib()
-    config_file_b = config_file.encode('utf-8')
-    config_file_p = c.c_char_p(config_file)
-    mts_buff = mtsi_lib.mts_init(config_file_p, 0)
-    
-    while True:
-        ptr = c.c_void_p(mtsi_lib.get_sample(mts_buff))
-        (caption, image) = format_sample(mtsi_lib, ptr)
-        yield caption, image
-        mtsi_lib.free_sample(ptr)
         
 def multithreaded_data_generator(config_file, num_producers):
     """ Generator to be used in tensorflow """
@@ -122,6 +109,13 @@ def multithreaded_data_generator(config_file, num_producers):
         yield caption, image_cpy
         mtsi_lib.free_sample(ptr)
 
+
+def data_generator(config_file):
+    iter = multithreaded_data_generator(config_file, 0)
+    while True:
+        yield next(iter)
+
+        
 def test_generator(num_values=10, show_images=False,
                    log_time=False, buffered=False, num_producers=0):
     """ For testing purposes only """
