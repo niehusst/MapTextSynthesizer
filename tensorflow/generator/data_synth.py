@@ -118,7 +118,8 @@ def multithreaded_data_generator(config_file, num_producers):
     while True:
         ptr = c.c_void_p(mtsi_lib.get_sample(mts_buff))
         (caption, image) = format_sample(mtsi_lib, ptr)
-        yield caption, image
+        image_cpy = image.copy()
+        yield caption, image_cpy
         mtsi_lib.free_sample(ptr)
 
 def test_generator(num_values=10, show_images=False,
