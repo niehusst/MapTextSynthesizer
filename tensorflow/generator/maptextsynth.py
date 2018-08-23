@@ -45,8 +45,9 @@ def get_dataset( args=None ):
     
         # Extract args
         [ config_path, num_producers ] = args[0:2]
-        
-        gen = data_generator( config_path, num_producers*2 )
+
+        # TODO/NOTE currently using 0 to get true single threaded synthesis
+        gen = data_generator( config_path, 0 )
 
         while True:
             caption, image = next( gen )
@@ -62,7 +63,7 @@ def get_dataset( args=None ):
         
     return tf.data.Dataset.from_generator( 
         _generator_wrapper, 
-        (tf.string, tf.int32, tf.int32),   # Output Types
+        (tf.string, tf.uint8, tf.int32),   # Output Types
         (tf.TensorShape( [] ),             # Text shape
          tf.TensorShape( (32, None, 1) ),  # Image shape
          tf.TensorShape( [None] )) )       # Labels shape
@@ -74,7 +75,7 @@ def preprocess_fn( caption, image, labels ):
     Intended to get data as formatted from get_dataset function.
     Parameters:
       caption : tf.string corresponding to text
-      image   : tf.int32 tensor of shape [32, ?, 1]
+      image   : tf.uint8 tensor of shape [32, ?, 1]
       labels  : tf.int32 tensor of shape [?]
     Returns:
       image   : preprocessed image
