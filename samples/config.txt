@@ -1,7 +1,7 @@
 //FILE PATHS
 
 // Files to fetch font names from (e.g. blocky.txt, regular.txt, cursive.txt)
-fonts = fonts/regular.txt
+fonts = fonts/basic_fonts.txt
 
 // The files to sample image captions from
 captions = IA_placenames/Civil.txt, IA_placenames/Pillar.txt
@@ -10,6 +10,7 @@ captions = IA_placenames/Civil.txt, IA_placenames/Pillar.txt
 //TEXT PARAMS
 
 // Stretching of Characters (beta probability density distribution)
+stretch_prob=0.1               // The probability that caption text is stretched 
 stretch_alpha=1               // Set probability distribution shape with alpha  
 stretch_beta=2                // and beta, then set value bounds with scale and
 stretch_scale=3               // shift. For more info on beta distribution see:
@@ -17,6 +18,7 @@ stretch_shift=0.5             // https://en.wikipedia.org/wiki/Beta_distribution
 
 
 // Spacing between Characters (beta probability density distribution)
+spacing_prob=0.1               // The probability that test does not use default spacing 
 spacing_alpha=0.2               // Set probability distribution shape with alpha 
 spacing_beta=5                // and beta, then set value bounds with scale and
 spacing_scale=2              // shift. For more info on beta distribution see:
@@ -24,7 +26,7 @@ spacing_shift=-0.2              // https://en.wikipedia.org/wiki/Beta_distributi
 
 
 // Baseline Curve
-curve_prob=0.3                // The probability that caption text is curved
+curve_prob=0.05                // The probability that caption text is curved
 curve_min_spacing=0          //min spacing required for the text to be curved
 curve_min_char_num_per_point=1    // Min number of characters required for
                                   // each point of curve
@@ -42,8 +44,8 @@ curve_d_max=2
 curve_cd_sum_max=3            //prevent huge curvature at the beginning of curve
 curve_y_variance_min=0        // Range of possible curve amplitude in the
 curve_y_variance_max=0.8      // y-direction with respect to image height
-curve_is_deformed_prob=0.5    // Probability that curved text may be deformed
-curve_line_prob=1             // Probability of drawing a line along the
+curve_is_deformed_prob=0.3    // Probability that curved text may be deformed
+curve_line_prob=0.2             // Probability of drawing a line along the
                               // text baseline.
 curve_line_width_min=0.0125   // Range of the ratio of width of the curved line
 curve_line_width_max=0.1      // with respect to image height (for if the
@@ -51,7 +53,7 @@ curve_line_width_max=0.1      // with respect to image height (for if the
 
 
 // Italic
-italic_prob=0.3               // The probability that caption text is italic
+italic_prob=0.1               // The probability that caption text is italic
 
 
 // Caption Text Weight
@@ -61,7 +63,7 @@ weight_normal_prob=0.3        // Probability that text is normally weighted
                               // Probability for heavy weight = 1-(light-normal)
 
 // Missing Ink from Text
-missing_prob=0.2              // The probability that this feature appears
+missing_prob=0.05              // The probability that this feature appears
 missing_num_min=1             // Range for number of missing spots that appear
 missing_num_max=5
 missing_size_min=0.0625       // Range of sizes of the missing spot radius
@@ -71,23 +73,23 @@ missing_diminish_rate=100     // The rate at which the spot edge dissolves;
 
 
 // Rotate
-rotate_prob=0.3               // The probability that this feature appears
+rotate_prob=0.1               // The probability that this feature appears
 rotate_degree_min=-10         // Range of text rotation angles in degrees.
 rotate_degree_max=10
 
 
 // Padding
-pad_min=0                     // Range of how much padding to add to the
-pad_max=0.1                   // text with respect to image height.
+pad_min=-0.05                     // Range of how much padding to add to the
+pad_max=0.05                   // text with respect to image height.
 
 
 // Scaling
-scale_min=0.9                 // Ratio range for scaling caption text size.
-scale_max=1.1
+scale_min=0.95                 // Ratio range for scaling caption text size.
+scale_max=1.05
 
 
 // Blend
-blend_prob=0.2                // The probability that this feature appears.
+blend_prob=0.05                // The probability that this feature appears.
 blend_alpha_min=0.8           // Range of text opacity in the alpha layer.
 blend_alpha_max=1             // 1 is fully opaque, 0 is invisible.
 
@@ -96,7 +98,7 @@ blend_alpha_max=1             // 1 is fully opaque, 0 is invisible.
 //BG PARAMS
 
 // Different Background Color (grey-scale shade) Zones
-diff_prob=0.3                 // The probability that this feature appears.
+diff_prob=0.05                 // The probability that this feature appears.
 diff_color_distance=50        // Min difference between the text shade and the
                               // background color.
 diff_num_colors_min=1         // Range of the number of zones with different
@@ -104,20 +106,20 @@ diff_num_colors_max=2         // colors that may be generated.
 
 
 // Distractor Text
-distract_prob=0.3             // The probability that this feature appears
+distract_prob=0.05             // The probability that this feature appears
 
 distract_num_min=1            // Range of the number of instances of distractor
-distract_num_max=3            // text that are generated.
+distract_num_max=1            // text that are generated.
 
 distract_len_min=1            // Range of the distractor text string length.
 distract_len_max=10
 
 distract_size_min=0.5         // Range of distractor text size ratio
-distract_size_max=0.2         // with respect to main text size.
+distract_size_max=2           // with respect to main text size.
 
 
 // Boundary-like Lines (A thick colored line, closely parallel to normal line) 
-boundary_prob=0.2             // The probability that this feature appears.
+boundary_prob=0.05             // The probability that this feature appears.
 
 boundary_dashed_prob=.5       // The probability that the lines are dashed.
 
@@ -140,7 +142,7 @@ boundary_curve_d_max=2        // f(x) = a + bx + cx^2 + dx^3
 
 
 // Color Blob/Splotch
-blob_prob=0.2                 // The probability that this feature appears.
+blob_prob=0.05                 // The probability that this feature appears.
 
 blob_num_min=1                // Range of quantity of blobs are generated.
 blob_num_max=1
@@ -153,7 +155,7 @@ blob_diminish_rate=100        // The rate at which the spot edge dissolves;
 
 
 // Straight Line
-straight_prob=0.2             // The probability that this feature appears.
+straight_prob=0.05             // The probability that this feature appears.
 
 straight_dashed_prob=0.5      // The probability that the line is dashed.
 
@@ -162,7 +164,7 @@ straight_num_lines_max=5
 
 
 // Grid
-grid_prob=0.2                 // The probability that this feature appears.
+grid_prob=0.05                 // The probability that this feature appears.
 
 grid_curve_prob=0.5           // The probability that grid lines are curved.
 
@@ -171,7 +173,7 @@ grid_num_max=10               // the generated grid.
 
 
 // City Point (a circle that simulates a point marking a town on a map)
-point_prob=0.1                // The probability that this feature appears.
+point_prob=0.05                // The probability that this feature appears.
 
 point_hollow_prob=0.5         // Probability of the point not being filled in
 
@@ -183,7 +185,7 @@ point_num_max=3
 
 
 // Parallel Lines
-para_prob=0.2                 // The probability that this feature appears.
+para_prob=0.05                 // The probability that this feature appears.
 
 para_curve_prob=0.5           // The probability that the lines are curved.
 
@@ -197,7 +199,7 @@ para_curve_d_max=2            // f(x) = a + bx + cx^2 + dx^3
 
 
 // Varying Distance between multiple Parallel Lines (simulates water-body)
-vpara_prob=0.2                // The probability that this feature appears.
+vpara_prob=0.05                // The probability that this feature appears.
 
 vpara_curve_prob=0.5          // The probability that the lines are curved.
 
@@ -211,7 +213,7 @@ vpara_curve_d_max=2           // f(x) = a + bx + cx^2 + dx^3
 
 
 // Texture (Diagonal Lines, Crossed Lines, Geometric Shapes)
-texture_prob=0.2              // The probability that this feature appears.
+texture_prob=0.05              // The probability that this feature appears.
 
 texture_num_lines_min=1       // Range of number of lines that are drawn with
 texture_num_lines_max=2       // texture.
@@ -226,7 +228,7 @@ texture_curve_d_max=2         // f(x) = a + bx + cx^2 + dx^3
 
 
 // Railroad
-railroad_prob=0.2             // The probability that this feature appears.
+railroad_prob=0.05             // The probability that this feature appears.
 
 railroad_num_lines_min=1      // Range of number of lines that may be generated.
 railroad_num_lines_max=2
@@ -252,7 +254,7 @@ double_distance_max=9         // pairs in multiples of the base line width.
 
 
 // River Line
-river_prob=0.3                // The probability that this feature appears.
+river_prob=0.05                // The probability that this feature appears.
 
 river_num_lines_min=1         // Range of number of lines drawn.
 river_num_lines_max=5
@@ -272,8 +274,8 @@ river_curve_y_var_scale=0.3   // Ratio for line amplitude; values less than
 
 
 // Background Bias Field (makes the background a non-flat color)
-bias_vert_num_min=3           // Range of number of vertical points. More points
-bias_vert_num_max=7           // results in many color fluctuations over a
+bias_vert_num_min=1           // Range of number of vertical points. More points
+bias_vert_num_max=3           // results in many color fluctuations over a
                               // shorter dist. Fewer points results in the  
                               // color gradient being over a larger distance.
 //horizontal range is just (width - height) times num in vertical direction
@@ -307,7 +309,7 @@ dash_len_max=10
 
 // Background Color Difference from Text Color
 // (applied to all bg features except color blob and color diff)
-bg_feature_color_dis_min=0    // Range of difference (255 scale). The value is
+bg_feature_color_dis_min=5    // Range of difference (255 scale). The value is
 bg_feature_color_dis_max=20   // capped at (bg_color - text_color).
 
 
@@ -321,13 +323,13 @@ bg_curve_num_points_max=15    // More points means more curves per line.
 
 // GENERAL PARAMETERS
 
-digit_prob=0.1                // Chance of caption being digits instead of word.
+digit_prob=0.3                // Chance of caption being digits instead of word.
 
 digit_len_alpha=3             // Set probability distribution shape with alpha
 digit_len_beta=0.2            // and beta for a Gaussian-inverse-gamma 
                               // distribution. For more info, see:
                               // https://en.wikipedia.org/wiki/Normal-inverse-gamma_distribution
-digit_len_max=20              // Maximum number of characters in a digit caption.
+digit_len_max=4              // Maximum number of characters in a digit caption.
 
 zero_padding=0                // 0 for false, any other value for true. If true,
                               // images smaller than the max image height have
@@ -336,11 +338,11 @@ zero_padding=0                // 0 for false, any other value for true. If true,
                               // height (useful for batching data by height)
 
 height_min=32                 // Image height range in pixels. Note that larger
-height_max=70                 // images take longer to draw, slowing generation.
+height_max=64                 // images take longer to draw, slowing generation.
 
 width_min=50                  // Image minimum width in pixels.
 
-max_num_features=6            // Max number of features in background. Note:
+max_num_features=4            // Max number of features in background. Note:
                               // Having many bg features slows generation
 
 // Text and Background Color
@@ -363,7 +365,7 @@ blur_kernel_size_max=5        // kernel size can only be odd integer. More info:
                               // https://en.wikipedia.org/wiki/Kernel_(image_processing)
 
 //Jpeg artifacts
-jpeg_prob=0.1                 // Probability of this feature appearing.
+jpeg_prob=0.05                 // Probability of this feature appearing.
 
 jpeg_quality_min=5            // Range of simulated JPEG compression artifacts.
 jpeg_quality_max=100          // Higher quality means fewer/smaller artifacts.
