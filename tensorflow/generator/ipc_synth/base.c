@@ -35,11 +35,8 @@ int main(int argc, char *argv[]) {
   printf("Memory alloc limit: %lu", data_limit.rlim_cur);
   */
 
-  uint64_t start_offset = 8;
-  *(uint64_t*)buff = start_offset;
-
-  //cleanup
-  /* insert cleanup here */
+  *(uint64_t*)buff = START_BUFF_OFFSET;
+  *(uint64_t*)(buff+sizeof(uint64_t)) = START_BUFF_OFFSET;
   
   return 0;
 }

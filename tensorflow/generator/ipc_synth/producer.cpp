@@ -7,6 +7,7 @@
 #include <sys/sem.h>
 #include <opencv2/opencv.hpp>
 #include <signal.h>
+#include <unistd.h>
 
 #include "map_text_synthesizer.hpp"
 
@@ -23,11 +24,12 @@ void write_data(intptr_t buff, uint32_t height,
   /* Keep track of start to write to later */
   uint64_t* start_buff = (uint64_t*)buff;
   
-  /* Skip past first 4 bytes (to write to-be-consumed magic num later */
+  /* Skip past first 8 bytes (to write to-be-consumed magic num later */
   buff += sizeof(uint64_t);
-  
-  *(uint32_t*)buff = height;
-  buff += sizeof(uint32_t);
+
+  // 8 byte bc 4 byte wouldn't have the 8 byte alignment...
+  *(uint64_t*)buff = height;
+  buff += sizeof(uint64_t);
 
   strcpy((char*)buff, label);
   buff += (MAX_WORD_LENGTH + 1) * sizeof(char);
@@ -51,7 +53,6 @@ void produce(intptr_t buff, int semid, const char* config_file) {
   cv::Mat image;
   int height;
 
-  int counter = 0;
   while(1) {
     mts->generateSample(label, image, height);
 
@@ -60,10 +61,10 @@ void produce(intptr_t buff, int semid, const char* config_file) {
       exit(1);
     }
     
+    uint64_t image_size = image.rows * image.cols;
     /* Update the producer offset */
     lock_buff(semid);
     
-    uint64_t image_size = image.rows * image.cols;
     intptr_t write_loc = buff + *((uint64_t*)buff);
     
     // If there's no space to fit this image in the current buff
@@ -71,7 +72,7 @@ void produce(intptr_t buff, int semid, const char* config_file) {
 
       // Write in magic number to tell consumer to reset consume offset
       if(((*(uint64_t*)buff) + sizeof(uint64_t)) > SHM_SIZE) {
-	//can't fit magic num, need consumer to know not enough space
+	// Can't fit magic num, need consumer to know not enough space
       } else {
 	*((uint64_t*)write_loc) = NO_SPACE_TO_PRODUCE;
       }
@@ -79,12 +80,39 @@ void produce(intptr_t buff, int semid, const char* config_file) {
       *((uint64_t*)buff) = START_BUFF_OFFSET;
       write_loc = buff + *((uint64_t*)buff);
     }
-    
+
+    // Update producer offset
     *((uint64_t*)buff) += (BASE_CHUNK_SIZE + image_size);
 
-    unlock_buff(semid);
+    // Force 8 byte alignment
+    *((uint64_t*)buff) += *((uint64_t*)buff) % 8;
 
-    /* Copy data into buff */
+    // Check out the consume_offset 
+    uint64_t volatile consume_offset = *((uint64_t volatile*)(buff+sizeof(uint64_t)));
+    
+    /* Sleep until producer-consumer offsets have 
+     * cleared memory corruption territory...
+     * (checking if current producer offset is less than consume offset, and
+     * that the producer offset is greater than the consume offset 
+     * (ie a write that would corrupt memory)
+     */
+    while(write_loc - buff < consume_offset
+	  && *((uint64_t*)buff) >= consume_offset) {
+      consume_offset = *((uint64_t volatile*)(buff+sizeof(uint64_t)));
+      sleep(5); // 5 is arbitrary
+      printf("sleepsies");
+    }
+    
+    uint64_t needle = SHOULD_CONSUME;
+    
+    /* Verify no overwritage */
+    while(memmem((void*)write_loc, (*((uint64_t*)buff)+buff) - write_loc,
+	       (void*)&needle, sizeof(uint64_t))) {
+      printf("would've overwritten memory, you dummy!\n");
+      sleep(5);
+    }
+    unlock_buff(semid);
+    /* Write data into buff */
     write_data(write_loc, height, label.c_str(),
 	       image_size, image.data);
   }

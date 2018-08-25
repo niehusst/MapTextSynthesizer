@@ -35,3 +35,4 @@ all : producer.o consumer.o prod_cons.o base.o master.o ipc_cleanup.o \
 clean :
 	rm -f ./*.o
 	rm -f ./*~
+	rm -f ./producer ./ipc_cleanup ./base

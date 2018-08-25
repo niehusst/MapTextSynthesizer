@@ -26,16 +26,16 @@
 #define MAX_WORD_LENGTH 31
 
 // Offset into buffer where data chunks are stored
-#define START_BUFF_OFFSET sizeof(uint64_t)
+#define START_BUFF_OFFSET (sizeof(uint64_t)*2)
 
-// magic num to specify 'able to consume' ("eatme")
-#define SHOULD_CONSUME (uint64_t)0x6561746d65
+// magic num to specify 'able to consume' ("eat!")
+#define SHOULD_CONSUME ((uint64_t)0x21746165)
 
 // magic num to specify that a chunk has already been consumed ("used")
-#define ALREADY_CONSUMED (uint64_t)0x75736564
+#define ALREADY_CONSUMED ((uint64_t)0x64657375)
 
 // Size of chunk w/o image
-#define BASE_CHUNK_SIZE sizeof(SHOULD_CONSUME) + (MAX_WORD_LENGTH + 1)*sizeof(char) \
+#define BASE_CHUNK_SIZE sizeof(uint64_t) + (MAX_WORD_LENGTH + 1)*sizeof(char) \
                         + sizeof(uint32_t) + sizeof(uint64_t)
 
 // Magic number for producers to write to tell consumer to wrap
