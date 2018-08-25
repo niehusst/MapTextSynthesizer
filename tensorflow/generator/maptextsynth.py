@@ -47,7 +47,7 @@ def get_dataset( args=None ):
         [ config_path, num_producers ] = args[0:2]
 
         # TODO/NOTE currently using 0 to get true single threaded synthesis
-        gen = data_generator( config_path, 0 )
+        gen = data_generator( config_path, num_producers )
 
         while True:
             caption, image = next( gen )
@@ -85,7 +85,7 @@ def preprocess_fn( caption, image, labels ):
       labels  : list of indices of characters mapping text->out_charset
                   tf.int32 tensor of shape [?] (? = length+1)
       length  : length of labels (sans -1 EOS token)
-                  tf.int32 tensor of shape []
+                  tf.int64 tensor of shape []
       text    : ground truth string
                   tf.string tensor of shape []
     """
@@ -96,7 +96,7 @@ def preprocess_fn( caption, image, labels ):
 
     # Length is the length of labels - 1
     # (because labels has -1 EOS token here)
-    length = tf.subtract( tf.size( labels ), -1 ) 
+    length = tf.cast( tf.subtract( tf.size( labels ), -1 ), tf.int64 )
 
     text = caption
 
