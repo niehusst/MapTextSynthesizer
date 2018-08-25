@@ -1,4 +1,4 @@
-BONUS_FLAGS=-g
+BONUS_FLAGS=
 producer.o : producer.cpp
 	g++ ${BONUS_FLAGS} -c -I../../../include/mtsynth $^
 

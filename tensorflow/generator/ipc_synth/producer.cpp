@@ -98,20 +98,23 @@ void produce(intptr_t buff, int semid, const char* config_file) {
      */
     while(write_loc - buff < consume_offset
 	  && *((uint64_t*)buff) >= consume_offset) {
-      consume_offset = *((uint64_t volatile*)(buff+sizeof(uint64_t)));
+
       sleep(5); // 5 is arbitrary
-      printf("sleepsies");
+
+      // Update consume offset
+      consume_offset = *((uint64_t volatile*)(buff+sizeof(uint64_t)));
     }
     
     uint64_t needle = SHOULD_CONSUME;
     
-    /* Verify no overwritage */
+    /* Verify no bad overwritage would occur */
     while(memmem((void*)write_loc, (*((uint64_t*)buff)+buff) - write_loc,
 	       (void*)&needle, sizeof(uint64_t))) {
-      printf("would've overwritten memory, you dummy!\n");
-      sleep(5);
+      sleep(5); // 5 is arbitrary
     }
+    
     unlock_buff(semid);
+
     /* Write data into buff */
     write_data(write_loc, height, label.c_str(),
 	       image_size, image.data);
