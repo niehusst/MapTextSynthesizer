@@ -14,7 +14,7 @@
 #include "ipc_consumer.h"
 #include "mts_ipc.h"
 
-/* Necessary if we don't want to make another class */
+/* Necessary if we(I) don't want to make another class... */
 void* g_buff;
 int  g_semid;
 uint32_t  g_have_buff_lock;
@@ -45,45 +45,28 @@ void fork_and_exec_producers(int num_producers, const char* config_file) {
     }
 
     // Sleep for a hot sec to avoid identically-seeded synthesizers
-    // (default seeds based on time in seconds)
+    // (default seeds based on time in seconds, which is kinda lame)
     sleep(1);
   }
 }
 
-/* Might need this eventually if used in diff environment?? */
-void wait_for_children(void) {
-  /* This should catch everything, hopefully */
-  int wstatus;
-  pid_t pid = waitpid(-1, &wstatus, WUNTRACED);
-}
-
-
-/* Legacy code for easier debugging */
-void fork_and_exec_consumer(void) {
-  /* Fork & exec consumer */
-  int fstatus = fork();
-  if(fstatus == -1) {
-    fprintf(stderr, "Fork failed!");
-  } else if(fstatus == 0) {
-    //child ps //TODO FIX
-    char* args[2];
-    args[0] = "consumer";
-    args[1] = NULL;
-    execvp(args[0], args);
-  }   
-}
-
 /* Fork & exec base */
 void fork_and_exec_base(int* pid) {
+
+  // Fork
   *pid = fork();
   if(*pid == -1) {
+    // Failed
     fprintf(stderr, "Fork failed!");
+    exit(1);
   } else if(*pid == 0) {
-
-    // Send SIGHUP to this process when parent dies
-    // (Shouldn't be necessary because it dies on its own)
-    prctl(PR_SET_PDEATHSIG, SIGHUP);
+    // In forked ps...
     
+    // Send SIGHUP to this process when parent dies
+    // (Shouldn't be necessary because this dies on its own pretty fast)
+    prctl(PR_SET_PDEATHSIG, SIGHUP);
+
+    // Prep args and exec `base`
     char* args[2];
     args[0] = "base";
     args[1] = NULL;
@@ -94,11 +77,13 @@ void fork_and_exec_base(int* pid) {
   }   
 }
 
+/* Perform necessary operations for prepping IPC */
 void mts_ipc_init(int num_producers, const char* config_file) {
   /* Prepare shared memory and semaphores */
   pid_t pid;
   int wstatus;
   fork_and_exec_base(&pid);
+  // Wait until base terminates
   waitpid(pid, &wstatus, WUNTRACED);
 
   /* Start producers */
@@ -110,8 +95,6 @@ void mts_ipc_init(int num_producers, const char* config_file) {
   g_have_buff_lock = 0;
   g_consume_offset = START_BUFF_OFFSET;
 
-  // Set buffer-visible consume_offset
-  *(uint64_t*)(g_buff + sizeof(uint64_t)) = g_consume_offset;
 }
 
 /* Get a sample from shared memory */

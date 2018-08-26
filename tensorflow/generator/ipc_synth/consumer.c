@@ -11,7 +11,9 @@
 #include "prod_cons.h"
 #include "ipc_consumer.h"
 
-sample_t* consume(intptr_t buff, uint64_t* consume_offset, int semid, uint32_t* have_buff_lock) {
+/* Consume next available sample and return pointer to heap allocated sample */
+sample_t* consume(intptr_t buff, uint64_t* consume_offset,
+		  int semid, uint32_t* have_buff_lock) {
 
   /* For wrapping -- test to see if producer wrapped */
   if(*consume_offset + BASE_CHUNK_SIZE >= SHM_SIZE
@@ -27,7 +29,7 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset, int semid, uint32_t* 
   /* Cache initial buff value */
   intptr_t start_buff = buff;
   
-  /* Jump to the next available element (8 is to skip past `ABLE_TO_CONSUME``) */
+  /* Jump to the next available element (8 is to skip past `ABLE_TO_CONSUME`) */
   buff += *consume_offset + sizeof(uint64_t);
   
   sample_t* spl = (sample_t*)malloc(sizeof(sample_t));
@@ -40,17 +42,21 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset, int semid, uint32_t* 
   uint32_t height = (uint32_t)*((uint64_t*)buff);
   buff += sizeof(uint64_t);
 
+  // Extract label from data chunk
   char* label = strdup((char*)buff);
   if(label == NULL) {
     perror("strdup");
     exit(1);
   }
 
+  // Label is hardcoded to be max MAX_WORD_LENGTH chars
   buff += (MAX_WORD_LENGTH + 1)*sizeof(char);
 
+  // Extract size and update buff
   uint64_t sz = *((uint64_t*)buff);
   buff += sizeof(uint64_t);
 
+  // Allocate enough space to store flat image
   unsigned char* img_flat = (unsigned char*)malloc(sz);
   if(img_flat == NULL) {
     perror("malloc");
@@ -62,7 +68,10 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset, int semid, uint32_t* 
   memcpy(img_flat, (void*)buff, sz);
   buff += sz*sizeof(unsigned char);
 
+  // Instantiate spl according to extracted values
   spl->height = height;
+
+  // Ensure no funny business with image height/img_size relationship
   if(sz % height != 0) {
     fprintf(stderr,
 	    "invalid image dimensions. size=%lu, height=%u\n",
@@ -82,13 +91,13 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset, int semid, uint32_t* 
   // Force 8 byte alignment -- consistent with producer
   *consume_offset += (*consume_offset % 8);
   
-  // Update the consume_offset (global)
+  // Update the consume_offset (visible to producers)
   *((uint64_t*)(start_buff+sizeof(uint64_t))) = *consume_offset;
 
   return spl;
 }
 
-  
+/* Exposed via mts_ipc.h -- get sample */
 sample_t* ipc_get_sample(void* buff, uint64_t* consume_offset,
 		 int semid, uint32_t* have_buff_lock) {
 
@@ -102,11 +111,4 @@ sample_t* ipc_get_sample(void* buff, uint64_t* consume_offset,
   }
 
   return spl;
-}
-
-/* For debugging */
-void print_sample_struct(sample_t* spl) {
-  // Contains all of the raw data of a sample
-  printf("Height: %ld\n", spl->height);
-  printf("Caption: %s\n", spl->caption);
 }

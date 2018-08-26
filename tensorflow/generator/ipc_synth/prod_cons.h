@@ -1,14 +1,5 @@
 #ifndef PROD_CONS_H
 
-/* Chunks currently defined as follows: 
-{
- uint8_t consumed ,  
- uint32_t height  , 
- char buff[MAX_IMAGE_SIZE+1] ,
- uint64_t img_size ,
- unsigned char* buff[img_size]
-}
- */
 #include <stdint.h>
 
 // 1 GB
@@ -33,10 +24,20 @@
 // Magic number for producers to write to tell consumer to wrap
 #define NO_SPACE_TO_PRODUCE (uint64_t)0xc001be9
 
+/* Exposed functions below -- abstract away the nits grits of UNIX IPC */
+// Get ptr to shared buff
 void* get_shared_buff(int create);
+
+// Get semid
 int get_semaphores(int create);
+
+// Get shmid
 int get_shmid(int create);
+
+// Lock buff (by semid)
 void lock_buff(int semid);
+
+// Unlock buff (by semid)
 void unlock_buff(int semid);
 
 #endif
