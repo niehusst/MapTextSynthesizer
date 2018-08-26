@@ -37,7 +37,7 @@ ipc :
 
 # Compile the shared library
 libmtsi.so : textsynthinterface.cpp ipc_synth/*
-	${CXX} -g -I./ipc_synth/  ./ipc_synth/prod_cons.o ./ipc_synth/master.o ./ipc_synth/consumer.o textsynthinterface.cpp ./*.o ${SOFLAGS} ${PKG-CONFIG} -o libmtsi.so
+	${CXX} -I./ipc_synth/  ./ipc_synth/prod_cons.o ./ipc_synth/master.o ./ipc_synth/consumer.o textsynthinterface.cpp ./*.o ${SOFLAGS} ${PKG-CONFIG} -o libmtsi.so
 
 clean :
 	rm -f *.pyc *~ *.o *.so
