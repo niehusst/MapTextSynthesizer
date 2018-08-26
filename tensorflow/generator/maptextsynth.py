@@ -20,7 +20,7 @@
 import os
 import tensorflow as tf
 import numpy as np
-from data_synth import data_generator as data_generator
+from data_synth import multithreaded_data_generator as data_generator
 import pipeline
 import charset
 
@@ -44,8 +44,10 @@ def get_dataset( args=None ):
         """
     
         # Extract args
-        [ config_path, lexicon_path ] = args[0:2]
-        gen = data_generator( config_path, lexicon_path )
+        [ config_path, num_producers ] = args[0:2]
+
+        # TODO/NOTE currently using 0 to get true single threaded synthesis
+        gen = data_generator( config_path, num_producers )
 
         while True:
             caption, image = next( gen )
@@ -61,7 +63,7 @@ def get_dataset( args=None ):
         
     return tf.data.Dataset.from_generator( 
         _generator_wrapper, 
-        (tf.string, tf.int32, tf.int32),   # Output Types
+        (tf.string, tf.uint8, tf.int32),   # Output Types
         (tf.TensorShape( [] ),             # Text shape
          tf.TensorShape( (32, None, 1) ),  # Image shape
          tf.TensorShape( [None] )) )       # Labels shape
@@ -73,7 +75,7 @@ def preprocess_fn( caption, image, labels ):
     Intended to get data as formatted from get_dataset function.
     Parameters:
       caption : tf.string corresponding to text
-      image   : tf.int32 tensor of shape [32, ?, 1]
+      image   : tf.uint8 tensor of shape [32, ?, 1]
       labels  : tf.int32 tensor of shape [?]
     Returns:
       image   : preprocessed image
@@ -83,7 +85,7 @@ def preprocess_fn( caption, image, labels ):
       labels  : list of indices of characters mapping text->out_charset
                   tf.int32 tensor of shape [?] (? = length+1)
       length  : length of labels (sans -1 EOS token)
-                  tf.int32 tensor of shape []
+                  tf.int64 tensor of shape []
       text    : ground truth string
                   tf.string tensor of shape []
     """
@@ -94,7 +96,7 @@ def preprocess_fn( caption, image, labels ):
 
     # Length is the length of labels - 1
     # (because labels has -1 EOS token here)
-    length = tf.subtract( tf.size( labels ), -1 ) 
+    length = tf.cast( tf.subtract( tf.size( labels ), -1 ), tf.int64 )
 
     text = caption
 

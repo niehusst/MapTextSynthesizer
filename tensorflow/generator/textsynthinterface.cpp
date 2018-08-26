@@ -23,69 +23,42 @@
 #include <fstream>
 #include <mtsynth/map_text_synthesizer.hpp>
 #include <stdio.h>
-
-// Contains all of the raw data of a sample
-typedef struct sample {
-  unsigned char* img_data;
-  size_t height;
-  size_t width;
-  char* caption;
-} sample_t;
-
+extern "C" {
+#include "mts_ipc.h"
+#include "ipc_consumer.h"
+}
 
 struct MTS_Buffer {
-  cv::Ptr<MapTextSynthesizer> mts;
-  MTS_Buffer(const char* config_path);
-  void cleanup(void);
+  virtual void cleanup(void) = 0;
+  virtual sample_t* get_sample(void) = 0;
 };
 
+struct MTS_Singlethreaded : MTS_Buffer {
+  cv::Ptr<MapTextSynthesizer> mts;
+  MTS_Singlethreaded(const char* config_path);
+  void cleanup(void);
+  sample_t* get_sample(void);
+};
 
-MTS_Buffer::MTS_Buffer(const char* config_path) {
-  this->mts = MapTextSynthesizer::create(config_path);
-}
+struct MTS_Multithreaded : MTS_Buffer {
+  int num_producers;
+  MTS_Multithreaded(const char* config_path, int num_producers);
+  void cleanup(void);
+  sample_t* get_sample(void);
+};
 
-void MTS_Buffer::cleanup() {
-  /*Currently does nothing. Retained for potential future use. */
-}
-
-// For ctypes visibility
-extern "C" {
-  unsigned char* get_img_data(void* spl);
-  size_t get_height(void* spl);
-  size_t get_width(void* spl);
-  char* get_caption(void* spl);
-  void* mts_init(const char* config_path);
-  void* get_sample(void* mts_buff);
-  void free_sample(void* spl);
-  void mts_cleanup(void* mts_buff);
+MTS_Singlethreaded::MTS_Singlethreaded(const char* config_file) {
+  this->mts = MapTextSynthesizer::create(config_file);
 }
 
-void free_sample(void* ptr) {
-  sample_t* s = (sample_t*)ptr;
-  free(s->img_data);
-  free(s->caption);
-  free(s);
+MTS_Multithreaded::MTS_Multithreaded(const char* config_file, \
+				     int num_producers) {
+  this->num_producers = num_producers;
+  mts_ipc_init(num_producers, config_file);  
 }
 
-unsigned char* get_img_data(void* ptr) {
-  return ((sample_t*)ptr)->img_data;
-}
-size_t get_height(void* ptr) {
-  return ((sample_t*)ptr)->height;
-}
-size_t get_width(void* ptr) {
-  return ((sample_t*)ptr)->width;
-}
-char* get_caption(void* ptr) {
-  return ((sample_t*)ptr)->caption;
-}
-
-
-/* Get a sample */
-void* get_sample(void* mts_buff_arg) {
-  //extract actual mts
-  auto mts_buff = (MTS_Buffer*)mts_buff_arg;
-  auto mts = mts_buff->mts;
+sample_t* MTS_Singlethreaded::get_sample(void) {
+  auto mts = this->mts;
   
   std::string label;
   cv::Mat image;
@@ -119,12 +92,67 @@ void* get_sample(void* mts_buff_arg) {
     perror("Failed to allocate memory for caption!\n");
   }
 
-  return (void*)spl;
+  return spl;
+}
+
+sample_t* MTS_Multithreaded::get_sample(void) {
+  return (sample_t*)mts_ipc_get_sample();
+}
+
+void MTS_Singlethreaded::cleanup(void) {
+  /*Currently does nothing. Retained for potential future use. */
+}
+
+void MTS_Multithreaded::cleanup(void) {
+  mts_ipc_cleanup();
+}
+
+// For ctypes visibility
+extern "C" {
+  unsigned char* get_img_data(void* spl);
+  size_t get_height(void* spl);
+  size_t get_width(void* spl);
+  char* get_caption(void* spl);
+  void* mts_init(const char* config_path, int num_producers);
+  void* get_sample(void* mts_buff);
+  void free_sample(void* spl);
+  void mts_cleanup(void* mts_buff);
+}
+
+void free_sample(void* ptr) {
+  sample_t* s = (sample_t*)ptr;
+  free(s->img_data);
+  free(s->caption);
+  free(s);
+}
+
+unsigned char* get_img_data(void* ptr) {
+  return ((sample_t*)ptr)->img_data;
+}
+size_t get_height(void* ptr) {
+  return ((sample_t*)ptr)->height;
+}
+size_t get_width(void* ptr) {
+  return ((sample_t*)ptr)->width;
+}
+char* get_caption(void* ptr) {
+  return ((sample_t*)ptr)->caption;
+}
+
+/* Get a sample */
+void* get_sample(void* mts_buff_arg) {
+  MTS_Buffer* mts_buff = (MTS_Buffer*)mts_buff_arg;
+  void* ret = ((MTS_Buffer*)mts_buff_arg)->get_sample();
+  return ret;
 }
 
 /* Called before using python generator function */
-void* mts_init(const char* config_path) {
-  return new MTS_Buffer(config_path);
+void* mts_init(const char* config_path, int num_threads) {
+  if(num_threads >= 1) {
+    return (void*)new MTS_Multithreaded(config_path, num_threads);
+  } else {
+    return (void*)new MTS_Singlethreaded(config_path);
+  }
 }
 
 /* Called after using python generator function */
@@ -132,4 +160,3 @@ void mts_cleanup(void* mts) {
   ((MTS_Buffer*)mts)->cleanup();
   free(mts);
 }
-
