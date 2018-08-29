@@ -41,7 +41,7 @@ cpp_sample: text_synthesizer.cpp
 	${CXX} $^ ${PKG-CONFIG} ${SAMPLE_FLAGS} -o mts_sample_shared
 
 leak: leak_memory.cpp
-	${CXX} $^ ${PKG-CONFIG} ${SAMPLE_FLAGS} -o mts_sample_leak
+	${CXX} $^ ${PKG-CONFIG} ${SAMPLE_FLAGS} -fsanitize=leak -o mts_sample_leak
 
 # Compile a cpp example with static library
 cpp_sample_static: text_synthesizer.cpp ${BINDIR}libmtsynth.a
