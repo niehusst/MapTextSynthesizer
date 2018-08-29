@@ -50,14 +50,14 @@ using boost::random::variate_generator;
 
 
 MTS_BackgroundHelper::MTS_BackgroundHelper(shared_ptr<MTS_BaseHelper> h,
-                                           shared_ptr<MTSConfig> c)
+        shared_ptr<MTSConfig> c)
     :helper(&(*h)),  // initialize fields
     config(&(*c)),  
     bias_var_dist(c->getParamDouble("bias_std_alpha"),
-                  c->getParamDouble("bias_std_beta")),
+            c->getParamDouble("bias_std_beta")),
     bias_var_gen(h->rng2_, bias_var_dist),
     texture_distribution(c->getParamDouble("texture_width_alpha"), 
-                         c->getParamDouble("texture_width_beta")),
+            c->getParamDouble("texture_width_beta")),
     texture_distrib_gen(h->rng2_, texture_distribution)
 {}
 
@@ -67,7 +67,7 @@ MTS_BackgroundHelper::~MTS_BackgroundHelper(){
 
 void
 MTS_BackgroundHelper::draw_boundary(cairo_t *cr, double linewidth,
-                                    double og_col) {
+        double og_col) {
 
     // get original dash code
     int dash_len = cairo_get_dash_count(cr);
@@ -129,7 +129,7 @@ MTS_BackgroundHelper::draw_hatched(cairo_t *cr, double linewidth) {
     double hatch_width_min = config->getParamDouble("railroad_hatch_width_min");
     double hatch_width_max = config->getParamDouble("railroad_hatch_width_max");
     double hatch_wide = helper->rndBetween(hatch_width_min,hatch_width_max) *
-                        linewidth; 
+        linewidth; 
 
     // set distance between hatches (in multiples of original linewidth)
     double dis_min = config->getParamDouble("railroad_distance_between_crosses_min");
@@ -170,7 +170,7 @@ MTS_BackgroundHelper::set_dash_pattern(cairo_t *cr) {
 
 void
 MTS_BackgroundHelper::orient_path(cairo_t *cr, bool curved, 
-                                  int length, int width, int height) {
+        int length, int width, int height) {
     int translation_x, translation_y;
     double angle = (helper->rng() % 360)/180.0*M_PI; //get angle 0 - 2PI
     translation_x = helper->rndBetween(0,width); 
@@ -183,8 +183,8 @@ MTS_BackgroundHelper::orient_path(cairo_t *cr, bool curved,
 
 void
 MTS_BackgroundHelper::generate_curve(cairo_t *cr, int width, int height,
-                                     double c_min, double c_max, double d_min,
-                                     double d_max, bool river) {
+        double c_min, double c_max, double d_min,
+        double d_max, bool river) {
 
     vector<coords> points;
     int num_min = config->getParamInt("bg_curve_num_points_min");
@@ -207,10 +207,10 @@ MTS_BackgroundHelper::generate_curve(cairo_t *cr, int width, int height,
         y_var_min *= scale;
         y_var_max *= scale;
     }
-    
+
     //get correct point vector based on line orientation
     points = helper->make_points_wave(width, height, num_points,
-                                      y_var_min, y_var_max);
+            y_var_min, y_var_max);
     helper->points_to_path(cr, points, c_min, c_max, d_min, d_max);
 }
 
@@ -279,140 +279,140 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
 
 void
 MTS_BackgroundHelper::diagonal_lines(cairo_t *cr,int x1, int y1, int x2, int y2,
-                                     int spacing, int width, int height) {
+        int spacing, int width, int height) {
 
-  // increment point positions
-  if (y1 >= height && x2 < width){
-    x1 += spacing;
-    x2 += spacing;
-  } else if (x2 >= width && y1 >= height) {
-    y2 += spacing;
-    x1 += spacing;
-  } else if (x2 >= width && y1 < height) {
-    y1 += spacing;
-    y2 += spacing;
-  } else { 
-    y1 += spacing;
-    x2 += spacing;
-  }
+    // increment point positions
+    if (y1 >= height && x2 < width){
+        x1 += spacing;
+        x2 += spacing;
+    } else if (x2 >= width && y1 >= height) {
+        y2 += spacing;
+        x1 += spacing;
+    } else if (x2 >= width && y1 < height) {
+        y1 += spacing;
+        y2 += spacing;
+    } else { 
+        y1 += spacing;
+        x2 += spacing;
+    }
 
-  // draw diagonal line
-  cairo_move_to(cr, x1, y1);
-  cairo_line_to(cr, x2, y2);
+    // draw diagonal line
+    cairo_move_to(cr, x1, y1);
+    cairo_line_to(cr, x2, y2);
 
-  //if both points have reached the corner opposite the origin, return
-  if (x1 >= width && y2 >= height) return;  
+    //if both points have reached the corner opposite the origin, return
+    if (x1 >= width && y2 >= height) return;  
 
-  // otherwise recurse to draw another line
-  diagonal_lines(cr, x1, y1, x2, y2, spacing, width, height);
+    // otherwise recurse to draw another line
+    diagonal_lines(cr, x1, y1, x2, y2, spacing, width, height);
 }
 
 
 
 void
 MTS_BackgroundHelper::crossed_lines(cairo_t *cr, int x1, int y1, int x2,
-                                    int y2, int spacing, int width, int height){
-  // draw lines 
-  diagonal_lines(cr, x1, y1, x2, y2, spacing, width, height);
+        int y2, int spacing, int width, int height){
+    // draw lines 
+    diagonal_lines(cr, x1, y1, x2, y2, spacing, width, height);
 
-  // draw lines perpendicular to existing lines
-  cairo_translate(cr, width, 0);
-  cairo_rotate(cr, M_PI/2);
-  // (width and height switched to account for rotation)
-  diagonal_lines(cr, x1, y1, x2, y2, spacing, height, width);
+    // draw lines perpendicular to existing lines
+    cairo_translate(cr, width, 0);
+    cairo_rotate(cr, M_PI/2);
+    // (width and height switched to account for rotation)
+    diagonal_lines(cr, x1, y1, x2, y2, spacing, height, width);
 
-  //return matrix transformations to normal
-  cairo_identity_matrix(cr);
+    //return matrix transformations to normal
+    cairo_identity_matrix(cr);
 }
 
 
 
 double
 MTS_BackgroundHelper::get_edge_len(int num_sides, int radius) {
-  double circumference = 2 * M_PI * radius;
-  return circumference / num_sides;
+    double circumference = 2 * M_PI * radius;
+    return circumference / num_sides;
 }
 
 
 void
 MTS_BackgroundHelper::shape_helper(cairo_t *cr, double x, double y,
-                                   double angle, double edge_len,
-                                   int num_sides, int counter) {
-  if (num_sides-1 == counter) {
-    // close shape and end recursion
-    cairo_close_path(cr);
-    return;
+        double angle, double edge_len,
+        int num_sides, int counter) {
+    if (num_sides-1 == counter) {
+        // close shape and end recursion
+        cairo_close_path(cr);
+        return;
 
-  } else { // draw the next edge
-    // polar coordinates conversion to calculate next point
-    double increase = counter * angle; 
-    x = edge_len * cos(increase) + x;
-    y = edge_len * sin(increase) + y;
-    cairo_line_to(cr, x, y);
+    } else { // draw the next edge
+        // polar coordinates conversion to calculate next point
+        double increase = counter * angle; 
+        x = edge_len * cos(increase) + x;
+        y = edge_len * sin(increase) + y;
+        cairo_line_to(cr, x, y);
 
-    //recurse
-    shape_helper(cr, x, y, angle, edge_len, num_sides, counter+1);
-  }
+        //recurse
+        shape_helper(cr, x, y, angle, edge_len, num_sides, counter+1);
+    }
 }
 
 
 void 
 MTS_BackgroundHelper::draw_shape(cairo_t *cr, int x, int y,
-                                 int num_sides, int radius) {
+        int num_sides, int radius) {
 
-  if (num_sides < 3) { //shape is a circle
-    // draw circle
-    cairo_arc(cr, x, y, radius, 0, 2*M_PI);
+    if (num_sides < 3) { //shape is a circle
+        // draw circle
+        cairo_arc(cr, x, y, radius, 0, 2*M_PI);
 
-  } else { //shape is not a circle
-    // calculate the angle between edges and edge length of the shape
-    double total = (num_sides - 2) * M_PI;
-    double internal_angle =  total / num_sides;
-    double outer_angle = M_PI - internal_angle;
-    double edge_len = get_edge_len(num_sides, radius);
+    } else { //shape is not a circle
+        // calculate the angle between edges and edge length of the shape
+        double total = (num_sides - 2) * M_PI;
+        double internal_angle =  total / num_sides;
+        double outer_angle = M_PI - internal_angle;
+        double edge_len = get_edge_len(num_sides, radius);
 
-    // move to start coords and draw geometric shape
-    cairo_move_to(cr, x, y);
-    shape_helper(cr, x, y, outer_angle, edge_len, num_sides, 0);
-  }
+        // move to start coords and draw geometric shape
+        cairo_move_to(cr, x, y);
+        shape_helper(cr, x, y, outer_angle, edge_len, num_sides, 0);
+    }
 }
 
 
 void
 MTS_BackgroundHelper::shape_texture_helper(cairo_t *cr, int origin_x,
-               int origin_y, int num_sides, int distance, bool even, int radius,
-               int width, int height) {
+        int origin_y, int num_sides, int distance, bool even, int radius,
+        int width, int height) {
 
-  // if dot origin has reached opposite corner from start, return
-  if (origin_x >= width && origin_y >= height) return;
+    // if dot origin has reached opposite corner from start, return
+    if (origin_x >= width && origin_y >= height) return;
 
-  // draw shape
-  draw_shape(cr, origin_x, origin_y, num_sides, radius);
-  cairo_fill(cr);  
+    // draw shape
+    draw_shape(cr, origin_x, origin_y, num_sides, radius);
+    cairo_fill(cr);  
 
-  // if origin has reached edge, set it back and start new row
-  if(origin_x >= width) {
-    even? origin_x = -distance/2 : origin_x = 0;
-    origin_y += distance;
-    even = !even;
+    // if origin has reached edge, set it back and start new row
+    if(origin_x >= width) {
+        even? origin_x = -distance/2 : origin_x = 0;
+        origin_y += distance;
+        even = !even;
 
-  } else { // otherwise move origin along row, towards edge
-    origin_x += distance;
-  }
+    } else { // otherwise move origin along row, towards edge
+        origin_x += distance;
+    }
 
-  //recurse
-  shape_texture_helper(cr, origin_x, origin_y, num_sides, distance, even,
-                       radius, width, height);
+    //recurse
+    shape_texture_helper(cr, origin_x, origin_y, num_sides, distance, even,
+            radius, width, height);
 }
 
 
 
 void
 MTS_BackgroundHelper::make_shape_texture(cairo_t *cr,int x, int y, int diameter,
-                            int num_sides, int spacing, int width, int height) {
-  // call recursive circle helper to draw texture
-  shape_texture_helper(cr, x, y, num_sides, spacing, true, diameter/2,
-                       width, height);
+        int num_sides, int spacing, int width, int height) {
+    // call recursive circle helper to draw texture
+    shape_texture_helper(cr, x, y, num_sides, spacing, true, diameter/2,
+            width, height);
 }
 
 
@@ -447,42 +447,42 @@ MTS_BackgroundHelper::draw_texture(cairo_t *cr, int texture, double brightness, 
 
 void
 MTS_BackgroundHelper::set_texture_source(cairo_t *cr, int texture, double brightness,
-                                         double linewidth, int spacing, int width,
-                                         int height) {
-  cairo_t *cr_new;
-  cairo_surface_t *surface_m;
-  int diameter = 0, num_sides = 0;
+        double linewidth, int spacing, int width,
+        int height) {
+    cairo_t *cr_new;
+    cairo_surface_t *surface_m;
+    int diameter = 0, num_sides = 0;
 
-  // if shapes texture is chosen, set shape related parameters
-  if (texture == 2) {
-    spacing *= 2;
-    diameter = 2 + helper->rng() % 40;  // range 2 - 41
-    num_sides = 2+ helper->rng() % 8;   // circles through nonagon 
-    if(spacing < diameter) spacing = diameter; // verify preconditions
-  }
+    // if shapes texture is chosen, set shape related parameters
+    if (texture == 2) {
+        spacing *= 2;
+        diameter = 2 + helper->rng() % 40;  // range 2 - 41
+        num_sides = 2+ helper->rng() % 8;   // circles through nonagon 
+        if(spacing < diameter) spacing = diameter; // verify preconditions
+    }
 
-  //create new surface and context to hold the texture for the source
-  surface_m = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 
-                                          width, height);
-  cr_new = cairo_create(surface_m);
+    //create new surface and context to hold the texture for the source
+    surface_m = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 
+            width, height);
+    cr_new = cairo_create(surface_m);
 
 
-  // make texture on new surface
-  draw_texture(cr_new, texture, brightness, linewidth, diameter, num_sides, spacing, width, height);
+    // make texture on new surface
+    draw_texture(cr_new, texture, brightness, linewidth, diameter, num_sides, spacing, width, height);
 
-  // set texture as source
-  cairo_set_source_surface(cr, surface_m, 0,0);
+    // set texture as source
+    cairo_set_source_surface(cr, surface_m, 0,0);
 
-  // clean up
-  cairo_destroy(cr_new);
-  cairo_surface_destroy(surface_m);
+    // clean up
+    cairo_destroy(cr_new);
+    cairo_surface_destroy(surface_m);
 }
 
 
 void
 MTS_BackgroundHelper::addTexture(cairo_t *cr, bool curved, double brightness,
-                                 int width, int height, double c_min,
-                                 double c_max, double d_min, double d_max) {
+        int width, int height, double c_min,
+        double c_max, double d_min, double d_max) {
 
     cairo_save(cr);
 
@@ -540,9 +540,9 @@ MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
     if (width > height) {
         // num points in horiz direction is multiplied by ratio width/height
         num_points_horizontal = helper->rndBetween((width/height)*points_min,
-                                                   (width/height)*points_max); 
+                (width/height)*points_max); 
     }
-    
+
     double offset_vertical = 1.0 / (num_points_vertical - 1);
     double offset_horizontal = 1.0 / (num_points_horizontal - 1);
 
@@ -553,11 +553,11 @@ MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
 
     double bias_std = round((pow(1/(bias_var_gen() + 0.1), 0.5) 
                 * std_scale + std_shift) * 100) / 100;
-    
+
     // set a normal distribution for the bias
     normal_distribution<> bias_dist(mean , bias_std);
     variate_generator<mt19937, normal_distribution<> > bias_gen(helper->rng2_,
-                                                                bias_dist);
+            bias_dist);
     bias_gen.engine().seed(helper->rng());
     bias_gen.distribution().reset();
 
@@ -572,7 +572,7 @@ MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
         dcolor = color_stop_val / 255.0;
 
         cairo_pattern_add_color_stop_rgb(pattern_vertical, i*offset_vertical,
-                                         dcolor,dcolor,dcolor);
+                dcolor,dcolor,dcolor);
     }
     // add color stops for each point along the horizontal line
     for (int i = 0; i < num_points_horizontal; i++){
@@ -583,7 +583,7 @@ MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
         dcolor = color_stop_val / 255.0;
 
         cairo_pattern_add_color_stop_rgb(pattern_horizontal,i*offset_horizontal,
-                                         dcolor,dcolor,dcolor);
+                dcolor,dcolor,dcolor);
     }
 
     double alpha = config->getParamDouble("bias_alpha");
@@ -591,13 +591,16 @@ MTS_BackgroundHelper::addBgBias(cairo_t *cr, int width, int height, int color){
     cairo_paint_with_alpha(cr,alpha);
     cairo_set_source(cr, pattern_vertical);
     cairo_paint_with_alpha(cr,alpha);
+
+    cairo_pattern_destroy(pattern_vertical);
+    cairo_pattern_destroy(pattern_horizontal);
     //cout << "finished bias" << endl;
 }
 
 
 void
 MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height, 
-                                    bool even, bool grid, bool curved) {
+        bool even, bool grid, bool curved) {
 
     // get and set base line width from user config params
     double line_width, magic_line_ratio;
@@ -661,9 +664,9 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
         int num_max = config->getParamInt("bg_curve_num_points_max");
         int num_points = helper->rndBetween(num_min,num_max); 
         curve_points = helper->make_points_wave(length,length,num_points,
-                                                y_var_min,y_var_max);
+                y_var_min,y_var_max);
     }
-    
+
     // get the points for each line (there are 'num' number of lines)
     for (int i = 0; i < num; i++) {
         // what points are used depends on if line is curved or not
@@ -671,14 +674,14 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
             // add points that are in curved shape
             for (int k = 0; k < curve_points.size(); k++) {
                 points.push_back(std::make_pair(left_x + curve_points[k].first,
-                                      curve_points[k].second - (length-cur_y)));
+                            curve_points[k].second - (length-cur_y)));
             }
         } else {
             // add 2 points; start and end of line
             points.push_back(std::make_pair(left_x,cur_y));
             points.push_back(std::make_pair(right_x,cur_y));
         }
-        
+
         // add the line to the lines vector
         lines.push_back(points);
         points.clear();
@@ -712,7 +715,7 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
             // draw line path
             cairo_move_to(cr,points[0].first,points[0].second);
             cairo_line_to(cr,points[points.size()-1].first,
-                          points[points.size()-1].second);
+                    points[points.size()-1].second);
         }
 
         // stroke the path
@@ -735,7 +738,7 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
                 // draw line path 
                 cairo_move_to(cr,points[0].first,points[0].second);
                 cairo_line_to(cr,points[points.size() - 1].first,
-                              points[points.size() - 1].second);
+                        points[points.size() - 1].second);
             }
 
             // stroke the path
@@ -750,7 +753,7 @@ MTS_BackgroundHelper::addBgPattern (cairo_t *cr, int width, int height,
 
 void
 MTS_BackgroundHelper::colorDiff (cairo_t *cr, int width, int height, 
-                                 double color_min, double color_max) {
+        double color_min, double color_max) {
 
     int num_colors_min = config->getParamInt("diff_num_colors_min");
     int num_colors_max = config->getParamInt("diff_num_colors_max");
@@ -778,7 +781,7 @@ MTS_BackgroundHelper::colorDiff (cairo_t *cr, int width, int height,
 
             int x_bottom=helper->rng()%width;
             cairo_line_to (cr, x_bottom, height);
-            
+
             if (left) {
                 cairo_line_to (cr, 0, height);
                 cairo_line_to (cr, 0, 0);
@@ -814,7 +817,7 @@ MTS_BackgroundHelper::colorDiff (cairo_t *cr, int width, int height,
 }
 
 
-void
+    void
 MTS_BackgroundHelper::cityPoint(cairo_t *cr, int width, int height, bool hollow)
 {
     //options for side of the surface the point origin appears on
@@ -852,7 +855,7 @@ MTS_BackgroundHelper::cityPoint(cairo_t *cr, int width, int height, bool hollow)
 
     //draw the circle arc
     cairo_arc(cr, x, y, radius, 0, 2*M_PI);
-    
+
     if (hollow) { // don't fill in the circle
         // set line width from user config params
         double line_width, magic_line_ratio;
@@ -890,8 +893,8 @@ MTS_BackgroundHelper::generateBgFeatures(vector<BGFeature> &bg_features){
 
     // init the vector of all possible features to sample from
     vector<BGFeature> all_features={Colordiff, Distracttext, Boundary,
-            Colorblob, Straight, Grid, Citypoint, Parallel, Vparallel, Texture,
-            Railroad, Riverline};
+        Colorblob, Straight, Grid, Citypoint, Parallel, Vparallel, Texture,
+        Railroad, Riverline};
     int j, cur_index, count = 0;
     bool flag;
     BGFeature cur;
@@ -905,18 +908,18 @@ MTS_BackgroundHelper::generateBgFeatures(vector<BGFeature> &bg_features){
             j = helper->rng() % all_features.size();
             cur = all_features[j];
             all_features.erase(all_features.begin()+j);
-            
+
             if (cur == Vparallel &&
-                find(bg_features.begin(), bg_features.end(), Parallel) !=
-                bg_features.end()) {
-              continue;
+                    find(bg_features.begin(), bg_features.end(), Parallel) !=
+                    bg_features.end()) {
+                continue;
             }
             if (cur == Parallel &&
-                find(bg_features.begin(), bg_features.end(), Vparallel)
-                != bg_features.end()) {
-              continue;
+                    find(bg_features.begin(), bg_features.end(), Vparallel)
+                    != bg_features.end()) {
+                continue;
             }
-            
+
             flag=false;
 
             cur_index=static_cast<int>(cur);
@@ -978,7 +981,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
     if (color_dis_max > contrast) color_dis_max = contrast;
     int text_color = bg_color - contrast;
     double color =(text_color + helper->rndBetween(color_dis_min,color_dis_max))
-                  / 255.0;
+        / 255.0;
     cairo_set_source_rgb(cr,color,color,color);
 
     // GENERATE BACKGROUND FEATURES:
@@ -995,8 +998,8 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
 
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
-          addTexture(cr, (bool) helper->rng() % 2, color, width, height,
-                       c_min, c_max, d_min, d_max); 
+            addTexture(cr, (bool) helper->rng() % 2, color, width, height,
+                    c_min, c_max, d_min, d_max); 
         }
     }
 
@@ -1004,21 +1007,21 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
     if (find(features.begin(), features.end(), Parallel)!= features.end()) {
         curve_prob = config->getParamDouble("para_curve_prob");
         addBgPattern(cr, width, height, true, false,
-                     helper->rndProbUnder(curve_prob));
+                helper->rndProbUnder(curve_prob));
     }
 
     // add varied parallel lines by probability
     if (find(features.begin(), features.end(), Vparallel)!= features.end()) {
         curve_prob = config->getParamDouble("vpara_curve_prob");
         addBgPattern(cr, width, height, false, false,
-                     helper->rndProbUnder(curve_prob));
+                helper->rndProbUnder(curve_prob));
     }
 
     // add grid lines by probability
     if (find(features.begin(), features.end(), Grid)!= features.end()) {
         curve_prob = config->getParamDouble("grid_curve_prob");
         addBgPattern(cr, width, height, true, true,
-                     helper->rndProbUnder(curve_prob));
+                helper->rndProbUnder(curve_prob));
     }
 
     // add railroads by probability
@@ -1034,7 +1037,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
             addLines(cr, false, true, false, true, false, false, width, height,
-                     c_min, c_max, d_min, d_max);
+                    c_min, c_max, d_min, d_max);
         }
     }
 
@@ -1042,7 +1045,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
     if (find(features.begin(), features.end(), Boundary)!= features.end()) {
         int boundary_min = config->getParamInt("boundary_num_lines_min");
         int boundary_max = config->getParamInt("boundary_num_lines_max") + 1
-                           - boundary_min;
+            - boundary_min;
 
         num_lines = helper->rndBetween(boundary_min,boundary_max); 
         double dash_probability= config->getParamDouble("boundary_dashed_prob");
@@ -1054,8 +1057,8 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
             addLines(cr, true, false, helper->rndProbUnder(dash_probability),
-                     true, false, false, width, height, c_min, c_max, d_min,
-                     d_max, color);
+                    true, false, false, width, height, c_min, c_max, d_min,
+                    d_max, color);
         }
     }
 
@@ -1063,14 +1066,14 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
     if (find(features.begin(), features.end(), Straight)!= features.end()) {
         int straight_min = config->getParamInt("straight_num_lines_min");
         int straight_max = config->getParamInt("straight_num_lines_max")+1
-                           - straight_min;
+            - straight_min;
         double dash_probability= config->getParamDouble("straight_dashed_prob");
         num_lines = helper->rndBetween(straight_min,straight_max); 
 
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
             addLines(cr, false, false, helper->rndProbUnder(dash_probability),
-                     false, false, false, width, height);
+                    false, false, false, width, height);
         }
     }
 
@@ -1107,4 +1110,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
 
     // save generated cairo surface as the background surface
     bg_surface = surface;
+
+    //clean up
+    cairo_destroy(cr);
 }

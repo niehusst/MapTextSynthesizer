@@ -126,9 +126,9 @@ MTS_TextHelper::addFontlist(vector<string>& font_list){
     // contains every font in the font_list
     for(size_t k = 0; k < font_list.size(); k++){
         if(std::find(availableList.begin(), availableList.end(), font_list[k])
-           == availableList.end()){
+                == availableList.end()){
             cerr << "The fonts list must only contain fonts in your system"
-                      << "\n" << font_list[k] << " is not in your system\n";
+                << "\n" << font_list[k] << " is not in your system\n";
             exit(1);
         }
     }
@@ -176,10 +176,10 @@ MTS_TextHelper::generateFont(char *font, int fontsize){
 
 void
 MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
-                                 double &spacing_deg, double &spacing,
-                                 double &stretch_deg, int &x_pad, int &y_pad,
-                                 double &scale, PangoFontDescription *&desc,
-                                 int height) {
+        double &spacing_deg, double &spacing,
+        double &stretch_deg, int &x_pad, int &y_pad,
+        double &scale, PangoFontDescription *&desc,
+        int height) {
 
     // if determined by probability of rotation, set rotated angle
     if (helper->rndProbUnder(config->getParamDouble("rotate_prob"))){
@@ -539,7 +539,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     cairo_t *cr;
 
     surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 40*height,height);
-    cr = cairo_create (surface);
+    cr = cairo_create(surface);
 
     cairo_set_source_rgb(cr,text_color/255.0,text_color/255.0,text_color/255.0);
     PangoLayout *layout;
@@ -758,8 +758,8 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     // free layout
     g_object_unref(layout);
-    pango_font_description_free (desc);
-    cairo_destroy (cr);
+    pango_font_description_free(desc);
+    cairo_destroy(cr);
 
     // create a new surface that has the correct width
     cairo_surface_t *surface_n;
@@ -803,7 +803,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     cairo_set_source_surface(cr_n, surface, 0, 0);
     cairo_rectangle(cr_n, 0, 0, patch_width, height);
     cairo_fill(cr_n);
-    cairo_surface_destroy (surface);
+    cairo_surface_destroy(surface);
 
     // set drawing color to the grey-scale text color
     double grey_scale = text_color/255.0;
@@ -913,10 +913,10 @@ MTS_TextHelper::distractText (cairo_t *cr, int width, int height, char *font) {
     // use pango to turn cstring into vector text
     PangoLayout *layout;
     PangoFontDescription *desc;
-    layout = pango_cairo_create_layout (cr);
+    layout = pango_cairo_create_layout(cr);
 
     desc = pango_font_description_from_string(font);
-    pango_layout_set_font_description (layout, desc);
+    pango_layout_set_font_description(layout, desc);
     pango_layout_set_text(layout, text, -1);
 
     // find text bounding rectangle
@@ -947,5 +947,5 @@ MTS_TextHelper::distractText (cairo_t *cr, int width, int height, char *font) {
     // clean up 
     cairo_identity_matrix(cr);
     g_object_unref(layout);
-    pango_font_description_free (desc);
+    pango_font_description_free(desc);
 }

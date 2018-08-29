@@ -71,11 +71,11 @@ using boost::random::variate_generator;
 
 void
 MTSImplementation::cairoToMat(cairo_surface_t *surface,Mat &mat) {
-  
+
     // make a 4 channel opencv matrix
     Mat mat4 = Mat(cairo_image_surface_get_height(surface),
-                           cairo_image_surface_get_width(surface),CV_8UC4,
-                           cairo_image_surface_get_data(surface));
+            cairo_image_surface_get_width(surface),CV_8UC4,
+            cairo_image_surface_get_data(surface));
 
     vector<Mat> channels;
 
@@ -90,7 +90,7 @@ void MTSImplementation::addGaussianNoise(Mat& out) {
     double scale = config->getParamDouble("noise_sigma_scale");
     double shift = config->getParamDouble("noise_sigma_shift");
     double sigma = round((pow(1/(noise_gen() + 0.1),0.5) * scale + shift) * 100)
-                   / 100;
+        / 100;
 
     // create noise matrix
     Mat noise = Mat(out.rows, out.cols, CV_32F);
@@ -187,21 +187,21 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
     //cout << "text" << endl;
     // use TextHelper instance to generate synthetic text
     if (std::find(bg_features.begin(), bg_features.end(), Distracttext)!=
-        bg_features.end()) {
+            bg_features.end()) {
         // generate distractor text
         th.generateTextSample(caption,text_surface,height,
-                              width,text_color,true);
+                width,text_color,true);
     } else {
         // dont generate distractor text
         th.generateTextSample(caption,text_surface,height,
-                              width,text_color,false);
+                width,text_color,false);
     }
 
     //cout << "bg" << endl;
     // use BackgroundHelper to generate the background image
     cairo_surface_t *bg_surface;
     bh.generateBgSample(bg_surface, bg_features, height, width,
-                        bg_brightness, contrast);
+            bg_brightness, contrast);
     cairo_t *cr = cairo_create(bg_surface);
     cairo_set_source_surface(cr, text_surface, 0, 0);
 
