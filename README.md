@@ -115,3 +115,4 @@ Future work for this project that we hypothesize would lead to a more robustly t
 * [Behdad Esfahbod](https://github.com/behdad), a developer of both Pango and cairo, for a number of functions he wrote in [cairotwisted.c](https://github.com/phuang/pango/blob/master/examples/cairotwisted.c) which we use to curve pango text baselines using cairo.
 * [USGS GNIS](https://geonames.usgs.gov/domestic/index.html) for the massive collection of sample Iowa place-name captions freely provided under U.S. Government Work license.
 
+This work was supported in part by the National Science Foundation under grant Grant Number [1526350](http://www.nsf.gov/awardsearch/showAward.do?AwardNumber=1526350).
