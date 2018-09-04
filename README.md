@@ -124,13 +124,10 @@ Note:
   * `OPENCV_*` environmental variables are specified to prevent OpenCV
     from trying to use GPU when converting an image from 4 (RGBA)
     channels to 1 (gray) channel.
-  
   * `PYTHONPATH` is specified so that `maptextsynth.py` can be found
     when `import`ing.
-    
   * `PATH` is specified so that `producer` and `base` can be found
     when `execvp`ing for IPC multiprocess synthesis.
-  
   * `MTS_IPC` is to get a pathname for unique IPC key generation
 
 When launched successfully, you _should_ see `Failed to load OpenCL
