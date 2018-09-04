@@ -101,7 +101,7 @@ g++ syntheziser_sample.cpp `pkg-config --cflags --libs mtsynth -o synthesizer_sa
 
 ### Tensorflow generator
 
-The following commands (from the repository root) construct a Python generator for use with [`tf.data.Dataset.from_generator'](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#from_generator):
+The following commands (from the repository root) construct a Python generator for use with [tf.data.Dataset.from_generator](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#from_generator):
 
 ```
 make static
