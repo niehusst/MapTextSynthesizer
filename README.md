@@ -49,15 +49,18 @@ rm -rf fonts
 ```
 
 Also be sure to change the fonts parameter in the `config.txt` file so that MTS will actually use the newly available fonts. If you wish to use our selection of google fonts, your fonts parameter should look like this:
-```fonts = fonts/blocky.txt, fonts/regular.txt, fonts/cursive.txt```
+
+```
+fonts = fonts/blocky.txt, fonts/regular.txt, fonts/cursive.txt
+```
 
 ## Compiling Samples
 
-### Compile samples with Makefile on UNIX  
+### Compile samples with Makefile on UNIX
 
 #### Python Samples
 
-Python sample file: ```samples/text_synthesizer.py```
+Python sample file: `samples/text_synthesizer.py`
 
 To compile a Ctypes Python sample that uses a shared library, call ```make python_ctypes``` from the base directory to compile a shared object file and the C code wrapper for the MTS C++ code. Then navigate to the samples directory and run the code from your terminal; ```python text_synthesizer.py```.
 Unlike the C++ samples, the Python sample uses a GUI that allows you to dynamically adjust the pause time between displayed images.
@@ -66,27 +69,74 @@ A benchmark test can also be run by passing the command line argument 'benchmark
 
 #### C++ Samples
 
-C++ sample file: ```samples/text_synthesizer.cpp```
+C++ sample file: `samples/text_synthesizer.cpp`
 
-To compile the C++ sample from a shared library, call ```make shared``` from the base directory to create the shared library file in a bin subdirectory of MapTextSynthesizer, followed by ```make cpp_sample``` to make the executable. To run the resulting executable (shared_sample) found in the samples directory, set an environment variable that allows your executable to find the shared library to your specific path to the shared library file: ```export LD_LIBRARY_PATH=/directory/path/to/bin/``` and then run the executable from the samples directory with ```./mts_sample_shared```.
+To compile the C++ sample from a shared library, call `make shared` from the base directory to create the shared library file in a bin subdirectory of MapTextSynthesizer, followed by `make cpp_sample` to make the executable. To run the resulting executable (shared_sample) found in the samples directory, set an environment variable that allows your executable to find the shared library to your specific path to the shared library file: `export LD_LIBRARY_PATH=/directory/path/to/bin/` and then run the executable from the samples directory with `./mts_sample_shared`.
 
-To compile using a static library, ```make static``` followed by ```make cpp_sample_static```. To run the resulting executable (static_sample) located in the samples directory, call ```./mts_sample_static``` in the samples directory.
+To compile using a static library, `make static` followed by `make cpp_sample_static`. To run the resulting executable (static_sample) located in the samples directory, call `./mts_sample_static` in the samples directory.
 
-The C++ sample is capable of running a benchmark test of the production rate, showing and saving, or just showing the generated images. All of this can be determined by giving the executable one of either command line argument 'benchmark' or 'save'. For example: ```./mts_sample_shared benchmark```
+The C++ sample is capable of running a benchmark test of the production rate, showing and saving, or just showing the generated images. All of this can be determined by giving the executable one of either command line argument `benchmark` or `save`. For example: 
+
+```
+./mts_sample_shared benchmark
+```
 
 ### Compiling C++ samples with CMake:
 
 To install MapTextSynthesizer in your machine using CMake, open install.sh using a text editor and fill in the necessary environment variables with complete paths to this repository and, if you are using one, to your virtual environment. 
 
-Once you have corrected the environment variables, run `` $ ./install.sh ``. The resulting files will be in the new build folder.
+Once you have corrected the environment variables, run `./install.sh`. The resulting files will be in the new build folder.
 
 Now that MapTextSynthesizer is installed on your machine, you can easily compile C++ programs that use MapTextSynthesizer with pkg-config:
 
-(if using virtual env,) `` export PKG_CONFIG_PATH=[install_prefix]/share/pkgconfig ``
-(if using virtual env,) `` export LD_LIBRARY_PATH="[install_prefix]/lib" ``
+(if using virtual env,) `export PKG_CONFIG_PATH=[install_prefix]/share/pkgconfig`
+(if using virtual env,) `export LD_LIBRARY_PATH="[install_prefix]/lib`
 
-``g++ syntheziser_sample.cpp `pkg-config --cflags --libs mtsynth`; ./a.out``
+Then
 
+```
+g++ syntheziser_sample.cpp `pkg-config --cflags --libs mtsynth -o synthesizer_sample
+./synthesizer_sample
+```
+
+### Tensorflow generator
+
+The following commands (from the repository root) construct a Python generator for use with [`tf.data.Dataset.from_generator'](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#from_generator):
+
+```
+make static
+export PKG_CONFIG_PATH=`pwd`
+cd ./tensorflow/generator/
+make lib
+```
+
+To use the library, set the following environment variables:
+
+```
+export PYTHONPATH=$PYTHONPATH:`pwd`
+export PATH=$PATH:`pwd`/ipc_synth
+export MTS_IPC=`pwd`/ipc_synth
+export OPENCV_OPENCL_RUNTIME=null
+export OPENCV_OPENCL_DEVICE=disabled
+```
+
+Note: 
+  * `OPENCV_*` environmental variables are specified to prevent OpenCV
+    from trying to use GPU when converting an image from 4 (RGBA)
+    channels to 1 (gray) channel.
+  
+  * `PYTHONPATH` is specified so that `maptextsynth.py` can be found
+    when `import`ing.
+    
+  * `PATH` is specified so that `producer` and `base` can be found
+    when `execvp`ing for IPC multiprocess synthesis.
+  
+  * `MTS_IPC` is to get a pathname for unique IPC key generation
+
+When launched successfully, you _should_ see `Failed to load OpenCL
+runtime` for each producer spawned. (It means that OpenCV isn't using
+the GPU.)
+   
 ### For More in-depth Information
 
 If you want still more information about the nitty-gritty of how this program works or how to modify it, please look at the DESIGN file. It has information about the file architecture, the purpose of the files, configuration instructions, and notes for contributors or devolopers who may wish to integrate this synthesizer into TensorFlow.
