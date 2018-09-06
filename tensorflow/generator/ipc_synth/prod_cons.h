@@ -19,7 +19,7 @@
 
 // Size of chunk w/o image
 #define BASE_CHUNK_SIZE sizeof(uint64_t) + (MAX_WORD_LENGTH + 1)*sizeof(char) \
-                        + sizeof(uint32_t) + sizeof(uint64_t)
+                        + sizeof(uint64_t) + sizeof(uint64_t)
 
 // Magic number for producers to write to tell consumer to wrap
 #define NO_SPACE_TO_PRODUCE (uint64_t)0xc001be9
