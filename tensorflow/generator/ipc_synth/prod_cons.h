@@ -6,7 +6,7 @@
 #define SHM_SIZE 1073741824
 
 // Upper limit to word length
-#define MAX_WORD_LENGTH 31
+#define MAX_WORD_LENGTH 63
 
 // Offset into buffer where data chunks are stored
 #define START_BUFF_OFFSET (sizeof(uint64_t)*2)

@@ -96,7 +96,7 @@ def preprocess_fn( caption, image, labels ):
 
     # Length is the length of labels - 1
     # (because labels has -1 EOS token here)
-    length = tf.cast( tf.subtract( tf.size( labels ), -1 ), tf.int64 )
+    length = tf.cast( tf.subtract( tf.size( labels ), 1 ), tf.int64 )
 
     text = caption
 
