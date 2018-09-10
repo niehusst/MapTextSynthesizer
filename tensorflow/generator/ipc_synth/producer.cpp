@@ -101,9 +101,6 @@ void produce(intptr_t buff, int semid, const char* config_file) {
     // Update producer offset
     *((uint64_t*)buff) += (BASE_CHUNK_SIZE + image_size);
 
-    // Force 8 byte alignment
-    *((uint64_t*)buff) += *((uint64_t*)buff) % 8;
-
     // Check out the consume_offset 
     uint64_t volatile consume_offset = *((uint64_t volatile*)(buff+sizeof(uint64_t)));
     
