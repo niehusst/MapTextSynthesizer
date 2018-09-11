@@ -87,9 +87,6 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset,
 
   // Update consume_offset (local)
   *consume_offset = buff - start_buff;
-
-  // Force 8 byte alignment -- consistent with producer
-  *consume_offset += (*consume_offset % 8);
   
   // Update the consume_offset (visible to producers)
   *((uint64_t*)(start_buff+sizeof(uint64_t))) = *consume_offset;
