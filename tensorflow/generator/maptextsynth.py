@@ -39,8 +39,8 @@ def get_dataset( args=None ):
         Returns:
         caption : ground truth string
         image   : raw mat object image [32, ?, 1] 
-        label   : list of indices corresponding to out_charset 
-                  length=len( caption )
+        label   : list of indices corresponding to out_charset plus a temporary
+                  increment; length=len( caption )
         """
     
         # Extract args
@@ -53,10 +53,11 @@ def get_dataset( args=None ):
             caption, image = next( gen )
 
             # Transform string text to sequence of indices using charset dict
-            label = [charset.out_charset_dict[c] for c in list( caption )]
-        
-            # Add in -1 as an EOS token for sparsification in postbatch_fn
-            label.append( -1 )
+            label = charset.string_to_label(caption)
+
+            # Temporarily increment all labels so that zero can be the EOS token
+            # during post-batch dense-to-sparse conversion
+            label = [index+1 for index in label]
 
             yield caption, image, label
 
@@ -82,9 +83,9 @@ def preprocess_fn( caption, image, labels ):
                   tf.float32 tensor of shape [32, ?, 1] (? = width)
       width   : width (in pixels) of image
                   tf.int32 tensor of shape []
-      labels  : list of indices of characters mapping text->out_charset
-                  tf.int32 tensor of shape [?] (? = length+1)
-      length  : length of labels (sans -1 EOS token)
+      labels  : list of indices (+1) of characters mapping text->out_charset
+                  tf.int32 tensor of shape [?] (? = length)
+      length  : length of labels
                   tf.int64 tensor of shape []
       text    : ground truth string
                   tf.string tensor of shape []
@@ -94,9 +95,8 @@ def preprocess_fn( caption, image, labels ):
     # Width is the 2nd element of the image tuple
     width = tf.size( image[1] ) 
 
-    # Length is the length of labels - 1
-    # (because labels has -1 EOS token here)
-    length = tf.cast( tf.subtract( tf.size( labels ), 1 ), tf.int64 )
+    # Length length of labels/caption
+    length = tf.size(labels)
 
     text = caption
 
@@ -106,12 +106,18 @@ def preprocess_fn( caption, image, labels ):
 def postbatch_fn( image, width, label, length, text ):
     """ 
     Prepare dataset for ingestion by Estimator.
-    Sparsifies labels, and 'packs' the rest of the components into feature map
+    Sparsifies and decrements labels, and 'packs' the rest of the components
+    into feature map
     """
 
-    # Convert dense to sparse with EOS token of -1
     # Labels must be sparse for ctc functions (loss, decoder, etc)
-    label = tf.contrib.layers.dense_to_sparse( label, -1 )
+    # Convert dense to sparse with EOS token of 0
+    label = tf.contrib.layers.dense_to_sparse( label, eos_token=0 )
+
+    # Reconstruct sparse tensor, un-incrementing label values after conversion
+    label = tf.SparseTensor( indices=label.indices,
+                             values=tf.subtract(label.values,1), # decrement
+                             dense_shape=label.dense_shape )
     
     # Format relevant features for estimator ingestion
     features = {
