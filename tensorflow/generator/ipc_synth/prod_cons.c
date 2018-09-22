@@ -1,12 +1,19 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
+#include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
+#include <unistd.h>
 
 #include "prod_cons.h"
+
+union semun {
+  int val;
+  struct semid_ds *buf;
+  ushort *array;
+};
 
 /* Determine key, given character */
 void set_key(key_t* key, char uniq) {
@@ -72,9 +79,10 @@ int get_semaphores(int create) {
     sb.sem_num = 0;
     sb.sem_op = 1;
     sb.sem_flg = 0;
-
-    if(semop(semid, &sb, 1) == -1) {
-      perror("semop: semaphore initialization");
+    union semun arg;
+    arg.val = 1;
+    if(semctl(semid, 0, SETVAL, arg) == -1) {
+      perror("semctl: semaphore initialization");
       exit(1);
     }
   }

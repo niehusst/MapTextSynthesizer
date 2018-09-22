@@ -8,6 +8,7 @@
 #include <opencv2/opencv.hpp>
 #include <signal.h>
 #include <unistd.h>
+#include <linux/membarrier.h>
 
 #include "map_text_synthesizer.hpp"
 
@@ -21,7 +22,22 @@ void* g_buff;
 /* Write sample data into buff naively */
 void write_data(intptr_t buff, uint32_t height,
 		const char* label, uint64_t img_sz, unsigned char* img_flat) {
+  /* Data integrity verification */
+  uint8_t data = 0;
+  //  if(memmem((void*)buff, img_sz+BASE_CHUNK_SIZE,(void*)&data, 1)) {
+    //    fprintf(stderr, "Wrote bad data...\n");
+    /*
+    for(int i = 1; i <= img_sz+BASE_CHUNK_SIZE; i++) {
+      fprintf(stderr, "%02x ", ((char*)buff)[i-1] & 0xff);
+      if(i % 8 == 0 && i != 0) {
+	fprintf(stderr, "\n");
+      }
+    }
+    fprintf(stderr, "\n");
+    */
+  //}
 
+  //__sync_synchronize();
   /* Keep track of start to write to later */
   uint64_t* start_buff = (uint64_t*)buff;
   
@@ -44,6 +60,9 @@ void write_data(intptr_t buff, uint32_t height,
   memcpy((unsigned char*)buff, img_flat, img_sz);
   buff += img_sz * sizeof(unsigned char);
 
+  // Memory fencing to prevent possible badness btwn prod/cons
+  asm volatile ("mfence" ::: "memory");
+      
   // Mark as consumable
   *start_buff = SHOULD_CONSUME;
 }
@@ -78,7 +97,7 @@ void produce(intptr_t buff, int semid, const char* config_file) {
     
     /* Get & update the producer offset atomically */
     lock_buff(semid);
-
+    
     // Save write loc
     intptr_t write_loc = buff + *((uint64_t*)buff);
 
@@ -89,10 +108,11 @@ void produce(intptr_t buff, int semid, const char* config_file) {
 
       // Write in magic number to tell consumer to reset consume offset
       if(((*(uint64_t*)buff) + sizeof(uint64_t)) > SHM_SIZE) {
-	// Can't fit magic num, need consumer to know not enough space
+	// Can't fit magic num, this case is handled on the consumer-side
       } else {
 	*((uint64_t*)write_loc) = NO_SPACE_TO_PRODUCE;
       }
+      
       // Reset offset
       *((uint64_t*)buff) = START_BUFF_OFFSET;
       write_loc = buff + *((uint64_t*)buff);
@@ -101,6 +121,12 @@ void produce(intptr_t buff, int semid, const char* config_file) {
     // Update producer offset
     *((uint64_t*)buff) += (BASE_CHUNK_SIZE + image_size);
 
+    // Force 8 byte alignment
+    if(*((uint64_t*)buff) % 8 != 0 &&
+       *((uint64_t*)buff) + (*((uint64_t*)buff) % 8) < SHM_SIZE) {
+      *((uint64_t*)buff) += *((uint64_t*)buff) % 8;
+    }
+    
     // Check out the consume_offset 
     uint64_t volatile consume_offset = *((uint64_t volatile*)(buff+sizeof(uint64_t)));
     
@@ -118,10 +144,12 @@ void produce(intptr_t buff, int semid, const char* config_file) {
       consume_offset = *((uint64_t volatile*)(buff+sizeof(uint64_t)));
     }
 
+
     /* Verify no bad overwritage would occur */
-    uint64_t needle = SHOULD_CONSUME;
+    
+    uint8_t needle = (uint8_t)SHOULD_CONSUME;
     while(memmem((void*)write_loc, (*((uint64_t*)buff)+buff) - write_loc,
-	       (void*)&needle, sizeof(uint64_t))) {
+	       (void*)&needle, sizeof(uint8_t))) {
       sleep(5); // 5 is arbitrary
     }
     

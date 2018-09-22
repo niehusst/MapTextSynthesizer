@@ -7,6 +7,7 @@
 #include <sys/shm.h>
 #include <signal.h>
 #include <unistd.h>
+#include <linux/membarrier.h>
 
 #include "prod_cons.h"
 #include "ipc_consumer.h"
@@ -25,6 +26,10 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset,
   if(*(uint64_t*)(buff + *consume_offset) != SHOULD_CONSUME) {
     return NULL;
   }
+
+  /* Light memory fencing to ensure appropriate 
+     memory access ordering @ runtime*/
+  asm volatile ("mfence" ::: "memory");
   
   /* Cache initial buff value */
   intptr_t start_buff = buff;
@@ -81,16 +86,22 @@ sample_t* consume(intptr_t buff, uint64_t* consume_offset,
   spl->width = sz/height; //should be evenly divisible
   spl->caption = label;
   spl->img_data = img_flat;
+  
+  if(*consume_offset % 8 != 0 &&
+     *consume_offset + (*consume_offset % 8) < SHM_SIZE) {
+    *consume_offset += *consume_offset % 8;
+  }
 
   // Buff is now consumed!
-  *(uint64_t*)(start_buff+*consume_offset) = (uint64_t)ALREADY_CONSUMED;
+  memset((void*)(start_buff+*consume_offset), 1, buff-(start_buff+*consume_offset));
+  //*(uint64_t*)(start_buff+*consume_offset) = (uint64_t)ALREADY_CONSUMED;
 
   // Update consume_offset (local)
   *consume_offset = buff - start_buff;
   
   // Update the consume_offset (visible to producers)
   *((uint64_t*)(start_buff+sizeof(uint64_t))) = *consume_offset;
-
+  
   return spl;
 }
 
