@@ -113,7 +113,7 @@ sample_t* ipc_get_sample(void* buff, uint64_t* consume_offset,
 			  semid, have_buff_lock);
   
   // If this happens, then something broke
-  if(*consume_offset >= SHM_SIZE) {
+  if(*consume_offset > SHM_SIZE) {
     fprintf(stderr, "Consumer did not wrap appropriately.\n");
     exit(1);
   }
