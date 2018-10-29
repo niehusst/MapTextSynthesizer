@@ -85,7 +85,9 @@ public://-----------------PUBLIC METHODS AND FIELDS------------------------
          * actual_height - the actual height of sample in pixels. 
          */
         void generateSample(string &caption, Mat &sample,
-                            int &actual_height);
+                            int &actual_height,
+                            double &x1,double &y1,double &x2,double &y2,
+                            double &x3,double &y3,double &x4,double &y4);
 
 };
 

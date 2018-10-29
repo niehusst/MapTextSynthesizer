@@ -56,6 +56,7 @@ int main(int argc, char **argv) {
     string label;
     Mat image;
     int height, display_rate = ROUNDS/20;
+    double x1,y1,x2,y2,x3,y3,x4,y4;
     
     // Run a benchmark test of production speed
     if( (argc > 1) && (string(argv[1]) == "benchmark") ) {
@@ -68,7 +69,7 @@ int main(int argc, char **argv) {
           cout << "." << flush;
         }
         // make the sample
-        mts->generateSample(label, image, height);
+        mts->generateSample(label, image, height, x1,y1,x2,y2,x3,y3,x4,y4);
         k++;
       }
       int end = time(NULL);
@@ -85,7 +86,7 @@ int main(int argc, char **argv) {
            << "displayed, \nuse ^C with the terminal selected." << endl;
       do {
         // make the sample
-        mts->generateSample(label, image, height);
+        mts->generateSample(label, image, height, x1,y1,x2,y2,x3,y3,x4,y4);
         // show the image (using opencv) and print caption to terminal
         cout << label << endl;
         imshow("Sample image", image);

@@ -177,7 +177,7 @@ MTS_TextHelper::generateFont(char *font, int fontsize){
 void
 MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
         double &spacing_deg, double &spacing,
-        double &stretch_deg, int &x_pad, int &y_pad,
+        double &stretch_deg, double &x_pad, double &y_pad,
         double &scale, PangoFontDescription *&desc,
         int height) {
 
@@ -529,7 +529,9 @@ MTS_TextHelper::create_curved_text_deformed(cairo_t *cr,
 void 
 MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         string caption,int height,int &width,
-        int text_color, bool distract){
+        int text_color, bool distract,
+        double &x1, double &y1, double &x2, double &y2,
+        double &x3, double &y3, double &x4, double &y4){
 
 
     int len = caption.length();
@@ -552,7 +554,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     bool curved;
     //units: pure number, point, pure number
     double spacing_deg, spacing, stretch_deg;
-    int x_pad, y_pad;
+    double x_pad, y_pad;
     double scale;
 
     generateFeatures(rotated_angle, curved, spacing_deg, spacing, stretch_deg,
@@ -595,6 +597,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     // pixel = pure number * pixel
     text_w = stretch_deg * (text_w);
+    double text_width, text_height; // only used by rotated words
 
     int patch_width = (int)text_w;
 
@@ -608,7 +611,6 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         double cosine = abs(cos(rotated_angle));
 
         double ratio = text_h/(double)text_w;
-        double text_width, text_height;
 
         text_width=(height/(cosine*ratio+sine));
         text_height = (ratio*text_width);
@@ -769,9 +771,45 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     surface_n = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, max(width_min,patch_width), height);
     cr_n = cairo_create (surface_n);
 
+    // calculate bounding box
+    double new_h = scale*height;
+    double new_w = scale*patch_width;
+    x4=(patch_width-new_w)/2.0+x_pad*patch_width;
+    y4=(height-new_h)/2.0+y_pad*height;
+    x3=x4+new_w;
+    y3=y4;
+    x2=x3;
+    y2=y3+new_h;
+    x1=x4;
+    y1=y2;
+
+    if (rotated_angle != 0){
+        new_w=scale*text_width;
+        new_h=scale*text_height;
+        double r = -rotated_angle;
+        double xc = (x1+x2)/2.0;
+        double yc = (y1+y4)/2.0;
+        double a = atan(new_h/new_w);
+        double diff = a - r;
+        double sin_d = sin(diff);
+        double cos_d = cos(diff);
+        double sum = a + r;
+        double sin_s = sin(sum);
+        double cos_s = cos(sum);
+        double diag = pow(pow(new_h,2.0)+pow(new_w,2.0),0.5)/2.0;
+        x4=xc-cos_d*diag;
+        y4=yc-sin_d*diag;
+        x3=xc+cos_s*diag;
+        y3=yc-sin_s*diag;
+        x2=xc+cos_d*diag;
+        y2=yc+sin_d*diag;
+        x1=xc-cos_s*diag;
+        y1=yc+sin_s*diag;
+    }
+
     // apply arbitrary padding and scaling
     cairo_save(cr_n);
-    cairo_translate (cr_n, x_pad, y_pad);
+    cairo_translate (cr_n, x_pad*patch_width, y_pad*height);
     cairo_translate (cr_n, patch_width/2, height/2);
     cairo_scale(cr_n, scale, scale);
     cairo_translate (cr_n, -patch_width/2, -height/2);
@@ -851,7 +889,9 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 void 
 MTS_TextHelper::generateTextSample (string &caption,
         cairo_surface_t *&text_surface, int height, 
-        int &width, int text_color, bool distract) {
+        int &width, int text_color, bool distract,
+        double &x1, double &y1, double &x2, double &y2,
+        double &x3, double &y3, double &x4, double &y4){
 
     // determine if the text generated will be a string of digits 
     if (helper->rndProbUnder(config->getParamDouble("digit_prob"))) {
@@ -877,7 +917,7 @@ MTS_TextHelper::generateTextSample (string &caption,
     }
 
     // generate the text using pango for the caption string
-    generateTextPatch(text_surface,caption,height,width,text_color,distract);
+    generateTextPatch(text_surface,caption,height,width,text_color,distract,x1,y1,x2,y2,x3,y3,x4,y4);
 }
 
 

@@ -116,7 +116,7 @@ private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
         void
             generateFeatures(double &rotated_angle, bool &curved, 
                              double &spacing_deg, double &spacing, 
-                             double &stretch_deg, int &x_pad, int &y_pad,
+                             double &stretch_deg, double &x_pad, double &y_pad,
                              double &scale, PangoFontDescription *&desc,
                              int height);
 
@@ -206,11 +206,14 @@ private:// --------------- PRIVATE METHODS AND FIELDS ------------------------
          * width - output to store the width of the generated image
          * text_color - color of text
          * distract - whether to draw distracting text or not
+         * x1-x4, y1-y4 - coordinates of the bounding box of text
          */
         void
             generateTextPatch(cairo_surface_t *&text_surface,
                               string caption,int height,int &width,
-                              int text_color, bool distract);
+                              int text_color, bool distract,
+                              double &x1, double &y1, double &x2, double &y2,
+                              double &x3, double &y3, double &x4, double &y4);
 
 
 public:// --------------------- PUBLIC METHODS -------------------------------
@@ -238,11 +241,14 @@ public:// --------------------- PUBLIC METHODS -------------------------------
          * width - width of the surface that will be determined
          * text_color - the grayscale color value for the text
          * distract - flag that dictates whether distractor text will be present
+         * x1-x4, y1-y4 - coordinates of the bounding box of text
          */
         void 
             generateTextSample(string &caption,
                                cairo_surface_t *&text_surface, int height,
-                               int &width, int text_color, bool distract);
+                               int &width, int text_color, bool distract,
+                               double &x1, double &y1, double &x2, double &y2,
+                               double &x3, double &y3, double &x4, double &y4);
 
 };
 

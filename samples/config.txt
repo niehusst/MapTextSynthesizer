@@ -6,6 +6,10 @@ fonts = fonts/basic_fonts.txt
 // The files to sample image captions from
 captions = IA_placenames/Civil.txt, IA_placenames/Pillar.txt
 
+// Detector mode or not
+detect = 1                    // 1 for yes, other for no
+draw_bounding = 1             // 1 for yes, other for no
+
 
 //TEXT PARAMS
 
@@ -26,7 +30,7 @@ spacing_shift=-0.2              // https://en.wikipedia.org/wiki/Beta_distributi
 
 
 // Baseline Curve
-curve_prob=0.05                // The probability that caption text is curved
+curve_prob=0.01                // The probability that caption text is curved
 curve_min_spacing=0          //min spacing required for the text to be curved
 curve_min_char_num_per_point=1    // Min number of characters required for
                                   // each point of curve
@@ -73,19 +77,19 @@ missing_diminish_rate=100     // The rate at which the spot edge dissolves;
 
 
 // Rotate
-rotate_prob=0.1               // The probability that this feature appears
-rotate_degree_min=-10         // Range of text rotation angles in degrees.
-rotate_degree_max=10
+rotate_prob=0.8               // The probability that this feature appears
+rotate_degree_min=-80         // Range of text rotation angles in degrees.
+rotate_degree_max=80
 
 
 // Padding
-pad_min=-0.05                     // Range of how much padding to add to the
-pad_max=0.05                   // text with respect to image height.
+pad_min=-0.1                     // Range of how much padding to add to the
+pad_max=0.1                   // text with respect to image height.
 
 
 // Scaling
-scale_min=0.95                 // Ratio range for scaling caption text size.
-scale_max=1.05
+scale_min=0.5                 // Ratio range for scaling caption text size.
+scale_max=0.6
 
 
 // Blend
@@ -337,8 +341,8 @@ zero_padding=0                // 0 for false, any other value for true. If true,
                               // bottom to fill out the matrix to max image
                               // height (useful for batching data by height)
 
-height_min=32                 // Image height range in pixels. Note that larger
-height_max=64                 // images take longer to draw, slowing generation.
+height_min=100                 // Image height range in pixels. Note that larger
+height_max=100                 // images take longer to draw, slowing generation.
 
 width_min=50                  // Image minimum width in pixels.
 

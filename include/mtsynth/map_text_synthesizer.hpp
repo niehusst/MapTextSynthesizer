@@ -26,10 +26,12 @@ class MapTextSynthesizer{
          * caption - the label of the image. 
          * sample - the resulting text sample.
          * actual_height - the actual height of sample.
+         * x1-x4,y1-y4 - coordinates of the text bounding box
          */
         virtual void 
             generateSample (std::string &caption, cv::Mat &sample, 
-                    int &actual_height) = 0;
+                    int &actual_height, double &x1,double &y1,double &x2,
+                    double &y2,double &x3,double &y3,double &x4,double &y4) = 0;
 
         /*
          * A wrapper for the protected MapTextSynthesizer constructor.

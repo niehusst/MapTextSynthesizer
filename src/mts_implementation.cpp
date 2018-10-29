@@ -149,7 +149,11 @@ MTSImplementation::MTSImplementation(string config_file)
 MTSImplementation::~MTSImplementation() {
 }
 
-void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual_height){
+void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual_height,
+        double &x1,double &y1,double &x2,double &y2,double &x3,double &y3,double &x4,double &y4){
+
+    bool detectMode = config->getParamDouble("detect")==1?true:false;
+    bool drawBound = config->getParamDouble("draw_bounding")==1?true:false;
 
     //cout << "start generate sample" << endl;
     vector<BGFeature> bg_features;
@@ -190,12 +194,14 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
             bg_features.end()) {
         // generate distractor text
         th.generateTextSample(caption,text_surface,height,
-                width,text_color,true);
+                width,text_color,true,x1,y1,x2,y2,x3,y3,x4,y4);
     } else {
         // dont generate distractor text
         th.generateTextSample(caption,text_surface,height,
-                width,text_color,false);
+                width,text_color,false,x1,y1,x2,y2,x3,y3,x4,y4);
     }
+
+    // MIGHT DO: crop the canvas to square if in detect mode
 
     //cout << "bg" << endl;
     // use BackgroundHelper to generate the background image
@@ -216,6 +222,23 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
         cairo_paint_with_alpha(cr, blend_alpha);
     } else { // dont blend
         cairo_paint(cr);
+    }
+
+    // draw bounding box
+    if (drawBound) {
+        cairo_set_source_rgb(cr, 0, 0, 0);
+        cairo_move_to (cr, x1, y1);
+        cairo_line_to (cr, x2, y2);
+        cairo_line_to (cr, x3, y3);
+        cairo_line_to (cr, x4, y4);
+        cairo_line_to (cr, x1, y1);
+        cairo_set_line_width (cr, 1);
+        cairo_stroke(cr);
+        cairo_set_line_cap(cr,CAIRO_LINE_CAP_ROUND);
+        cairo_set_line_width (cr, 5);
+        cairo_move_to (cr, x1, y1);
+        cairo_line_to (cr, x1, y1);
+        cairo_stroke(cr);
     }
 
     Mat sample_uchar = Mat(height,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
