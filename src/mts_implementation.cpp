@@ -186,8 +186,6 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
         height = helper->rndBetween(height_min,height_max); 
     }
 
-    actual_height = height;
-
     //cout << "text" << endl;
     // use TextHelper instance to generate synthetic text
     if (std::find(bg_features.begin(), bg_features.end(), Distracttext)!=
@@ -201,7 +199,18 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
                 width,text_color,false,x1,y1,x2,y2,x3,y3,x4,y4);
     }
 
-    // MIGHT DO: crop the canvas to square if in detect mode
+    // MIGHT DO: crop the canvas to square to allow arbitrary rotation if in detect mode
+    double text_width=width;
+    if (detectMode){
+        width=height;
+        double pad=(text_width-width)/2.0;
+        x1-=pad;
+        x2-=pad;
+        x3-=pad;
+        x4-=pad;
+    }
+
+    actual_height = height;
 
     //cout << "bg" << endl;
     // use BackgroundHelper to generate the background image
@@ -209,7 +218,11 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
     bh.generateBgSample(bg_surface, bg_features, height, width,
             bg_brightness, contrast);
     cairo_t *cr = cairo_create(bg_surface);
-    cairo_set_source_surface(cr, text_surface, 0, 0);
+    if (detectMode) {
+        cairo_set_source_surface(cr, text_surface, (width-text_width)/2.0,0);
+    } else {
+        cairo_set_source_surface(cr, text_surface, 0, 0);
+    }
 
     // set the blend alpha range using user configured parameters
     double blend_min=config->getParamDouble("blend_alpha_min");

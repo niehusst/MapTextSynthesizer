@@ -8,6 +8,7 @@ captions = IA_placenames/Civil.txt, IA_placenames/Pillar.txt
 
 // Detector mode or not
 detect = 1                    // 1 for yes, other for no
+// Draw bounding box or not
 draw_bounding = 1             // 1 for yes, other for no
 
 
@@ -88,8 +89,8 @@ pad_max=0.1                   // text with respect to image height.
 
 
 // Scaling
-scale_min=0.5                 // Ratio range for scaling caption text size.
-scale_max=0.6
+scale_min=0.1                 // Ratio range for scaling caption text size.
+scale_max=0.2
 
 
 // Blend
@@ -341,8 +342,8 @@ zero_padding=0                // 0 for false, any other value for true. If true,
                               // bottom to fill out the matrix to max image
                               // height (useful for batching data by height)
 
-height_min=100                 // Image height range in pixels. Note that larger
-height_max=100                 // images take longer to draw, slowing generation.
+height_min=200                 // Image height range in pixels. Note that larger
+height_max=200                 // images take longer to draw, slowing generation.
 
 width_min=50                  // Image minimum width in pixels.
 

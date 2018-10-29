@@ -181,8 +181,9 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
         double &scale, PangoFontDescription *&desc,
         int height) {
 
+    bool detectMode = config->getParamDouble("detect")==1?true:false;
     // if determined by probability of rotation, set rotated angle
-    if (helper->rndProbUnder(config->getParamDouble("rotate_prob"))){
+    if (!detectMode && helper->rndProbUnder(config->getParamDouble("rotate_prob"))){
         int min_deg = config->getParamInt("rotate_degree_min");
         int max_deg = config->getParamInt("rotate_degree_max");
         int degree = helper->rndBetween(min_deg, max_deg);
@@ -771,11 +772,20 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     surface_n = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, max(width_min,patch_width), height);
     cr_n = cairo_create (surface_n);
 
+    // calculate paddings
+    bool detectMode = config->getParamDouble("detect")==1?true:false;
+    double x_padding = x_pad*patch_width, y_padding = y_pad*height;
+    if (detectMode) x_padding = x_pad*height;
+    // if in detect mode, randomly rotate
+    double rotate_detect = 0.0;
+    if (detectMode) rotate_detect=helper->rndBetween(0.0,M_PI*2);
+
     // calculate bounding box
     double new_h = scale*height;
     double new_w = scale*patch_width;
-    x4=(patch_width-new_w)/2.0+x_pad*patch_width;
-    y4=(height-new_h)/2.0+y_pad*height;
+
+    x4=(patch_width-new_w)/2.0+x_padding;
+    y4=(height-new_h)/2.0+y_padding;
     x3=x4+new_w;
     y3=y4;
     x2=x3;
@@ -805,12 +815,33 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
         y2=yc+sin_d*diag;
         x1=xc-cos_s*diag;
         y1=yc+sin_s*diag;
+    } else if (detectMode) {
+        double r = -rotate_detect;
+        double xc = (x1+x2)/2.0;
+        double yc = (y1+y4)/2.0;
+        double a = atan(new_h/new_w);
+        double diff = a - r;
+        double sin_d = sin(diff);
+        double cos_d = cos(diff);
+        double sum = a + r;
+        double sin_s = sin(sum);
+        double cos_s = cos(sum);
+        double diag = pow(pow(new_h,2.0)+pow(new_w,2.0),0.5)/2.0;
+        x4=xc-cos_d*diag;
+        y4=yc-sin_d*diag;
+        x3=xc+cos_s*diag;
+        y3=yc-sin_s*diag;
+        x2=xc+cos_d*diag;
+        y2=yc+sin_d*diag;
+        x1=xc-cos_s*diag;
+        y1=yc+sin_s*diag;
     }
 
     // apply arbitrary padding and scaling
     cairo_save(cr_n);
-    cairo_translate (cr_n, x_pad*patch_width, y_pad*height);
+    cairo_translate (cr_n, x_padding, y_padding);
     cairo_translate (cr_n, patch_width/2, height/2);
+    cairo_rotate(cr_n, rotate_detect);
     cairo_scale(cr_n, scale, scale);
     cairo_translate (cr_n, -patch_width/2, -height/2);
     if (path != NULL &&
