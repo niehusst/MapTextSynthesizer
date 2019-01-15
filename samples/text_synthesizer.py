@@ -68,7 +68,7 @@ def guiLoop():
             caption,image = next( mts )
             
             # print sample information
-            print caption
+            print(caption)
             
             # show the sample image
             cv2.imshow('Text Synthesizer Demo',image)
@@ -79,7 +79,7 @@ def guiLoop():
 def benchmark(num_iters):
     global mts
     k=0
-    print "Running benchmark",
+    print("Running benchmark",end="")
     sys.stdout.flush()
     start = time.time()
     #run the benchmark for num_iters images
@@ -88,14 +88,14 @@ def benchmark(num_iters):
         # generate sample and store data
         caption,image = next( mts )
         if num_iters/10 % k == 0:
-            print ".",
+            print(".",end="")
             sys.stdout.flush()
     end = time.time()
-    print "."
+    print(".")
     runtime = end-start
-    print "Total Runtime: {} seconds".format(runtime)
-    print "Images Generated: {}".format(num_iters)
-    print "Production Rate: {} Hz".format(num_iters/runtime) 
+    print("Total Runtime: {} seconds".format(runtime))
+    print("Images Generated: {}".format(num_iters))
+    print("Production Rate: {} Hz".format(num_iters/runtime))
         
 # main; run the gui
 if __name__=='__main__':

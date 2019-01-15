@@ -196,7 +196,7 @@ MTS_TextHelper::generateFeatures(double &rotated_angle, bool &curved,
 
     // set probability of being curved
     if(helper->rndProbUnder(curvingProb)){
-        curved = true;
+	curved = true;
     }
 
     // get pango's default font map to get the resolution
@@ -653,7 +653,6 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     } else if (curved 
             && spacing_deg >= config->getParamDouble("curve_min_spacing")) {
-
         // get the number of curve points to set
         int num_min = config->getParamInt("curve_num_points_min");
         int num_max = config->getParamInt("curve_num_points_max");

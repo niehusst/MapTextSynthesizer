@@ -30,7 +30,7 @@
 using namespace std;
 using namespace cv;
 
-#define ROUNDS 10000
+#define ROUNDS 1
 
 /*
  * A sample program that generates images using the MapTextSynthesizer classes.
