@@ -35,7 +35,7 @@ After installing the dependencies, you should be able to jump right into compili
 
 ##### Installing Google Fonts
 
-If you wish to utilize the wide variaty of fonts available in the Google Fonts repository, simply past the following code into your terminal to download the google/fonts repo, copy all the font .ttf files into a `.fonts` folder in your home directory, and then delete the google/fonts repo.
+If you wish to utilize the wide variaty of fonts available in the Google Fonts repository, simply past the following Linux code into your terminal to download the google/fonts repo, copy all the font .ttf files into a `.fonts` folder in your home directory, and then delete the google/fonts repo. 
 
 ```
 git clone https://github.com/google/fonts.git
@@ -48,7 +48,19 @@ cd ../..
 rm -rf fonts
 ```
 
-Also be sure to change the fonts parameter in the `config.txt` file so that MTS will actually use the newly available fonts. If you wish to use our selection of google fonts, your fonts parameter should look like this:
+On MacOS, you will want to run similar commands, but copying the .ttf files into the `~/Library/Fonts/` directory for Pango to be able to see the new fonts.
+
+```
+git clone https://github.com/google/fonts.git
+cd fonts/ofl
+cp -r */*.ttf ~/Library/Fonts
+cd ../apache
+cp -r */*.ttf ~/Library/Fonts
+cd ../..
+rm -rf fonts
+```
+
+Also be sure to change the fonts parameter in the `config.txt` file so that MTS will actually use the newly available fonts. If you wish to use the same selection google fonts as us, your fonts parameter should look like this:
 
 ```
 fonts = fonts/blocky.txt, fonts/regular.txt, fonts/cursive.txt
