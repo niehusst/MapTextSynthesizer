@@ -4,7 +4,7 @@
 fonts = reproducibleData/iterOverData/FRANKLIN.447/fontFRANKLIN.447.txt
 
 // The files to sample image captions from
-captions = reproducibleData/iterOverData/FRANKLIN.477/captionFRANKLIN.447.txt
+captions = reproducibleData/iterOverData/FRANKLIN.447/captionFRANKLIN.447.txt
 
 
 //TEXT PARAMS
