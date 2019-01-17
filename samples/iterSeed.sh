@@ -1,6 +1,8 @@
 #!/bin/bash
 
 #program to run MTS cpp sample and change the seed in the config file for each run
+#When you start this program, the seed in the config file must be set to 1 and is then
+#subsequently incremented by this program.
 
 seed=1
 while [ 1 == 1 ]; do

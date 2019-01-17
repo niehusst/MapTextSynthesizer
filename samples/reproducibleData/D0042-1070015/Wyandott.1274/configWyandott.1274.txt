@@ -26,7 +26,7 @@ spacing_shift=.5              // https://en.wikipedia.org/wiki/Beta_distribution
 
 
 // Baseline Curve
-curve_prob=0                // The probability that caption text is curved
+curve_prob=1                // The probability that caption text is curved
 curve_min_spacing=0          //min spacing required for the text to be curved
 curve_min_char_num_per_point=1    // Min number of characters required for
                                   // each point of curve
@@ -42,8 +42,8 @@ curve_d_max=2
 
 
 curve_cd_sum_max=3            //prevent huge curvature at the beginning of curve
-curve_y_variance_min=.5        // Range of possible curve amplitude in the
-curve_y_variance_max=.8      // y-direction with respect to image height
+curve_y_variance_min=.1        // Range of possible curve amplitude in the
+curve_y_variance_max=.1      // y-direction with respect to image height
 curve_is_deformed_prob=1    // Probability that curved text may be deformed
 curve_line_prob=1             // Probability of drawing a line along the
                               // text baseline.
@@ -53,7 +53,7 @@ curve_line_width_max=0.2      // with respect to image height (for if the
 
 
 // Italic
-italic_prob=1               // The probability that caption text is italic
+italic_prob=0               // The probability that caption text is italic
 
 
 // Caption Text Weight
@@ -73,7 +73,7 @@ missing_diminish_rate=200     // The rate at which the spot edge dissolves;
 
 
 // Rotate
-rotate_prob=0               // The probability that this feature appears
+rotate_prob=1               // The probability that this feature appears
 rotate_degree_min=-10         // Range of text rotation angles in degrees.
 rotate_degree_max=10
 
@@ -84,8 +84,8 @@ pad_max=1                   // text with respect to image height.
 
 
 // Scaling
-scale_min=.7                 // Ratio range for scaling caption text size.
-scale_max=.9
+scale_min=.8                 // Ratio range for scaling caption text size.
+scale_max=1.05
 
 
 // Blend
@@ -98,7 +98,7 @@ blend_alpha_max=0.9             // 1 is fully opaque, 0 is invisible.
 //BG PARAMS
 
 // Different Background Color (grey-scale shade) Zones
-diff_prob=0                 // The probability that this feature appears.
+diff_prob=1                 // The probability that this feature appears.
 diff_color_distance=60        // Min difference between the text shade and the
                               // background color.
 diff_num_colors_min=1         // Range of the number of zones with different
@@ -106,13 +106,13 @@ diff_num_colors_max=1         // colors that may be generated.
 
 
 // Distractor Text
-distract_prob=1             // The probability that this feature appears
+distract_prob=0             // The probability that this feature appears
 
-distract_num_min=1            // Range of the number of instances of distractor
-distract_num_max=1            // text that are generated.
+distract_num_min=3            // Range of the number of instances of distractor
+distract_num_max=4            // text that are generated.
 
 distract_len_min=2            // Range of the distractor text string length.
-distract_len_max=4
+distract_len_max=10
 
 distract_size_min=0.3         // Range of distractor text size ratio
 distract_size_max=0.4           // with respect to main text size.
@@ -199,9 +199,9 @@ para_curve_d_max=2            // f(x) = a + bx + cx^2 + dx^3
 
 
 // Varying Distance between multiple Parallel Lines (simulates water-body)
-vpara_prob=1                // The probability that this feature appears.
+vpara_prob=0                // The probability that this feature appears.
 
-vpara_curve_prob=.5          // The probability that the lines are curved.
+vpara_curve_prob=0.5          // The probability that the lines are curved.
 
 vpara_num_min=10              // Range of number of lines drawn in parallel.
 vpara_num_max=20
@@ -274,8 +274,8 @@ river_curve_y_var_scale=0.3   // Ratio for line amplitude; values less than
 
 
 // Background Bias Field (makes the background a non-flat color)
-bias_vert_num_min=3           // Range of number of vertical points. More points
-bias_vert_num_max=6           // results in many color fluctuations over a
+bias_vert_num_min=5           // Range of number of vertical points. More points
+bias_vert_num_max=7           // results in many color fluctuations over a
                               // shorter dist. Fewer points results in the  
                               // color gradient being over a larger distance.
 //horizontal range is just (width - height) times num in vertical direction
@@ -345,7 +345,7 @@ max_num_features=5            // Max number of features in background. Note:
 bg_color_min=166              // Darkest the background shade can be (255 scale)
 text_color_max=49             // Brightest the text shade can be (255 scale)
 
-seed=1
+seed=56
 
 //Gaussian Noise for Final Image
 noise_sigma_alpha=2           // Set probability distribution shape with alpha 
@@ -355,12 +355,12 @@ noise_sigma_shift=0           // distribution see:
                               // https://en.wikipedia.org/wiki/Normal-inverse-gamma_distribution
 
 //Gaussian blur for Final Image
-blur_kernel_size_min=2        // Set the blur kernel size range. Note that
-blur_kernel_size_max=4        // kernel size can only be odd integer. More info:
+blur_kernel_size_min=6        // Set the blur kernel size range. Note that
+blur_kernel_size_max=9        // kernel size can only be odd integer. More info:
                               // https://en.wikipedia.org/wiki/Kernel_(image_processing)
 
 //Jpeg artifacts
-jpeg_prob=0                 // Probability of this feature appearing.
+jpeg_prob=1                 // Probability of this feature appearing.
 
 jpeg_quality_min=5            // Range of simulated JPEG compression artifacts.
 jpeg_quality_max=10          // Higher quality means fewer/smaller artifacts.
