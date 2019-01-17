@@ -59,6 +59,10 @@ MTS_BaseHelper::rndProbUnder(double probability){
 
 double
 MTS_BaseHelper::rndBetween(double min, double max) {
+    if(min == max) {
+	return min;
+    }
+
     int min_ = (int)(min*10000);
     int max_ = (int)(max*10000);
     double ret = ((int)(rng() % (max_ - min_ + 1)) + min_) / 10000.0;
@@ -67,6 +71,9 @@ MTS_BaseHelper::rndBetween(double min, double max) {
 
 int
 MTS_BaseHelper::rndBetween(int min, int max) {
+    if(min == max) {
+	return min;
+    }
     int ret = (int)(rng() % (max - min + 1)) + min;
     return ret;
 }

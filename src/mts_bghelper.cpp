@@ -1044,8 +1044,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
     // add boundary lines by probability
     if (find(features.begin(), features.end(), Boundary)!= features.end()) {
         int boundary_min = config->getParamInt("boundary_num_lines_min");
-        int boundary_max = config->getParamInt("boundary_num_lines_max") + 1
-            - boundary_min;
+        int boundary_max = config->getParamInt("boundary_num_lines_max");
 
         num_lines = helper->rndBetween(boundary_min,boundary_max); 
         double dash_probability= config->getParamDouble("boundary_dashed_prob");
@@ -1065,8 +1064,8 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
     // add straight lines by probability
     if (find(features.begin(), features.end(), Straight)!= features.end()) {
         int straight_min = config->getParamInt("straight_num_lines_min");
-        int straight_max = config->getParamInt("straight_num_lines_max")+1
-            - straight_min;
+        int straight_max = config->getParamInt("straight_num_lines_max");
+
         double dash_probability= config->getParamDouble("straight_dashed_prob");
         num_lines = helper->rndBetween(straight_min,straight_max); 
 
