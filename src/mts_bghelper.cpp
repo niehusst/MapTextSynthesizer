@@ -221,7 +221,7 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
         double c_min, double c_max, double d_min, double d_max, double color){
 
     double magic_line_ratio, line_width;
-
+    
     // set ratio to keep line scaled for image size
     double ratio_min = config->getParamDouble("line_width_scale_min");
     double ratio_max = config->getParamDouble("line_width_scale_max");
@@ -245,7 +245,7 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
 
     // set line style to dashed or not (default solid)
     if(dashed) { set_dash_pattern(cr); } 
-
+    
     // set boundary or not
     if(boundary) { draw_boundary(cr, line_width, color); }
 
@@ -268,7 +268,7 @@ MTS_BackgroundHelper::addLines(cairo_t *cr, bool boundary, bool hatched,
 
     //stroke
     cairo_stroke(cr);
-
+    
     //set rotations and translations back to normal
     cairo_identity_matrix(cr); 
     cairo_set_dash(cr, NULL, 0, 0);
@@ -995,7 +995,6 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
         int num_lines_min = config->getParamInt("texture_num_lines_min");
         int num_lines_max = config->getParamInt("texture_num_lines_max");
         num_lines = helper->rndBetween(num_lines_min,num_lines_max); 
-
         // add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
             addTexture(cr, (bool) helper->rng() % 2, color, width, height,
@@ -1044,8 +1043,7 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
     // add boundary lines by probability
     if (find(features.begin(), features.end(), Boundary)!= features.end()) {
         int boundary_min = config->getParamInt("boundary_num_lines_min");
-        int boundary_max = config->getParamInt("boundary_num_lines_max") + 1
-            - boundary_min;
+        int boundary_max = config->getParamInt("boundary_num_lines_max");
 
         num_lines = helper->rndBetween(boundary_min,boundary_max); 
         double dash_probability= config->getParamDouble("boundary_dashed_prob");
@@ -1065,12 +1063,11 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
     // add straight lines by probability
     if (find(features.begin(), features.end(), Straight)!= features.end()) {
         int straight_min = config->getParamInt("straight_num_lines_min");
-        int straight_max = config->getParamInt("straight_num_lines_max")+1
-            - straight_min;
+        int straight_max = config->getParamInt("straight_num_lines_max");
         double dash_probability= config->getParamDouble("straight_dashed_prob");
         num_lines = helper->rndBetween(straight_min,straight_max); 
-
-        // add num_lines lines iteratively
+        
+	// add num_lines lines iteratively
         for (int i = 0; i < num_lines; i++) {
             addLines(cr, false, false, helper->rndProbUnder(dash_probability),
                     false, false, false, width, height);

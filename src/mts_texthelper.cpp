@@ -522,7 +522,7 @@ MTS_TextHelper::create_curved_text_deformed(cairo_t *cr,
     //clean up
     cairo_path_destroy(path_tmp);
     cairo_restore(cr);
-    path = NULL;
+    //path = NULL;
 }
 
 
@@ -774,9 +774,11 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     cairo_translate (cr_n, patch_width/2, height/2);
     cairo_scale(cr_n, scale, scale);
     cairo_translate (cr_n, -patch_width/2, -height/2);
+    std::cout << "abotu to make line" << std::endl;
     if (path != NULL &&
             helper->rndProbUnder(config->getParamDouble("curve_line_prob"))) {
-        cairo_save(cr_n);
+        std::cout << "making line" << std::endl;
+	cairo_save(cr_n);
         cairo_append_path(cr_n,path);
         double cx1,cy1,cx2,cy2;
         cairo_path_extents(cr_n, &cx1, &cy1, &cx2, &cy2);

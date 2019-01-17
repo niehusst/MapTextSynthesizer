@@ -197,14 +197,13 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
                 width,text_color,false);
     }
 
-    //cout << "bg" << endl;
     // use BackgroundHelper to generate the background image
     cairo_surface_t *bg_surface;
     bh.generateBgSample(bg_surface, bg_features, height, width,
             bg_brightness, contrast);
     cairo_t *cr = cairo_create(bg_surface);
     cairo_set_source_surface(cr, text_surface, 0, 0);
-
+    
     // set the blend alpha range using user configured parameters
     double blend_min=config->getParamDouble("blend_alpha_min");
     double blend_max=config->getParamDouble("blend_alpha_max");

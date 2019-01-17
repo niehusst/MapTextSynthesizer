@@ -10,7 +10,7 @@ captions = caption.txt
 //TEXT PARAMS
 
 // Stretching of Characters (beta probability density distribution)
-stretch_prob=0               // The probability that caption text is stretched 
+stretch_prob=1               // The probability that caption text is stretched 
 stretch_alpha=1               // Set probability distribution shape with alpha  
 stretch_beta=2                // and beta, then set value bounds with scale and
 stretch_scale=3               // shift. For more info on beta distribution see:
@@ -18,7 +18,7 @@ stretch_shift=0.5             // https://en.wikipedia.org/wiki/Beta_distribution
 
 
 // Spacing between Characters (beta probability density distribution)
-spacing_prob=0               // The probability that test does not use default spacing 
+spacing_prob=1               // The probability that test does not use default spacing 
 spacing_alpha=0.2               // Set probability distribution shape with alpha 
 spacing_beta=5                // and beta, then set value bounds with scale and
 spacing_scale=2              // shift. For more info on beta distribution see:
@@ -53,7 +53,7 @@ curve_line_width_max=0.1      // with respect to image height (for if the
 
 
 // Italic
-italic_prob=1               // The probability that caption text is italic
+italic_prob=0               // The probability that caption text is italic
 
 
 // Caption Text Weight
@@ -73,19 +73,19 @@ missing_diminish_rate=200     // The rate at which the spot edge dissolves;
 
 
 // Rotate
-rotate_prob=1               // The probability that this feature appears
+rotate_prob=0               // The probability that this feature appears
 rotate_degree_min=-15         // Range of text rotation angles in degrees.
-rotate_degree_max=-10
+rotate_degree_max=9
 
 
 // Padding
-pad_min=0.2                     // Range of how much padding to add to the
+pad_min=0                     // Range of how much padding to add to the
 pad_max=0.3                   // text with respect to image height.
 
 
 // Scaling
-scale_min=0.75                 // Ratio range for scaling caption text size.
-scale_max=0.8
+scale_min=0.95                 // Ratio range for scaling caption text size.
+scale_max=1.05
 
 
 // Blend
@@ -98,7 +98,7 @@ blend_alpha_max=1             // 1 is fully opaque, 0 is invisible.
 //BG PARAMS
 
 // Different Background Color (grey-scale shade) Zones
-diff_prob=1                 // The probability that this feature appears.
+diff_prob=0                 // The probability that this feature appears.
 diff_color_distance=60        // Min difference between the text shade and the
                               // background color.
 diff_num_colors_min=1         // Range of the number of zones with different
@@ -106,7 +106,7 @@ diff_num_colors_max=1         // colors that may be generated.
 
 
 // Distractor Text
-distract_prob=0             // The probability that this feature appears
+distract_prob=1             // The probability that this feature appears
 
 distract_num_min=1            // Range of the number of instances of distractor
 distract_num_max=2            // text that are generated.
@@ -157,10 +157,10 @@ blob_diminish_rate=100        // The rate at which the spot edge dissolves;
 // Straight Line
 straight_prob=1             // The probability that this feature appears.
 
-straight_dashed_prob=0      // The probability that the line is dashed.
+straight_dashed_prob=0.5      // The probability that the line is dashed.
 
 straight_num_lines_min=1      // Range of number of lines drawn.
-straight_num_lines_max=1
+straight_num_lines_max=2
 
 
 // Grid
@@ -228,7 +228,7 @@ texture_curve_d_max=2         // f(x) = a + bx + cx^2 + dx^3
 
 
 // Railroad
-railroad_prob=0             // The probability that this feature appears.
+railroad_prob=1             // The probability that this feature appears.
 
 railroad_num_lines_min=2      // Range of number of lines that may be generated.
 railroad_num_lines_max=2
@@ -254,7 +254,7 @@ double_distance_max=12         // pairs in multiples of the base line width.
 
 
 // River Line
-river_prob=0                // The probability that this feature appears.
+river_prob=1                // The probability that this feature appears.
 
 river_num_lines_min=4         // Range of number of lines drawn.
 river_num_lines_max=6
@@ -350,7 +350,7 @@ max_num_features=4            // Max number of features in background. Note:
 bg_color_min=166              // Darkest the background shade can be (255 scale)
 text_color_max=49             // Brightest the text shade can be (255 scale)
 
-seed=56
+seed=20
 
 //Gaussian Noise for Final Image
 noise_sigma_alpha=2           // Set probability distribution shape with alpha 
@@ -360,12 +360,12 @@ noise_sigma_shift=0           // distribution see:
                               // https://en.wikipedia.org/wiki/Normal-inverse-gamma_distribution
 
 //Gaussian blur for Final Image
-blur_kernel_size_min=6        // Set the blur kernel size range. Note that
-blur_kernel_size_max=8        // kernel size can only be odd integer. More info:
+blur_kernel_size_min=3        // Set the blur kernel size range. Note that
+blur_kernel_size_max=5        // kernel size can only be odd integer. More info:
                               // https://en.wikipedia.org/wiki/Kernel_(image_processing)
 
 //Jpeg artifacts
-jpeg_prob=1                 // Probability of this feature appearing.
+jpeg_prob=0                 // Probability of this feature appearing.
 
 jpeg_quality_min=5            // Range of simulated JPEG compression artifacts.
 jpeg_quality_max=10          // Higher quality means fewer/smaller artifacts.

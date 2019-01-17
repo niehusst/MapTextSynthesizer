@@ -3,7 +3,9 @@
 #program to run MTS cpp sample and change the seed in the config file for each run
 
 seed=1
-while read line; do
+while [ 1 == 1 ]; do
+	echo "Press q to quite"
+	read line
 	if [ $line == "q" ] 
 	then
 		break
