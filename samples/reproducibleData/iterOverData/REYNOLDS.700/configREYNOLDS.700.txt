@@ -1,32 +1,32 @@
 //FILE PATHS
 
 // Files to fetch font names from (e.g. blocky.txt, regular.txt, cursive.txt)
-fonts = fonts/custom.txt
+fonts = reproducibleData/iterOverData/REYNOLDS.700/fontREYNOLDS.700.txt
 
 // The files to sample image captions from
-captions = caption.txt
+captions = reproducibleData/iterOverData/REYNOLDS.700/captionREYNOLDS.700.txt
 
 
 //TEXT PARAMS
 
 // Stretching of Characters (beta probability density distribution)
-stretch_prob=1               // The probability that caption text is stretched 
+stretch_prob=0               // The probability that caption text is stretched 
 stretch_alpha=1               // Set probability distribution shape with alpha  
 stretch_beta=2                // and beta, then set value bounds with scale and
-stretch_scale=-0.01               // shift. For more info on beta distribution see:
-stretch_shift=.5             // https://en.wikipedia.org/wiki/Beta_distribution
+stretch_scale=3               // shift. For more info on beta distribution see:
+stretch_shift=0.5             // https://en.wikipedia.org/wiki/Beta_distribution
 
 
 // Spacing between Characters (beta probability density distribution)
-spacing_prob=0               // The probability that test does not use default spacing 
+spacing_prob=1               // The probability that test does not use default spacing 
 spacing_alpha=0.2               // Set probability distribution shape with alpha 
 spacing_beta=5                // and beta, then set value bounds with scale and
-spacing_scale=3              // shift. For more info on beta distribution see:
-spacing_shift=.5              // https://en.wikipedia.org/wiki/Beta_distribution
+spacing_scale=4              // shift. For more info on beta distribution see:
+spacing_shift=0.2              // https://en.wikipedia.org/wiki/Beta_distribution
 
 
 // Baseline Curve
-curve_prob=0                // The probability that caption text is curved
+curve_prob=1                // The probability that caption text is curved
 curve_min_spacing=0          //min spacing required for the text to be curved
 curve_min_char_num_per_point=1    // Min number of characters required for
                                   // each point of curve
@@ -42,56 +42,56 @@ curve_d_max=2
 
 
 curve_cd_sum_max=3            //prevent huge curvature at the beginning of curve
-curve_y_variance_min=.5        // Range of possible curve amplitude in the
-curve_y_variance_max=.8      // y-direction with respect to image height
+curve_y_variance_min=0.6        // Range of possible curve amplitude in the
+curve_y_variance_max=0.8      // y-direction with respect to image height
 curve_is_deformed_prob=0    // Probability that curved text may be deformed
 curve_line_prob=0             // Probability of drawing a line along the
                               // text baseline.
-curve_line_width_min=0.1   // Range of the ratio of width of the curved line
-curve_line_width_max=0.2      // with respect to image height (for if the
+curve_line_width_min=0.0125   // Range of the ratio of width of the curved line
+curve_line_width_max=0.1      // with respect to image height (for if the
                               // baseline is drawn)
 
 
 // Italic
-italic_prob=1               // The probability that caption text is italic
+italic_prob=0               // The probability that caption text is italic
 
 
 // Caption Text Weight
 // (the sum of theses probabilitise should be less than or equal to 1)
-weight_light_prob=1         // Probability that text is lightly weighted
+weight_light_prob=0         // Probability that text is lightly weighted
 weight_normal_prob=0        // Probability that text is normally weighted
                               // Probability for heavy weight = 1-(light-normal)
 
 // Missing Ink from Text
-missing_prob=1              // The probability that this feature appears
+missing_prob=0              // The probability that this feature appears
 missing_num_min=1             // Range for number of missing spots that appear
-missing_num_max=2
-missing_size_min=0.025       // Range of sizes of the missing spot radius
-missing_size_max=0.1        // with respect to image height (e.g. 0.1*height)
-missing_diminish_rate=500     // The rate at which the spot edge dissolves; 
+missing_num_max=3
+missing_size_min=0.0625       // Range of sizes of the missing spot radius
+missing_size_max=0.125        // with respect to image height (e.g. 0.1*height)
+missing_diminish_rate=200     // The rate at which the spot edge dissolves; 
                               // for larger values, edge diminishes more slowly.
 
 
 // Rotate
-rotate_prob=1               // The probability that this feature appears
-rotate_degree_min=-10         // Range of text rotation angles in degrees.
-rotate_degree_max=10
+rotate_prob=0               // The probability that this feature appears
+rotate_degree_min=-15         // Range of text rotation angles in degrees.
+rotate_degree_max=-10
 
 
 // Padding
-pad_min=0.9                     // Range of how much padding to add to the
-pad_max=1                   // text with respect to image height.
+pad_min=0.1                     // Range of how much padding to add to the
+pad_max=0.3                   // text with respect to image height.
 
 
 // Scaling
-scale_min=.7                 // Ratio range for scaling caption text size.
-scale_max=.9
+scale_min=0.85                 // Ratio range for scaling caption text size.
+scale_max=1
 
 
 // Blend
-blend_prob=0                // The probability that this feature appears.
+blend_prob=1                // The probability that this feature appears.
 blend_alpha_min=0.7           // Range of text opacity in the alpha layer.
-blend_alpha_max=0.9             // 1 is fully opaque, 0 is invisible.
+blend_alpha_max=1             // 1 is fully opaque, 0 is invisible.
 
 
 
@@ -106,25 +106,25 @@ diff_num_colors_max=1         // colors that may be generated.
 
 
 // Distractor Text
-distract_prob=0             // The probability that this feature appears
+distract_prob=1             // The probability that this feature appears
 
-distract_num_min=1            // Range of the number of instances of distractor
-distract_num_max=1            // text that are generated.
+distract_num_min=3            // Range of the number of instances of distractor
+distract_num_max=4            // text that are generated.
 
 distract_len_min=2            // Range of the distractor text string length.
-distract_len_max=4
+distract_len_max=10
 
 distract_size_min=0.3         // Range of distractor text size ratio
 distract_size_max=0.4           // with respect to main text size.
 
 
 // Boundary-like Lines (A thick colored line, closely parallel to normal line) 
-boundary_prob=0             // The probability that this feature appears.
+boundary_prob=1             // The probability that this feature appears.
 
 boundary_dashed_prob=1       // The probability that the lines are dashed.
 
-boundary_num_lines_min=1      // Range of number of lines that may be drawn.
-boundary_num_lines_max=1
+boundary_num_lines_min=2      // Range of number of lines that may be drawn.
+boundary_num_lines_max=3
 
 boundary_linewidth_min=3      // Range of colored line width ratio with
 boundary_linewidth_max=4      // respect to width of the base line.
@@ -147,29 +147,29 @@ blob_prob=0                 // The probability that this feature appears.
 blob_num_min=1                // Range of quantity of blobs are generated.
 blob_num_max=1
 
-blob_size_min=0.155           // Range of size of blob radius
+blob_size_min=0.125           // Range of size of blob radius
 blob_size_max=0.25            // with respect to image height.
 
-blob_diminish_rate=800        // The rate at which the spot edge dissolves; 
+blob_diminish_rate=100        // The rate at which the spot edge dissolves; 
                               // for larger values, edge diminishes more slowly.
 
 
 // Straight Line
-straight_prob=1             // The probability that this feature appears.
+straight_prob=0             // The probability that this feature appears.
 
-straight_dashed_prob=1      // The probability that the line is dashed.
+straight_dashed_prob=0      // The probability that the line is dashed.
 
-straight_num_lines_min=2      // Range of number of lines drawn.
-straight_num_lines_max=2
+straight_num_lines_min=1      // Range of number of lines drawn.
+straight_num_lines_max=1
 
 
 // Grid
-grid_prob=0                 // The probability that this feature appears.
+grid_prob=1                 // The probability that this feature appears.
 
-grid_curve_prob=0           // The probability that grid lines are curved.
+grid_curve_prob=0.5           // The probability that grid lines are curved.
 
-grid_num_min=2                // Range of number of lines that are drawn in
-grid_num_max=3               // the generated grid.
+grid_num_min=4                // Range of number of lines that are drawn in
+grid_num_max=7               // the generated grid.
 
 
 // City Point (a circle that simulates a point marking a town on a map)
@@ -178,16 +178,16 @@ point_prob=0                // The probability that this feature appears.
 point_hollow_prob=1         // Probability of the point not being filled in
 
 point_radius_min=0.1          // Range of dot radius with respect to the image
-point_radius_max=0.15          // height. This value is capped at 0.5
+point_radius_max=0.1          // height. This value is capped at 0.5
 
 point_num_min=1               // Range of quantity of points to draw.
-point_num_max=2
+point_num_max=1
 
 
 // Parallel Lines
 para_prob=0                 // The probability that this feature appears.
 
-para_curve_prob=0           // The probability that the lines are curved.
+para_curve_prob=0.5           // The probability that the lines are curved.
 
 para_num_min=10               // Range of number of lines drawn in parallel.
 para_num_max=20
@@ -201,25 +201,25 @@ para_curve_d_max=2            // f(x) = a + bx + cx^2 + dx^3
 // Varying Distance between multiple Parallel Lines (simulates water-body)
 vpara_prob=0                // The probability that this feature appears.
 
-vpara_curve_prob=0          // The probability that the lines are curved.
+vpara_curve_prob=0.5          // The probability that the lines are curved.
 
-vpara_num_min=40              // Range of number of lines drawn in parallel.
-vpara_num_max=60
+vpara_num_min=10              // Range of number of lines drawn in parallel.
+vpara_num_max=20
 
-vpara_curve_c_min=0          // Curved line cubic function coefficient ranges.
-vpara_curve_c_max=1           // Increasing c or d will increase the 
-vpara_curve_d_min=0          // amplitude of produced curves. 
-vpara_curve_d_max=1           // f(x) = a + bx + cx^2 + dx^3
+vpara_curve_c_min=-2          // Curved line cubic function coefficient ranges.
+vpara_curve_c_max=2           // Increasing c or d will increase the 
+vpara_curve_d_min=-2          // amplitude of produced curves. 
+vpara_curve_d_max=2           // f(x) = a + bx + cx^2 + dx^3
 
 
 // Texture (Diagonal Lines, Crossed Lines, Geometric Shapes)
-texture_prob=1              // The probability that this feature appears.
+texture_prob=0              // The probability that this feature appears.
 
 texture_num_lines_min=1       // Range of number of lines that are drawn with
 texture_num_lines_max=1       // texture.
 
-texture_width_alpha=1         // Set beta probability distribution 
-texture_width_beta=1          // shape with alpha and beta. For more info see:
+texture_width_alpha=0.5         // Set beta probability distribution 
+texture_width_beta=0.5          // shape with alpha and beta. For more info see:
                               // https://en.wikipedia.org/wiki/Beta_distribution
 texture_curve_c_min=-2        // Curved line cubic function coefficient ranges.
 texture_curve_c_max=2         // Increasing c or d will increase the
@@ -230,17 +230,17 @@ texture_curve_d_max=2         // f(x) = a + bx + cx^2 + dx^3
 // Railroad
 railroad_prob=0             // The probability that this feature appears.
 
-railroad_num_lines_min=1      // Range of number of lines that may be generated.
-railroad_num_lines_max=1
+railroad_num_lines_min=2      // Range of number of lines that may be generated.
+railroad_num_lines_max=2
 
-railroad_cross_width_min=3    // Range of cross section length ratio
-railroad_cross_width_max=3   // with respect to the width of the base line.
+railroad_cross_width_min=2    // Range of cross section length ratio
+railroad_cross_width_max=10   // with respect to the width of the base line.
 
-railroad_hatch_width_min=.5  // Range of width of each hatch in multiples 
-railroad_hatch_width_max=1.5    // of thickness of the base line.
+railroad_hatch_width_min=0.5  // Range of width of each hatch in multiples 
+railroad_hatch_width_max=2    // of thickness of the base line.
 
-railroad_distance_between_crosses_min=3   // Range of distance in multiples of 
-railroad_distance_between_crosses_max=5   // the base line width.
+railroad_distance_between_crosses_min=1   // Range of distance in multiples of 
+railroad_distance_between_crosses_max=3   // the base line width.
 
 railroad_curve_c_min=-2       // Curved line cubic function coefficient ranges.
 railroad_curve_c_max=2        // Increasing c or d will increase the
@@ -249,17 +249,17 @@ railroad_curve_d_max=2        // f(x) = a + bx + cx^2 + dx^3
 
 
 // Parallel Line Pair
-double_distance_min=2         // Range of the distance between parallel line
+double_distance_min=6         // Range of the distance between parallel line
 double_distance_max=12         // pairs in multiples of the base line width.
 
 
 // River Line
-river_prob=0                // The probability that this feature appears.
+river_prob=1                // The probability that this feature appears.
 
 river_num_lines_min=1         // Range of number of lines drawn.
-river_num_lines_max=1
+river_num_lines_max=3
 
-river_double_line_prob=1     // Probability of drawing a second line parallel 
+river_double_line_prob=0     // Probability of drawing a second line parallel 
                               // to the original line.
 river_curve_c_min=-2          // Curved line cubic function coefficient ranges.
 river_curve_c_max=2           // Increasing c or d increases the 
@@ -274,7 +274,7 @@ river_curve_y_var_scale=0.3   // Ratio for line amplitude; values less than
 
 
 // Background Bias Field (makes the background a non-flat color)
-bias_vert_num_min=4           // Range of number of vertical points. More points
+bias_vert_num_min=3           // Range of number of vertical points. More points
 bias_vert_num_max=5           // results in many color fluctuations over a
                               // shorter dist. Fewer points results in the  
                               // color gradient being over a larger distance.
@@ -295,11 +295,11 @@ line_width_scale_max=0.025    // the smaller of image width and image height.
 
 
 // Dash Settings (applied to all bg features)
-dash_pattern_len_min=4        // Range of number of dashes in one pattern
-dash_pattern_len_max=8
+dash_pattern_len_min=3        // Range of number of dashes in one pattern
+dash_pattern_len_max=4
 
-dash_len_min=2                // Range of length of each dash (in pixels)
-dash_len_max=10
+dash_len_min=4                // Range of length of each dash (in pixels)
+dash_len_max=8
 
 
 // Background Color Difference from Text Color
@@ -309,10 +309,10 @@ bg_feature_color_dis_max=20   // capped at (bg_color - text_color).
 
 
 // Background Curved Line Settings (applied to all bg features)
-bg_curve_y_variance_min=-0.1  // Range of line amplitude in the y-direction
-bg_curve_y_variance_max=0.1   // with respect to image height.
+bg_curve_y_variance_min=-0.4  // Range of line amplitude in the y-direction
+bg_curve_y_variance_max=0.4   // with respect to image height.
 
-bg_curve_num_points_min=9     // Range of the number of points in each line.
+bg_curve_num_points_min=3     // Range of the number of points in each line.
 bg_curve_num_points_max=15    // More points means more curves per line.
 
 
@@ -324,7 +324,7 @@ digit_len_alpha=3             // Set probability distribution shape with alpha
 digit_len_beta=0.2            // and beta for a Gaussian-inverse-gamma 
                               // distribution. For more info, see:
                               // https://en.wikipedia.org/wiki/Normal-inverse-gamma_distribution
-digit_len_max=2              // Maximum number of characters in a digit caption.
+digit_len_max=4              // Maximum number of characters in a digit caption.
 
 zero_padding=0                // 0 for false, any other value for true. If true,
                               // images smaller than the max image height have
@@ -335,9 +335,9 @@ zero_padding=0                // 0 for false, any other value for true. If true,
 height_min=80                 // Image height range in pixels. Note that larger
 height_max=80                 // images take longer to draw, slowing generation.
 
-width_min=10                  // Image minimum width in pixels.
+width_min=50                  // Image minimum width in pixels.
 
-max_num_features=3            // Max number of features in background. Note:
+max_num_features=4            // Max number of features in background. Note:
                               // Having many bg features slows generation
 
 // Text and Background Color
@@ -345,7 +345,7 @@ max_num_features=3            // Max number of features in background. Note:
 bg_color_min=166              // Darkest the background shade can be (255 scale)
 text_color_max=49             // Brightest the text shade can be (255 scale)
 
-seed=51
+seed=16
 
 //Gaussian Noise for Final Image
 noise_sigma_alpha=2           // Set probability distribution shape with alpha 
@@ -355,12 +355,12 @@ noise_sigma_shift=0           // distribution see:
                               // https://en.wikipedia.org/wiki/Normal-inverse-gamma_distribution
 
 //Gaussian blur for Final Image
-blur_kernel_size_min=5        // Set the blur kernel size range. Note that
-blur_kernel_size_max=7        // kernel size can only be odd integer. More info:
+blur_kernel_size_min=2        // Set the blur kernel size range. Note that
+blur_kernel_size_max=4        // kernel size can only be odd integer. More info:
                               // https://en.wikipedia.org/wiki/Kernel_(image_processing)
 
 //Jpeg artifacts
-jpeg_prob=1                 // Probability of this feature appearing.
+jpeg_prob=0                 // Probability of this feature appearing.
 
-jpeg_quality_min=10            // Range of simulated JPEG compression artifacts.
-jpeg_quality_max=20          // Higher quality means fewer/smaller artifacts.
+jpeg_quality_min=5            // Range of simulated JPEG compression artifacts.
+jpeg_quality_max=10          // Higher quality means fewer/smaller artifacts.

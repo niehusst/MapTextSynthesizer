@@ -777,7 +777,6 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
     std::cout << "abotu to make line" << std::endl;
     if (path != NULL &&
             helper->rndProbUnder(config->getParamDouble("curve_line_prob"))) {
-        std::cout << "making line" << std::endl;
 	cairo_save(cr_n);
         cairo_append_path(cr_n,path);
         double cx1,cy1,cx2,cy2;
@@ -808,6 +807,7 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     // set drawing color to the grey-scale text color
     double grey_scale = text_color/255.0;
+	//std::cout << "gned texter" << endl;
     cairo_set_source_rgb(cr_n, grey_scale, grey_scale, grey_scale);
 
     // draw distractor text or not based on user config params
