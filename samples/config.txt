@@ -22,7 +22,7 @@ spacing_prob=0.1               // The probability that test does not use default
 spacing_alpha=0.2               // Set probability distribution shape with alpha 
 spacing_beta=5                // and beta, then set value bounds with scale and
 spacing_scale=2              // shift. For more info on beta distribution see:
-spacing_shift=-0.2              // https://en.wikipedia.org/wiki/Beta_distribution
+spacing_shift=0.2              // https://en.wikipedia.org/wiki/Beta_distribution
 
 
 // Baseline Curve
@@ -289,14 +289,10 @@ bias_mean=0                   // Mean of the Gaussian bias and the background
                               // colors. Larger numbers mean brighter bias field
 bias_alpha=0.3                //transparency of bias (the linear pattern)
 
+
 // Base Line Width
 line_width_scale_min=0.0125   // Range of ratio of line width with respect to
 line_width_scale_max=0.025    // the smaller of image width and image height.
-
-
-// Background Base Line Width (applied to all bg features)
-line_width_scale_min=0.0125   // Range of line width ratio with respect to the 
-line_width_scale_max=0.05     // minimum of image width and height.
 
 
 // Dash Settings (applied to all bg features)
