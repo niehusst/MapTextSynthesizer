@@ -1,0 +1,90 @@
+----- DEFAULT -----
+Total runtime: 6 seconds
+Production rate: 833 Hz
+----- NORMAL -----
+Total runtime: 8 seconds
+Production rate: 625 Hz
+----- BASELINE -----
+Total runtime: 2 seconds
+Production rate: 2500 Hz
+----- STRETCH -----
+Total runtime: 3 seconds
+Production rate: 1666 Hz
+----- SPACING -----
+Total runtime: 2 seconds
+Production rate: 2500 Hz
+----- TEXT_CURVE_NO_DEFORM -----
+Total runtime: 7 seconds
+Production rate: 714 Hz
+----- TEXT_CURVE_DEFORM -----
+Total runtime: 6 seconds
+Production rate: 833 Hz
+----- TEXT_CURVE_BASELINE -----
+Total runtime: 7 seconds
+Production rate: 714 Hz
+----- MISSING_INK -----
+Total runtime: 19 seconds
+Production rate: 263 Hz
+----- TEXT_ROTATION -----
+Total runtime: 6 seconds
+Production rate: 833 Hz
+----- PADDING -----
+Total runtime: 2 seconds
+Production rate: 2500 Hz
+----- SCALING -----
+Total runtime: 2 seconds
+Production rate: 2500 Hz
+----- BLEND -----
+Total runtime: 2 seconds
+Production rate: 2500 Hz
+----- DIFF_BACKGROUND_COLOR_REGIONS -----
+Total runtime: 2 seconds
+Production rate: 2500 Hz
+----- DISTRACT_TEXT -----
+Total runtime: 3 seconds
+Production rate: 1666 Hz
+----- BOUNDARY_LINES -----
+Total runtime: 3 seconds
+Production rate: 1666 Hz
+----- COLOR_BLOB -----
+Total runtime: 14 seconds
+Production rate: 357 Hz
+----- STRAIGHT_LINES -----
+Total runtime: 2 seconds
+Production rate: 2500 Hz
+----- GRID -----
+Total runtime: 4 seconds
+Production rate: 1250 Hz
+----- CITY_POINT -----
+Total runtime: 2 seconds
+Production rate: 2500 Hz
+----- PARALLEL_LINES -----
+Total runtime: 6 seconds
+Production rate: 833 Hz
+----- VARYING_DISTANCE_PARALLEL_LINES -----
+Total runtime: 4 seconds
+Production rate: 1250 Hz
+----- TEXTURE -----
+Total runtime: 5 seconds
+Production rate: 1000 Hz
+----- RAILROADS -----
+Total runtime: 6 seconds
+Production rate: 833 Hz
+----- RIVERS -----
+Total runtime: 6 seconds
+Production rate: 833 Hz
+----- BIAS_FIELD -----
+Total runtime: 3 seconds
+Production rate: 1666 Hz
+----- DIGIT -----
+Total runtime: 1 seconds
+Production rate: 5000 Hz
+----- VARIABLE_HEIGHT -----
+Total runtime: 5 seconds
+Production rate: 1000 Hz
+----- ZERO_PADDED -----
+Total runtime: 1 seconds
+Production rate: 5000 Hz
+----- JPEG_COMPRESSION -----
+Total runtime: 3 seconds
+Production rate: 1666 Hz

@@ -32,8 +32,7 @@
 using namespace std;
 using namespace cv;
 
-//make this 50000
-#define ROUNDS 20
+#define ROUNDS 50000
 #define NUMFILES 30
 
 /*
@@ -79,7 +78,7 @@ int main() {
 			"ZERO_PADDED",
 			"JPEG_COMPRESSION"};
 
-    	int k=0;
+    	
     	string label;
     	Mat image;
     	int height, display_rate = ROUNDS/20;
@@ -89,7 +88,8 @@ int main() {
 	ostream ofile(&out);
 
 	for(int configFile = 0; configFile < NUMFILES; configFile++) {
-		String fileName = "benchmarkConfigs/config" + string(configFile) + ".txt";
+		int k=0;
+		String fileName = "benchmarkConfigs/config" + to_string(configFile) + ".txt";
     
     		// Run a benchmark test of production speed with a new config file
    		auto mts = MapTextSynthesizer::create(fileName);

@@ -121,7 +121,7 @@ distract_size_max=2           // with respect to main text size.
 // Boundary-like Lines (A thick colored line, closely parallel to normal line) 
 boundary_prob=0.1             // The probability that this feature appears.
 
-boundary_dashed_prob=.1       // The probability that the lines are dashed.
+boundary_dashed_prob=0.1       // The probability that the lines are dashed.
 
 boundary_num_lines_min=1      // Range of number of lines that may be drawn.
 boundary_num_lines_max=2
@@ -132,8 +132,8 @@ boundary_linewidth_max=6      // respect to width of the base line.
 boundary_distance_min=1       // Range of distance ratio between the two lines 
 boundary_distance_max=6       // with respect to base line width.
 
-boundary_color_diff_min=.25   // Range of difference between the two line colors
-boundary_color_diff_max=.35   // (Scale 0.0 - 1.0, where 0 is black and 1 white)
+boundary_color_diff_min=0.25   // Range of difference between the two line colors
+boundary_color_diff_max=0.35   // (Scale 0.0 - 1.0, where 0 is black and 1 white)
 
 boundary_curve_c_min=-2       // Curved line cubic function coefficient ranges.
 boundary_curve_c_max=2        // Increasing either c or d will increase
@@ -259,7 +259,7 @@ river_prob=0.1                // The probability that this feature appears.
 river_num_lines_min=1         // Range of number of lines drawn.
 river_num_lines_max=5
 
-river_double_line_prob=.1     // Probability of drawing a second line parallel 
+river_double_line_prob=0.1     // Probability of drawing a second line parallel 
                               // to the original line.
 river_curve_c_min=-2          // Curved line cubic function coefficient ranges.
 river_curve_c_max=2           // Increasing c or d increases the 
