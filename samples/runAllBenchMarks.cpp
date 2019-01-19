@@ -99,9 +99,10 @@ int main() {
       
     		// generate ROUNDS images from the synthesizer
      		while (k<ROUNDS) {
-        		if(k % display_rate == 0) { //TODO: remove this for more accurate benchmark?
+			/*
+        		if(k % display_rate == 0) {
           			cout << "." << flush;
-        		}
+        		}*/
         		// make the sample
         		mts->generateSample(label, image, height);
         		k++;
