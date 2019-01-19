@@ -33,7 +33,7 @@ using namespace std;
 using namespace cv;
 
 //make this 50000
-#define ROUNDS 1
+#define ROUNDS 20
 #define NUMFILES 30
 
 /*
@@ -47,7 +47,7 @@ All have a seed of 1.
 int main() {
 	//array of parameter names that are being tested in each config file in order.
 	//Parameter index in this array corresponds to the config file number.
-	string * configTests = {
+	string configTests[] = {
 			"DEFAULT",  
 			"NORMAL",
 			"BASELINE",
