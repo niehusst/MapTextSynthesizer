@@ -954,6 +954,9 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
     cairo_set_source_rgb(cr, bg_color/255.0,bg_color/255.0,bg_color/255.0);
     cairo_paint (cr);
 
+    //save pure color bg layer to disk
+    cairo_surface_write_to_png(surface,"bg_layer_pure.png");
+
     if (find(features.begin(), features.end(), Colordiff)!= features.end()) {
         double color_dis = config->getParamDouble("diff_color_distance");
         double color_min = (bg_color-contrast+color_dis)/255.0;
@@ -964,6 +967,9 @@ MTS_BackgroundHelper::generateBgSample(cairo_surface_t *&bg_surface,
 
     //add background bias field
     addBgBias(cr, width, height, bg_color);
+
+    //save light + bias bg layer to disk
+    cairo_surface_write_to_png(surface,"bg_layer_light.png");
 
     if (find(features.begin(), features.end(), Colorblob)!= features.end()) {
         int num_min= config->getParamInt("blob_num_min");

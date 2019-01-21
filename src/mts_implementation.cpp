@@ -204,6 +204,10 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
     cairo_t *cr = cairo_create(bg_surface);
     cairo_set_source_surface(cr, text_surface, 0, 0);
     
+    //save step imgs to disk
+    cairo_surface_write_to_png(text_surface,"text_layer.png");
+    cairo_surface_write_to_png(bg_surface,"bg_layer.png");
+
     // set the blend alpha range using user configured parameters
     double blend_min=config->getParamDouble("blend_alpha_min");
     double blend_max=config->getParamDouble("blend_alpha_max");
@@ -216,6 +220,9 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
     } else { // dont blend
         cairo_paint(cr);
     }
+
+    //save complete imgs before noise to disk
+    cairo_surface_write_to_png(bg_surface,"combined_layer.png");
 
     Mat sample_uchar = Mat(height,width,CV_8UC1,cv::Scalar_<uchar>(0,0,0));
     Mat sample_float = Mat(height,width,CV_32FC1,cv::Scalar_<float>(0,0,0));
@@ -251,4 +258,8 @@ void MTSImplementation::generateSample(string &caption, Mat &sample, int &actual
 
     Mat sample_roi = sample(cv::Rect(0, 0, width, height));
     sample_uchar.copyTo(sample_roi);
+
+    //save the completed img to disk
+    cv::imwrite("completed_img.png", sample);
+
 }

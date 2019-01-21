@@ -597,6 +597,25 @@ MTS_TextHelper::generateTextPatch(cairo_surface_t *&text_surface,
 
     int patch_width = (int)text_w;
 
+    //save unprocessed text layer img
+    cairo_save (cr);
+    cairo_translate (cr, -text_x, -text_y);
+    pango_cairo_show_layout (cr, layout);
+    cairo_surface_t *surface_nn;
+    cairo_t *cr_nn;
+    int width_minn = config->getParamInt("width_min");
+    int patch_width2=(int)(text_w/stretch_deg);
+    surface_nn = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, max(width_minn,patch_width2), height);
+    cr_nn = cairo_create(surface_nn);
+    cairo_set_source_surface(cr_nn, surface, 0, 0);
+    cairo_rectangle(cr_nn, 0, 0, patch_width2, height);
+    cairo_fill(cr_nn);
+    cairo_surface_write_to_png(surface_nn,"text_layer_un.png");
+    cairo_set_source_rgba (cr, 0,0,0,0);
+    cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
+    cairo_paint (cr);
+    cairo_restore (cr);
+
     cairo_path_t *path = NULL;
 
     if (rotated_angle!=0) {
