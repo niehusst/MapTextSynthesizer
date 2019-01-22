@@ -427,24 +427,39 @@ MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,
     // Get text
     char caption[100];
     strcpy(caption, pango_layout_get_text(layout));
-    int caption_len = strlen(caption);
-
+    
+    // make pango render Chinese characters correctly. eg: a赖a洪B辉 ref: https://en.wikipedia.org/wiki/UTF-8
+    // 0X7F hit asic ii range
+    bool is_ascii=true;
+    int skip=1;  // default utf8 char ,skip 3 chars
+    unsigned int first_byte=(unsigned int) caption[0];
+    if ( first_byte<=0x7F ) {is_ascii=true; skip=1;}
+    if ( first_byte>=0xC0 && first_byte<=0xCF  ) {is_ascii=false; skip=2;}
+    if ( first_byte>=0xE0 && first_byte>=0xEF ) {is_ascii=false; skip=3;}
+    if ( first_byte>=0xF0 && first_byte<=0xF8 ) {is_ascii=false; skip=4;}
+    
+    int caption_len = strlen(caption)/1;
+    
     double spacing = width / (caption_len-1);
 
     // Loop through the text
     int i = 0;
-    char cur = caption[i];
-
+    
     cairo_path_t *path_so_far = NULL;
     double y_abs;
     bool change = true;
 
     // iterate through characters in caption and correctly rotate and place it
     // on the curved path
-    while (cur != '\0') {
+    char tmp[4];
+    while (caption[i] != '\0') {
         cairo_save(cr);
-        char tmp[2] = {cur, '\0'};
+        const char * p_now_caption=caption+i;
+        strncpy(tmp,p_now_caption,skip);
+        tmp[skip]='\0';
+        
         pango_layout_set_text(layout, tmp, -1);
+        
         pango_cairo_layout_path(cr, layout);
         double rad, x, y;
         get_normal_vector(path, i*spacing, x, y, rad);
@@ -473,7 +488,9 @@ MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,
         path_so_far = cairo_copy_path(cr);
         cairo_path_destroy(tmp_path);
         cairo_new_path(cr);
-        cur = caption[++i];
+        
+        i+=skip;  // auto ascii/wild_char adaption 
+       
     }
 
     //clean up
@@ -522,6 +539,7 @@ MTS_TextHelper::create_curved_text_deformed(cairo_t *cr,
     //clean up
     cairo_path_destroy(path_tmp);
     cairo_restore(cr);
+    path = NULL;
 }
 
 
@@ -916,6 +934,7 @@ MTS_TextHelper::distractText (cairo_t *cr, int width, int height, char *font) {
 
     desc = pango_font_description_from_string(font);
     pango_layout_set_font_description(layout, desc);
+    cout<<"SuperDebug:distractText:"<<text<<"\n";
     pango_layout_set_text(layout, text, -1);
 
     // find text bounding rectangle
