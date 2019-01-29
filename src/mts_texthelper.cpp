@@ -544,7 +544,6 @@ MTS_TextHelper::create_curved_text_deformed(cairo_t *cr,
     //clean up
     cairo_path_destroy(path_tmp);
     cairo_restore(cr);
-    path = NULL;
 }
 
 
