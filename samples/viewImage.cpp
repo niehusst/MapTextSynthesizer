@@ -1,8 +1,6 @@
 /*
 This file requires a shared object file to compile MTS with. Be sure to run `make shared`
 in the base directory before trying to compile this file.
-
-g++ viewImage.cpp `pkg-config --cflags --libs pangocairo glib-2.0 opencv` -I. -I../include/ -L../bin/ -lmtsynth -std=c++11 -o viewImage
 */
 #include <vector>
 #include <iostream>
