@@ -387,6 +387,19 @@ void get_normal_vector(cairo_path_t *path, double x_exp, double &x, double &y, d
             break;
     }
 }
+int get_caption_skip(const char * curr_char)
+{
+    // make pango render Chinese characters correctly. eg: a赖a洪B辉 ref: https://en.wikipedia.org/wiki/UTF-8
+    // 0X7F hit asic ii range
+    int skip=1;
+    unsigned int first_byte=(unsigned int) *curr_char;
+
+    if ( first_byte<=0x7F )  skip=1;
+    if ( first_byte>=0xC0 && first_byte<=0xCF ) skip=2;
+    if ( first_byte>=0xE0 && first_byte>=0xEF ) skip=3;
+    if ( first_byte>=0xF0 && first_byte<=0xF8 ) skip=4;
+    return skip;
+}
 
 void
 MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,
@@ -425,26 +438,33 @@ MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,
     cairo_new_path(cr);
 
     // Get text
-    char caption[100];
+    char caption[512];
     strcpy(caption, pango_layout_get_text(layout));
+    
     int caption_len = strlen(caption);
-
+    
     double spacing = width / (caption_len-1);
 
     // Loop through the text
     int i = 0;
-    char cur = caption[i];
-
+    int skip = 1 ;
+    // get normal vector spacing coefficient
     cairo_path_t *path_so_far = NULL;
     double y_abs;
     bool change = true;
 
     // iterate through characters in caption and correctly rotate and place it
     // on the curved path
-    while (cur != '\0') {
+    char tmp[4];
+    while (caption[i] != '\0') {
         cairo_save(cr);
-        char tmp[2] = {cur, '\0'};
+        skip=get_caption_skip(caption+i);
+        strncpy(tmp,caption+i,skip);
+        
+        tmp[skip]='\0';
+        
         pango_layout_set_text(layout, tmp, -1);
+        
         pango_cairo_layout_path(cr, layout);
         double rad, x, y;
         get_normal_vector(path, i*spacing, x, y, rad);
@@ -473,7 +493,9 @@ MTS_TextHelper::create_curved_text(cairo_t *cr, PangoLayout *layout,
         path_so_far = cairo_copy_path(cr);
         cairo_path_destroy(tmp_path);
         cairo_new_path(cr);
-        cur = caption[++i];
+        
+        i+=skip;  // auto ascii/wild_char adaption 
+        
     }
 
     //clean up
@@ -522,6 +544,7 @@ MTS_TextHelper::create_curved_text_deformed(cairo_t *cr,
     //clean up
     cairo_path_destroy(path_tmp);
     cairo_restore(cr);
+    path = NULL;
 }
 
 
