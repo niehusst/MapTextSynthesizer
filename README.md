@@ -167,6 +167,21 @@ Future work for this project that we hypothesize would lead to a more robustly t
 * **Liam Niehus-Staab** - [niehusst](https://github.com/niehusst)
 * **Benjamin Gafford** - [gaffordb](https://github.com/gaffordb)
 
+## Citation
+
+Please cite the following [paper](https://www.cs.grinnell.edu/~weinman/pubs/weinman19deep.pdf) if you use this code in your own research work:
+
+```text
+@inproceedings{ weinman19deep,
+    author = {Jerod Weinman and Ziwen Chen and Ben Gafford and Nathan Gifford and Abyaya Lamsal and Liam Niehus-Staab},
+    title = {Deep Neural Networks for Text Detection and Recognition in Historical Maps},
+    booktitle = {Proc. IAPR International Conference on Document Analysis and Recognition},
+    month = {Sep.},
+    year = {2019},
+    location = {Sydney, Australia}
+} 
+```
+
 ## Acknowledgments
 
 * [Jerod Weinman](https://github.com/weinman) for his unwavering support as a mentor and guide through this project.
